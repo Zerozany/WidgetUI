@@ -1,0 +1,55 @@
+# 基于 Google 风格的代码格式化设置
+BasedOnStyle: Google  # 基于 Google 的代码风格
+
+IndentWidth: 4  # 设置缩进时使用的空格数为 4 个空格
+
+# 设置配置文件适用于 C++ 语言
+Language: Cpp  # 该配置适用于 C++ 代码
+
+# 强制指针符号（*）对齐到类型的左边
+# 不允许 clang-format 自动推导指针对齐方式
+DerivePointerAlignment: false  # 不自动推导指针对齐方式
+
+PointerAlignment: Left  # 指针符号（*）与类型左对齐，例如 int* ptr;
+
+ReferenceAlignment: Left  # 引用符号（&）与类型左对齐，例如 int& ref;
+
+# 使用自定义规则来控制大括号的换行方式
+BreakBeforeBraces: Custom  # 使用自定义规则来控制大括号换行
+
+AccessModifierOffset: -4  # 设置访问修饰符（如 public、private）相对于类成员的缩进偏移量，负值表示向左偏移
+
+AllowShortLambdasOnASingleLine: All  # 允许短的 Lambda 表达式写在同一行上
+
+NamespaceIndentation: All  # 所有命名空间内的内容都应缩进
+
+IndentRequiresClause: false  # 需要条件语句（如 `if`、`for`）时，不需要强制要求缩进
+
+SpaceBeforeRangeBasedForLoopColon: true  # 在范围基的 for 循环的冒号之前加一个空格
+
+ColumnLimit: 0  # 不限制每行的最大字符数，设置为 0 表示不做限制
+
+IndentExternBlock: true  # 使 extern 块缩进
+
+BraceWrapping:  # 控制大括号的换行规则
+  AfterClass: true  # 类定义后需要换行
+  AfterFunction: true  # 函数定义后需要换行
+  AfterCaseLabel: true  # case 标签后需要换行
+  AfterControlStatement: true  # 控制语句（如 if、for）后需要换行
+  AfterEnum: true  # 枚举定义后需要换行
+  AfterNamespace: true  # 命名空间定义后需要换行
+  AfterStruct: true  # 结构体定义后需要换行
+  AfterUnion: true  # 联合体定义后需要换行
+  BeforeCatch: true  # `catch` 语句之前需要换行
+  BeforeElse: true  # `else` 语句之前需要换行
+  BeforeLambdaBody: false  # Lambda 表达式的主体前不需要换行
+  BeforeWhile: false  # `while` 语句前不需要换行
+  SplitEmptyFunction: false  # 空函数体不需要分开成两行
+  SplitEmptyRecord: false  # 空记录（结构体或类）不需要分开成两行
+  SplitEmptyNamespace: false  # 空命名空间不需要分开成两行
+
+# 赋值、变量、操作符对齐
+AlignConsecutiveAssignments: true
+AlignOperands: true
+AlignConsecutiveDeclarations: true
+
