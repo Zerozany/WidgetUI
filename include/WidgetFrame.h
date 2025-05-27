@@ -1,7 +1,6 @@
 _Pragma("once");
 #include <QWidget>
 
-// class WidgetTitleBar;
 class WidgetFramePrivate;
 
 class WidgetFrame : public QWidget
@@ -11,7 +10,7 @@ public:
     explicit(true) WidgetFrame(QWidget* _parent = nullptr);
     virtual ~WidgetFrame() noexcept;
 
-protected:
+private:
     bool nativeEvent(const QByteArray& _eventType, void* _message, qintptr* _result) override;
 
 private:

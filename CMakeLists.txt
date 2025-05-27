@@ -10,8 +10,8 @@ include(${PROJECT_SOURCE_DIR}/cmakes/importQt.cmake)
 include(${PROJECT_SOURCE_DIR}/cmakes/importPrivate.cmake)
 include(${PROJECT_SOURCE_DIR}/cmakes/importSource.cmake)
 include(${PROJECT_SOURCE_DIR}/cmakes/importModule.cmake)
+include(${PROJECT_SOURCE_DIR}/cmakes/importUtils.cmake)
 
-# include(${PROJECT_SOURCE_DIR}/cmakes/importUtils.cmake)
 target_compile_features(${PROJECT_NAME}
     PRIVATE
     cxx_std_23

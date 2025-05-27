@@ -1,0 +1,29 @@
+/* TitleBar {
+    border-bottom: 1px solid #CFCFCF;
+} */
+
+QPushButton[propertyName="min"],
+QPushButton[propertyName="max"],
+QPushButton[propertyName="close"] {
+    border-radius: 3px;
+}
+
+QPushButton[propertyName="min"]:hover,
+QPushButton[propertyName="max"]:hover {
+    background: #c0c4cd;
+}
+
+QPushButton[propertyName="close"]:hover {
+    background-color: rgba(255, 0, 0, 200);
+}
+
+/* #TitleBarTitle {
+    color: #FFB90F;
+    font-size: 14px;
+    font-family: Microsoft YaHei;
+}
+
+#TitleBarIcon {
+    border: none;
+    padding: 0px;
+} */
