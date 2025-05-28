@@ -3,13 +3,7 @@ _Pragma("once");
 #include <QVBoxLayout>
 #include <QWidget>
 
-#ifdef Q_OS_WIN
-#include <dwmapi.h>
-#include <windows.h>
-#include <windowsx.h>
-#pragma comment(lib, "dwmapi")
-#pragma comment(lib, "user32.lib")
-#endif
+#include "Win32Tools.hpp"
 
 class WidgetFrame;
 class WidgetTitleBar;

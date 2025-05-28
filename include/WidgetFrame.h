@@ -10,7 +10,7 @@ public:
     explicit(true) WidgetFrame(QWidget* _parent = nullptr);
     virtual ~WidgetFrame() noexcept;
 
-private:
+protected:
     bool nativeEvent(const QByteArray& _eventType, void* _message, qintptr* _result) override;
 
 private:

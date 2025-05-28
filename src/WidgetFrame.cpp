@@ -30,27 +30,13 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
     {
         case WM_NCCALCSIZE:  // 计算窗口客户区大小（用于去掉系统边框）
         {
-            NCCALCSIZE_PARAMS* params{reinterpret_cast<NCCALCSIZE_PARAMS*>(msg->lParam)};
-            // 判断是否最大化
-            WINDOWPLACEMENT wp{};
-            wp.length = sizeof(WINDOWPLACEMENT);
-            ::GetWindowPlacement(msg->hwnd, &wp);
-            const bool isMaximized{(wp.showCmd == SW_SHOWMAXIMIZED)};
-            if (isMaximized)
-            {
-                // 从屏幕边缘缩进几像素
-                params->rgrc[0].top += 8;
-                params->rgrc[0].left += 8;
-                params->rgrc[0].right -= 8;
-                params->rgrc[0].bottom -= 8;
-            }
+            Win32Function::adjustCustomerArea(msg);
             *_result = 0;
             return true;
         }
         case WM_ACTIVATE:  // win11 圆角,窗口激活/非激活（可以用来重新绘制边框）
         {
-            constexpr MARGINS margins{1, 1, 1, 1};
-            HRESULT           hr{DwmExtendFrameIntoClientArea(msg->hwnd, &margins)};
+            const HRESULT hr{Win32Function::achieveRoundedCorners(msg)};
             *_result = hr;
             return true;
         }
@@ -58,19 +44,11 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         {
             // 获取鼠标的屏幕坐标
             POINT mouse{GET_X_LPARAM(msg->lParam), GET_Y_LPARAM(msg->lParam)};
-            RECT  rc{};
-            // 把窗口在屏幕上的位置放入 rc 中
-            GetWindowRect(msg->hwnd, &rc);
-            RECT rcFrame{};
-            // x,y 为鼠标在屏幕的坐标
-            long x{GET_X_LPARAM(msg->lParam)};
-            long y{GET_Y_LPARAM(msg->lParam)};
-            if (0 != *_result)
+            if (*_result != 0)
             {
                 return true;
             }
-            double dpr{this->devicePixelRatioF()};
-            QPoint pos{d->m_titleBar->mapFromGlobal(QPoint(x / dpr, y / dpr))};
+            QPoint pos{Win32Function::coordinateMapping(mouse, this, d->m_titleBar)};
             if (!d->m_titleBar->rect().contains(pos))
             {
                 return false;
@@ -81,18 +59,18 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 *_result = HTCAPTION;
                 return true;
             }
-            // 计算默认窗口边框的大小（不包含标题栏）
-            ::AdjustWindowRectEx(&rcFrame, WS_OVERLAPPEDWINDOW & ~WS_CAPTION, FALSE, NULL);
             /// @brief 判断鼠标是否悬停在最大化按钮上, win11 触发snap layout, 以下代码确保不同分辨率下正确触发
-            QAbstractButton* maximize{d->m_titleBar->getMaximizeBtn()};
-            QPoint           globalPos(mouse.x, mouse.y);
-            QWindow*         handle{this->window()->windowHandle()};
+            QPoint globalPos(mouse.x, mouse.y);
+            // DPI 缩放校正
+            QWindow* handle{this->window()->windowHandle()};
             if (handle && handle->screen())
             {
                 QScreen* screen{handle->screen()};
                 QPoint   offset{screen->geometry().topLeft()};
                 globalPos = (globalPos - offset) / screen->devicePixelRatio() + offset;
             }
+            QAbstractButton* maximize{d->m_titleBar->getMaximizeBtn()};
+            // 转化为最大化按钮的局部坐标
             const QPoint& localPos{maximize->mapFromGlobal(globalPos)};
             // 判断鼠标是否在最大化按钮上，如果在创建一个鼠标进入按钮的事件，发送给QT事件，否则QT无法收到这个事件 QSS失效
             if (maximize->rect().contains(localPos))
