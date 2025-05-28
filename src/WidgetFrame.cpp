@@ -75,7 +75,6 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 *_result = HTMAXBUTTON;
                 return true;
             }
-
             // 如果没有在最大化按钮上面,查看鼠标是否移出了按钮，发送鼠标移出按钮事件
             if (maximize->underMouse())
             {

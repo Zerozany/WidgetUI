@@ -20,11 +20,11 @@ auto WidgetFramePrivate::initWidgetFrame() noexcept -> void
     // q->setAttribute(Qt::WA_TranslucentBackground);
     /// @brief 绑定窗口句柄
     HWND hwnd{(HWND)q->winId()};
-    LONG style{GetWindowLongW(hwnd, GWL_STYLE)};
+    LONG style{::GetWindowLongW(hwnd, GWL_STYLE)};
     /// @brief 启用最大化按钮
     /// @brief 显示标题栏
     /// @brief 允许窗口调整大小
-    ::SetWindowLong(hwnd, GWL_STYLE, style | WS_MAXIMIZEBOX | WS_CAPTION | WS_THICKFRAME);
+    ::SetWindowLong(hwnd, GWL_STYLE, style | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_CAPTION | CS_DBLCLKS | WS_THICKFRAME);
 }
 
 auto WidgetFramePrivate::initWidgetLayout() noexcept -> void

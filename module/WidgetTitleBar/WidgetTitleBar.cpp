@@ -2,6 +2,7 @@
 
 #include <windows.h>
 
+#include <QMouseEvent>
 #include <ranges>
 #include <set>
 
@@ -90,15 +91,14 @@ void WidgetTitleBar::minimizeChanged() noexcept
 
 void WidgetTitleBar::maximizeChanged() noexcept
 {
-    HWND hwnd = reinterpret_cast<HWND>(m_widget->winId());
-
-    if (::IsZoomed(hwnd))  // 判断是否是最大化状态
+    HWND hwnd{reinterpret_cast<HWND>(m_widget->winId())};
+    if (::IsZoomed(hwnd))
     {
-        ::ShowWindow(hwnd, SW_RESTORE);  // 还原窗口（带动画）
+        ::ShowWindow(hwnd, SW_RESTORE);
     }
     else
     {
-        ::ShowWindow(hwnd, SW_MAXIMIZE);  // 最大化窗口（带动画）
+        ::ShowWindow(hwnd, SW_MAXIMIZE);
     }
 }
 
