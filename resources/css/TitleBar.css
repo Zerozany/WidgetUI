@@ -1,29 +1,45 @@
-/* TitleBar {
-    border-bottom: 1px solid #CFCFCF;
-} */
-
-QPushButton[propertyName="min"],
-QPushButton[propertyName="max"],
-QPushButton[propertyName="close"] {
-    border-radius: 3px;
+QPushButton[propertyName="min"] {
+    border: none;
+    border-radius: 0px;
+    background-color: transparent;
+    padding: 0px;
 }
 
-QPushButton[propertyName="min"]:hover,
+QPushButton[propertyName="max"] {
+    border: none;
+    border-radius: 0px;
+    background-color: transparent;
+    padding: 0px;
+}
+
+QPushButton[propertyName="min"]:hover {
+    background-color: #DCDCDC;
+}
+
 QPushButton[propertyName="max"]:hover {
-    background: #c0c4cd;
+    background-color: #DCDCDC;
+}
+
+QPushButton[propertyName="min"]:pressed {
+    background-color: #848282;
+}
+
+QPushButton[propertyName="max"]:pressed {
+    background-color: #848282;
+}
+
+QPushButton[propertyName="close"] {
+    border: none;
+    border-radius: 0px;
+    border-top-right-radius: 8px;
+    background-color: transparent;
+    padding: 0px;
 }
 
 QPushButton[propertyName="close"]:hover {
-    background-color: rgba(255, 0, 0, 200);
+    background-color: #f52c2c;
 }
 
-/* #TitleBarTitle {
-    color: #FFB90F;
-    font-size: 14px;
-    font-family: Microsoft YaHei;
+QPushButton[propertyName="close"]:pressed {
+    background-color: #f75d5d;
 }
-
-#TitleBarIcon {
-    border: none;
-    padding: 0px;
-} */

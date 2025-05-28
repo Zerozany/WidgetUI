@@ -30,11 +30,11 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
     {
         case WM_NCCALCSIZE:  // 计算窗口客户区大小（用于去掉系统边框）
         {
-            NCCALCSIZE_PARAMS* params = reinterpret_cast<NCCALCSIZE_PARAMS*>(msg->lParam);
+            NCCALCSIZE_PARAMS* params{reinterpret_cast<NCCALCSIZE_PARAMS*>(msg->lParam)};
             // 判断是否最大化
             WINDOWPLACEMENT wp{};
             wp.length = sizeof(WINDOWPLACEMENT);
-            GetWindowPlacement(msg->hwnd, &wp);
+            ::GetWindowPlacement(msg->hwnd, &wp);
             const bool isMaximized{(wp.showCmd == SW_SHOWMAXIMIZED)};
             if (isMaximized)
             {
@@ -49,8 +49,8 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         }
         case WM_ACTIVATE:  // win11 圆角,窗口激活/非激活（可以用来重新绘制边框）
         {
-            MARGINS margins{1, 1, 1, 1};
-            HRESULT hr{DwmExtendFrameIntoClientArea(msg->hwnd, &margins)};
+            constexpr MARGINS margins{1, 1, 1, 1};
+            HRESULT           hr{DwmExtendFrameIntoClientArea(msg->hwnd, &margins)};
             *_result = hr;
             return true;
         }
@@ -82,7 +82,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 return true;
             }
             // 计算默认窗口边框的大小（不包含标题栏）
-            AdjustWindowRectEx(&rcFrame, WS_OVERLAPPEDWINDOW & ~WS_CAPTION, FALSE, NULL);
+            ::AdjustWindowRectEx(&rcFrame, WS_OVERLAPPEDWINDOW & ~WS_CAPTION, FALSE, NULL);
             /// @brief 判断鼠标是否悬停在最大化按钮上, win11 触发snap layout, 以下代码确保不同分辨率下正确触发
             QAbstractButton* maximize{d->m_titleBar->getMaximizeBtn()};
             QPoint           globalPos(mouse.x, mouse.y);
