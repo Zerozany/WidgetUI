@@ -48,12 +48,8 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             {
                 return true;
             }
-            QPoint pos{Win32Function::coordinateMapping(mouse, this, d->m_titleBar)};
-            if (!d->m_titleBar->rect().contains(pos))
-            {
-                return false;
-            }
             /// @brief 检测鼠标位置在标题栏
+            QPoint   pos{Win32Function::coordinateMapping(mouse, this, d->m_titleBar)};
             QWidget* child{d->m_titleBar->childAt(pos)};
             if (!child)
             {
@@ -76,13 +72,13 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 return true;
             }
             // 如果没有在最大化按钮上面,查看鼠标是否移出了按钮，发送鼠标移出按钮事件
-            if (maximize->underMouse())
-            {
-                QMouseEvent mouseEvent{QEvent::Leave, QPoint(), QPoint(), Qt::NoButton, Qt::NoButton, Qt::NoModifier};
-                QCoreApplication::sendEvent(maximize, &mouseEvent);
-                maximize->update();
-                return true;
-            }
+            // if (!maximize->underMouse())
+            // {
+            //     QMouseEvent mouseEvent{QEvent::Leave, QPoint(), QPoint(), Qt::NoButton, Qt::NoButton, Qt::NoModifier};
+            //     QCoreApplication::sendEvent(maximize, &mouseEvent);
+            //     maximize->update();
+            //     return true;
+            // }
             *_result = HTCLIENT;
             return false;
         }
@@ -116,6 +112,23 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 return true;
             }
         }
+        case WM_NCMOUSEHOVER:
+        {
+            if (msg->wParam == HTMAXBUTTON)
+            {
+                *_result = HTNOWHERE;
+                return true;
+            }
+        }
+        case WM_NCMOUSELEAVE:
+        case WM_NCLBUTTONDBLCLK:
+            if (msg->wParam == HTMAXBUTTON)
+            {
+                *_result = 0;
+                // 处理鼠标事件
+                return true;
+            }
+            break;
     }
 #endif
 NO_WIN:
