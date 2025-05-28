@@ -6,6 +6,8 @@
 #include "WidgetFramePrivate.h"
 #include "WidgetTitleBar.h"
 
+constinit static bool tag{false};
+
 WidgetFrame::WidgetFrame(QWidget* _parent) : QWidget{_parent}, d_ptr{new WidgetFramePrivate{this}}
 {
 }
@@ -69,16 +71,17 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 QCoreApplication::sendEvent(maximize, &mouseEvent);
                 maximize->update();
                 *_result = HTMAXBUTTON;
+                tag      = true;
                 return true;
             }
             // 如果没有在最大化按钮上面,查看鼠标是否移出了按钮，发送鼠标移出按钮事件
-            // if (!maximize->underMouse())
-            // {
-            //     QMouseEvent mouseEvent{QEvent::Leave, QPoint(), QPoint(), Qt::NoButton, Qt::NoButton, Qt::NoModifier};
-            //     QCoreApplication::sendEvent(maximize, &mouseEvent);
-            //     maximize->update();
-            //     return true;
-            // }
+            if (maximize->underMouse())
+            {
+                QMouseEvent mouseEvent{QEvent::Leave, QPoint(), QPoint(), Qt::NoButton, Qt::NoButton, Qt::NoModifier};
+                QCoreApplication::sendEvent(maximize, &mouseEvent);
+                maximize->update();
+                return true;
+            }
             *_result = HTCLIENT;
             return false;
         }
@@ -121,7 +124,18 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             }
         }
         case WM_NCMOUSELEAVE:
+        {
+            if (tag)
+            {
+                QMouseEvent mouseEvent{QEvent::Leave, QPoint(), QPoint(), Qt::NoButton, Qt::NoButton, Qt::NoModifier};
+                QCoreApplication::sendEvent(d->m_titleBar->getMaximizeBtn(), &mouseEvent);
+                d->m_titleBar->getMaximizeBtn()->update();
+                tag = false;
+                return true;
+            }
+        }
         case WM_NCLBUTTONDBLCLK:
+        {
             if (msg->wParam == HTMAXBUTTON)
             {
                 *_result = 0;
@@ -129,6 +143,11 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 return true;
             }
             break;
+        }
+        default:
+        {
+            break;
+        }
     }
 #endif
 NO_WIN:
