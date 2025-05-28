@@ -21,11 +21,11 @@ QPushButton[propertyName="max"]:hover {
 }
 
 QPushButton[propertyName="min"]:pressed {
-    background-color: #848282;
+    background-color: #aca9a9;
 }
 
 QPushButton[propertyName="max"]:pressed {
-    background-color: #848282;
+    background-color: #aca9a9;
 }
 
 QPushButton[propertyName="close"] {

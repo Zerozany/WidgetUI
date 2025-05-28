@@ -17,6 +17,10 @@ public:
 public:
     auto getMaximizeBtn() noexcept -> QPushButton*;
 
+    auto getMinimizeBtn() noexcept -> QPushButton*;
+
+    auto getCloseBtn() noexcept -> QPushButton*;
+
 private:
     auto initTitleBarHandle() noexcept -> void;
 

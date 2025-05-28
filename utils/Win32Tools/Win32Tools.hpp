@@ -8,7 +8,10 @@ _Pragma("once");
 #pragma comment(lib, "user32.lib")
 #endif
 
+#include <QScreen>
 #include <QWidget>
+#include <QWindow>
+
 
 namespace Win32Function
 {
@@ -16,7 +19,9 @@ namespace Win32Function
 
     inline auto achieveRoundedCorners(const MSG* _msg) noexcept -> HRESULT;
 
-    inline auto coordinateMapping(const POINT _point, const QWidget* _widget, const QWidget* _titleBar) noexcept -> QPoint;
+    inline auto coordinateMapping(const POINT& _point, const QWidget* _widget, const QWidget* _titleBar) noexcept -> QPoint;
+
+    inline auto scalingCorrection(const POINT& _point, const QWindow* _handle) noexcept -> QPoint;
 
 }  // namespace Win32Function
 
@@ -45,11 +50,23 @@ auto Win32Function::achieveRoundedCorners(const MSG* _msg) noexcept -> HRESULT
     return hr;
 }
 
-auto Win32Function::coordinateMapping(const POINT _point, const QWidget* _widget, const QWidget* _titleBar) noexcept -> QPoint
+auto Win32Function::coordinateMapping(const POINT& _point, const QWidget* _widget, const QWidget* _titleBar) noexcept -> QPoint
 {
     // 如果 Windows 设置了 150% 缩放，那么 dpr ≈ 1.5
     double dpr{_widget->devicePixelRatioF()};
     // 将物理像素坐标（来自 WinAPI 鼠标事件）转换为 Qt 所需的逻辑像素坐标
     QPoint pos{_titleBar->mapFromGlobal(QPoint(_point.x / dpr, _point.y / dpr))};
     return pos;
+}
+
+auto Win32Function::scalingCorrection(const POINT& _point, const QWindow* _handle) noexcept -> QPoint
+{
+    QPoint globalPos(_point.x, _point.y);
+    // DPI 缩放校正
+    if (_handle && _handle->screen())
+    {
+        QPoint offset{_handle->screen()->geometry().topLeft()};
+        globalPos = (globalPos - offset) / _handle->screen()->devicePixelRatio() + offset;
+    }
+    return globalPos;
 }

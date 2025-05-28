@@ -53,39 +53,33 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             {
                 return false;
             }
+            /// @brief 检测鼠标位置在标题栏
             QWidget* child{d->m_titleBar->childAt(pos)};
             if (!child)
             {
                 *_result = HTCAPTION;
                 return true;
             }
-            /// @brief 判断鼠标是否悬停在最大化按钮上, win11 触发snap layout, 以下代码确保不同分辨率下正确触发
-            QPoint globalPos(mouse.x, mouse.y);
+            /// @brief 判断鼠标是否悬停在最大化按钮上, win11 触发snap layout
             // DPI 缩放校正
-            QWindow* handle{this->window()->windowHandle()};
-            if (handle && handle->screen())
-            {
-                QScreen* screen{handle->screen()};
-                QPoint   offset{screen->geometry().topLeft()};
-                globalPos = (globalPos - offset) / screen->devicePixelRatio() + offset;
-            }
-            QAbstractButton* maximize{d->m_titleBar->getMaximizeBtn()};
+            QPoint globalPos(Win32Function::scalingCorrection(mouse, this->window()->windowHandle()));
             // 转化为最大化按钮的局部坐标
+            QPushButton*  maximize{d->m_titleBar->getMaximizeBtn()};
             const QPoint& localPos{maximize->mapFromGlobal(globalPos)};
             // 判断鼠标是否在最大化按钮上，如果在创建一个鼠标进入按钮的事件，发送给QT事件，否则QT无法收到这个事件 QSS失效
-            if (maximize->rect().contains(localPos))
+            if (child == d->m_titleBar->getMaximizeBtn())
             {
-                // 鼠标进入按钮事件和在按钮上移动事件
                 QMouseEvent mouseEvent{maximize->underMouse() ? QEvent::MouseMove : QEvent::Enter, localPos, globalPos, Qt::NoButton, Qt::NoButton, Qt::NoModifier};
                 QCoreApplication::sendEvent(maximize, &mouseEvent);
                 maximize->update();
                 *_result = HTMAXBUTTON;
                 return true;
             }
+
             // 如果没有在最大化按钮上面,查看鼠标是否移出了按钮，发送鼠标移出按钮事件
             if (maximize->underMouse())
             {
-                QMouseEvent mouseEvent{QEvent::Leave, localPos, globalPos, Qt::NoButton, Qt::NoButton, Qt::NoModifier};
+                QMouseEvent mouseEvent{QEvent::Leave, QPoint(), QPoint(), Qt::NoButton, Qt::NoButton, Qt::NoModifier};
                 QCoreApplication::sendEvent(maximize, &mouseEvent);
                 maximize->update();
                 return true;
@@ -115,7 +109,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 return true;
             }
         }
-        case WM_NCMOUSEMOVE:  // 防止系统最大化按钮弹出 Snap Layout 菜单
+        case WM_NCMOUSEMOVE:
         {
             if (msg->wParam == HTMAXBUTTON)
             {

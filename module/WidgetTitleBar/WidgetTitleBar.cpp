@@ -28,6 +28,16 @@ auto WidgetTitleBar::getMaximizeBtn() noexcept -> QPushButton*
     return m_titleBarButtons.at("maximize");
 }
 
+auto WidgetTitleBar::getMinimizeBtn() noexcept -> QPushButton*
+{
+    return m_titleBarButtons.at("minimize");
+}
+
+auto WidgetTitleBar::getCloseBtn() noexcept -> QPushButton*
+{
+    return m_titleBarButtons.at("close");
+}
+
 auto WidgetTitleBar::initTitleBarHandle() noexcept -> void
 {
     this->setAttribute(Qt::WA_StyledBackground);
