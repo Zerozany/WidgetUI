@@ -48,14 +48,15 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         {
             // 获取鼠标的（屏幕）所在坐标
             POINT mouse{GET_X_LPARAM(msg->lParam), GET_Y_LPARAM(msg->lParam)};
+            // 获取DPI转换后（屏幕）所在坐标
+            QPoint pos{Win32Function::coordinateMapping(mouse, this, d->m_titleBar)};
             if (*_result != 0)
             {
                 return true;
             }
-            /// @brief 检测鼠标位置在标题栏
-            // 获取DPI下鼠标的（界面）所在坐标
-            QPoint   pos{Win32Function::coordinateMapping(mouse, this, d->m_titleBar)};
+            // 检索标题栏中鼠标所在元素
             QWidget* child{d->m_titleBar->childAt(pos)};
+            /// @brief 检测鼠标位置在标题栏
             if (!child && d->m_titleBar->rect().contains(pos))
             {
                 *_result = HTCAPTION;
@@ -75,19 +76,13 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 *_result = HTMAXBUTTON;
                 return true;
             }
-            if (tag && child != d->m_titleBar->getMaximizeBtn())
-            {
-                QMouseEvent mouseEvent{QEvent::Leave, QPoint(), QPoint(), Qt::NoButton, Qt::NoButton, Qt::NoModifier};
-                QCoreApplication::sendEvent(d->m_titleBar->getMaximizeBtn(), &mouseEvent);
-                d->m_titleBar->getMaximizeBtn()->update();
-                tag = false;
-                return true;
-            }
+            // qDebug() << "custom";
             *_result = HTCLIENT;
             return false;
         }
-        case WM_NCLBUTTONDOWN:  // 鼠标在非客户区按下
+        case WM_NCLBUTTONDOWN:  // 鼠标左键在非客户区按下
         {
+            qDebug() << "no custom pressed";
             if (msg->wParam == HTMAXBUTTON)
             {
                 QMouseEvent mouseEvent{QEvent::MouseButtonPress, QPoint(), QPoint(), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier};
@@ -97,88 +92,164 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             }
             break;
         }
-        case WM_NCLBUTTONUP:  // 鼠标在非客户区释放
+        case WM_NCLBUTTONUP:  // 鼠标左键在非客户区释放
         {
-            if (msg->wParam == HTMAXBUTTON)
-            {
-                QMouseEvent mouseEvent(QEvent::MouseButtonRelease, QPoint(), QPoint(), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-                QCoreApplication::sendEvent(d->m_titleBar->getMaximizeBtn(), &mouseEvent);
-                *_result = HTNOWHERE;
-                return true;
-            }
+            qDebug() << "no custom released";
+            // if (tag)
+            // {
+            qDebug() << "tttt";
+            QMouseEvent mouseEvent(QEvent::MouseButtonRelease, QPoint(), QPoint(), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+            QCoreApplication::sendEvent(d->m_titleBar->getMaximizeBtn(), &mouseEvent);
+            *_result = HTNOWHERE;
+            return true;
+            // }
             break;
         }
-        case WM_NCMOUSEMOVE:  // 当鼠标移动到窗口的“非客户区域”（如标题栏）时触发此消息
+        /// @brief 鼠标在非客户区域内移动
+        case WM_NCMOUSEMOVE:
         {
+            qDebug() << "maximize moveing";
             if (msg->wParam == HTMAXBUTTON)
             {
                 *_result = HTNOWHERE;
-                return true;
+                return false;
             }
             break;
         }
         case WM_NCMOUSEHOVER:  // 鼠标在非客户区悬停一段时间后触发
         {
-            if (msg->wParam == HTMAXBUTTON)
-            {
-                *_result = HTNOWHERE;
-                return true;
-            }
+            qDebug() << "in no custom some time";
+
+            // if (msg->wParam == HTMAXBUTTON)
+            // {
+            //     *_result = HTNOWHERE;
+            //     return true;
+            // }
             break;
         }
-        case WM_NCMOUSELEAVE:  // 鼠标离开非客户区后触发
+        /// @brief 鼠标离开非客户区后触发
+        case WM_NCMOUSELEAVE:
         {
+            qDebug() << "remove to no custom";
             if (tag)
             {
-                qDebug() << "*-*-";
                 QMouseEvent mouseEvent{QEvent::Leave, QPoint(), QPoint(), Qt::NoButton, Qt::NoButton, Qt::NoModifier};
                 QCoreApplication::sendEvent(d->m_titleBar->getMaximizeBtn(), &mouseEvent);
                 d->m_titleBar->getMaximizeBtn()->update();
                 tag = false;
-                return true;
+                return false;
             }
             break;
         }
-        case WM_MOUSELEAVE:  // 鼠标离开客户区后触发
+        /// @brief 鼠标离开客户区后触发
+        case WM_MOUSELEAVE:
         {
-            [[fallthrough]];
+            qDebug() << "remove to custom ";
+
+            // [[fallthrough]];
+            break;
         }
         case WM_LBUTTONUP:  // 用户松开鼠标左键
         {
-            [[fallthrough]];
+            qDebug() << "realease left button";
+
+            // [[fallthrough]];
+            break;
         }
+        case WM_MOUSEMOVE:  // 鼠标在客户区移动
+        {
+            qDebug() << "moveing in custom";
+            break;
+        }
+        // case WM_LBUTTONDOWN:  // 鼠标左键按下（客户区）
+        // {
+        // }
+        // case WM_LBUTTONDBLCLK:  // 鼠标左键双击（客户区）
+        // {
+        // }
+        // case WM_RBUTTONDOWN:  // 鼠标右键按下（客户区）
+        // {
+        // }
+        // case WM_RBUTTONUP:  // 鼠标右键释放（客户区）
+        // {
+        // }
+        // case WM_RBUTTONDBLCLK:  // 鼠标右键双击（客户区）
+        // {
+        // }
+        case WM_MOUSEHOVER:  // 鼠标悬停（需要调用 TrackMouseEvent 开启监听）（客户区）
+        {
+            qDebug() << "mouse hovering";
+            break;
+        }
+        case WM_CAPTURECHANGED:  // 捕获的窗口改变（例如鼠标按住拖动时，焦点窗口改变）
+        {
+            qDebug() << "windwo change";
+            break;
+        }
+        case WM_MOUSEACTIVATE:  // 鼠标点击激活窗口前的处理
+        {
+            qDebug() << "track before ready";
+            break;
+        }
+#if 0
+        case WM_MBUTTONDOWN:    // 鼠标中键按下
+        case WM_MBUTTONUP:      // 鼠标中键释放
+        case WM_MBUTTONDBLCLK:  // 鼠标中键双击
+        case WM_MOUSEWHEEL:     // 鼠标滚轮滚动（垂直方向）
+        case WM_MOUSEHWHEEL:    // 鼠标滚轮滚动（水平方向）
+#endif
         case WM_NCRBUTTONDOWN:  // 鼠标在非客户区右键按下
         {
-            [[fallthrough]];
+            qDebug() << "mouse in no custom right button pressed";
+
+            // [[fallthrough]];
+            break;
         }
         case WM_NCRBUTTONUP:  // 鼠标在非客户区右键释放
         {
-            [[fallthrough]];
+            qDebug() << "mouse in no custom right button release";
+
+            // [[fallthrough]];
+            break;
         }
         case WM_NCRBUTTONDBLCLK:  // 鼠标在非客户区右键双击
         {
-            [[fallthrough]];
+            qDebug() << "mouse in no custom right button double";
+
+            // [[fallthrough]];
+            break;
         }
         case WM_NCMBUTTONDOWN:  // 鼠标在非客户区中键按下
         {
-            [[fallthrough]];
+            qDebug() << "mouse in no custom mide button pressed";
+
+            // [[fallthrough]];
+            break;
         }
         case WM_NCMBUTTONUP:  // 鼠标在非客户区中键释放
         {
-            [[fallthrough]];
+            qDebug() << "mouse in no custom mide button release";
+
+            // [[fallthrough]];
+            break;
         }
         case WM_NCMBUTTONDBLCLK:  // 鼠标在非客户区中键双击
         {
-            [[fallthrough]];
+            qDebug() << "mouse in no custom mide button double";
+
+            // [[fallthrough]];
+            break;
         }
         case WM_NCLBUTTONDBLCLK:  // 鼠标在非客户区域双击左键时触发
         {
-            if (msg->wParam == HTMAXBUTTON)
-            {
-                *_result = 0;
-                // 处理鼠标事件
-                return true;
-            }
+            qDebug() << "mouse in no custom left button double";
+
+            // if (msg->wParam == HTMAXBUTTON)
+            // {
+            //     *_result = 0;
+            //     // 处理鼠标事件
+            //     return true;
+            // }
             break;
         }
         default:
