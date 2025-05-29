@@ -3,6 +3,7 @@
 #include <windows.h>
 
 #include <QMouseEvent>
+#include <QWindow>
 #include <ranges>
 #include <set>
 
@@ -192,6 +193,7 @@ auto WidgetTitleBar::connectSignalToSlot() noexcept -> void
     connect(this, &WidgetTitleBar::mouseRelease, this, &WidgetTitleBar::onMouseReleaseChanged);
     connect(this, &WidgetTitleBar::cursorType, this, &WidgetTitleBar::onCursorTypeChanged);
     connect(this, &WidgetTitleBar::mouseLeave, this, &WidgetTitleBar::onMouseLeaveChanged);
+    connect(this, &WidgetTitleBar::mouseDouble, this, &WidgetTitleBar::onMouseDoubleChanged);
 }
 
 void WidgetTitleBar::onMinimizeChanged() noexcept
@@ -278,6 +280,20 @@ void WidgetTitleBar::onMouseMoveChanged(const QMouseEvent* _event) noexcept
 void WidgetTitleBar::onMouseReleaseChanged(const QMouseEvent* _event) noexcept
 {
     this->m_resizing = false;
+}
+
+void WidgetTitleBar::onMouseDoubleChanged(const QMouseEvent* _event) noexcept
+{
+    if (_event->button() == Qt::LeftButton)
+    {
+        HWND hwnd{reinterpret_cast<HWND>(m_widget->window()->winId())};
+        // 获取鼠标全局位置
+        const QPoint globalPos{_event->globalPos()};
+        // 转换为 Win32 坐标
+        const LPARAM lParam{MAKELPARAM(globalPos.x(), globalPos.y())};
+        // 双击窗口顶部边缘
+        ::PostMessage(hwnd, WM_NCLBUTTONDBLCLK, HTTOP, lParam);
+    }
 }
 
 void WidgetTitleBar::onCursorTypeChanged() noexcept

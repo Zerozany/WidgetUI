@@ -67,7 +67,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             /// @brief 检测鼠标位置在标题栏
             if (!child && d->m_titleBar->rect().contains(pos))
             {
-                if ((GetAsyncKeyState(VK_LBUTTON) & 0x8000))
+                if (this->isMaximized() || (GetAsyncKeyState(VK_LBUTTON) & 0x8000))
                 {
                     *_result = HTCAPTION;
                     return true;
@@ -277,4 +277,5 @@ void WidgetFrame::mouseReleaseEvent(QMouseEvent* _event)
 void WidgetFrame::mouseDoubleClickEvent(QMouseEvent* _event)
 {
     Q_D(WidgetFrame);
+    Q_EMIT d->m_titleBar->mouseDouble(_event);
 }

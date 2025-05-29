@@ -55,6 +55,8 @@ Q_SIGNALS:
 
     void mouseRelease(const QMouseEvent* _event);
 
+    void mouseDouble(const QMouseEvent* _event);
+
     void cursorType();
 
     void mouseLeave(const bool _flag);
@@ -65,6 +67,8 @@ public Q_SLOTS:
     void onMouseMoveChanged(const QMouseEvent* _event) noexcept;
 
     void onMouseReleaseChanged(const QMouseEvent* _event) noexcept;
+
+    void onMouseDoubleChanged(const QMouseEvent* _event) noexcept;
 
     void onCursorTypeChanged() noexcept;
 
