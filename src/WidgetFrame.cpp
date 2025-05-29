@@ -7,6 +7,7 @@
 #include "WidgetTitleBar.h"
 
 constinit static bool tag{false};
+constinit static bool pressedTag{true};
 
 WidgetFrame::WidgetFrame(QWidget* _parent) : QWidget{_parent}, d_ptr{new WidgetFramePrivate{this}}
 {
@@ -75,28 +76,35 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 QMouseEvent  mouseEvent{d->m_titleBar->getMaximizeBtn()->underMouse() ? QEvent::MouseMove : QEvent::Enter, localPos, globalPos, Qt::NoButton, Qt::NoButton, Qt::NoModifier};
                 QCoreApplication::sendEvent(d->m_titleBar->getMaximizeBtn(), &mouseEvent);
                 d->m_titleBar->getMaximizeBtn()->update();
-                tag      = true;
-                *_result = HTMAXBUTTON;
+                tag = true;
+                // 检测某个按键的当前状态（是否被按下）
+                if (::GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+                {
+                    pressedTag = false;
+                }
+                else
+                {
+                    pressedTag = true;
+                }
+                *_result = pressedTag ? HTMAXBUTTON : HTCLIENT;
                 return true;
             }
-            else
-            {
-                qDebug() << "leave";
-            }
-            // qDebug() << "custom";
             *_result = HTCLIENT;
             return false;
+        }
+        case WM_LBUTTONDOWN:  // 鼠标左键按下（客户区）
+        {
+            if (tag)
+            {
+                // 当最大化按钮被点击，关闭Snap Layout
+                QMouseEvent mouseEvent{QEvent::MouseButtonPress, QPoint(), QPoint(), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier};
+                QCoreApplication::sendEvent(d->m_titleBar->getMaximizeBtn(), &mouseEvent);
+                d->m_titleBar->getMaximizeBtn()->update();
+            }
         }
         case WM_NCLBUTTONDOWN:  // 鼠标左键在非客户区按下
         {
             qDebug() << "no custom pressed";
-            if (msg->wParam == HTMAXBUTTON || tag)
-            {
-                QMouseEvent mouseEvent{QEvent::MouseButtonPress, QPoint(), QPoint(), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier};
-                QCoreApplication::sendEvent(d->m_titleBar->getMaximizeBtn(), &mouseEvent);
-                *_result = HTNOWHERE;
-                return true;
-            }
             break;
         }
         case WM_NCLBUTTONUP:  // 鼠标左键在非客户区释放
@@ -104,9 +112,10 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             qDebug() << "no custom released";
             if (tag)
             {
-                QMouseEvent mouseEvent(QEvent::MouseButtonRelease, QPoint(), QPoint(), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+                QMouseEvent mouseEvent{QEvent::MouseButtonRelease, QPoint(), QPoint(), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier};
                 QCoreApplication::sendEvent(d->m_titleBar->getMaximizeBtn(), &mouseEvent);
-                *_result = HTNOWHERE;
+                d->m_titleBar->getMaximizeBtn()->update();
+                tag = false;
                 return true;
             }
             break;
@@ -115,11 +124,14 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         case WM_NCMOUSEMOVE:
         {
             qDebug() << "maximize moveing";
-            if (msg->wParam == HTMAXBUTTON)
+            if (!pressedTag)
             {
-                *_result = HTNOWHERE;
-                return false;
             }
+            // if (msg->wParam == HTMAXBUTTON)
+            // {
+            //     *_result = HTNOWHERE;
+            //     return false;
+            // }
             break;
         }
         case WM_NCMOUSEHOVER:  // 鼠标在非客户区悬停一段时间后触发
@@ -151,43 +163,46 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         case WM_MOUSELEAVE:
         {
             qDebug() << "remove to custom ";
-
-            // [[fallthrough]];
+            if (tag)
+            {
+                QMouseEvent mouseEvent{QEvent::Leave, QPoint(), QPoint(), Qt::NoButton, Qt::NoButton, Qt::NoModifier};
+                QCoreApplication::sendEvent(d->m_titleBar->getMaximizeBtn(), &mouseEvent);
+                d->m_titleBar->getMaximizeBtn()->update();
+                tag = false;
+                return false;
+            }
             break;
         }
         case WM_LBUTTONUP:  // 用户松开鼠标左键
         {
             qDebug() << "realease left button";
-
             // [[fallthrough]];
             break;
         }
         case WM_MOUSEMOVE:
         {
-            if (child != d->m_titleBar->getMaximizeBtn())
-            {
-                qDebug() << "WM_MOUSEMOVE";
-                QWidget* maxBtn   = d->m_titleBar->getMaximizeBtn();
-                QPoint   localPos = maxBtn->mapFromGlobal(QCursor::pos());
-                if (!maxBtn->rect().contains(localPos))
-                {
-                    QEvent leaveEvent(QEvent::Leave);
-                    QCoreApplication::sendEvent(maxBtn, &leaveEvent);
+            // if (child != d->m_titleBar->getMaximizeBtn())
+            // {
+            //     qDebug() << "WM_MOUSEMOVE";
+            //     QWidget* maxBtn   = d->m_titleBar->getMaximizeBtn();
+            //     QPoint   localPos = maxBtn->mapFromGlobal(QCursor::pos());
+            //     if (!maxBtn->rect().contains(localPos))
+            //     {
+            //         QEvent leaveEvent(QEvent::Leave);
+            //         QCoreApplication::sendEvent(maxBtn, &leaveEvent);
 
-                    QMouseEvent releaseEvent(QEvent::MouseButtonRelease, localPos, QCursor::pos(),
-                                             Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-                    QCoreApplication::sendEvent(maxBtn, &releaseEvent);
+            //         QMouseEvent releaseEvent(QEvent::MouseButtonRelease, localPos, QCursor::pos(),
+            //                                  Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+            //         QCoreApplication::sendEvent(maxBtn, &releaseEvent);
 
-                    maxBtn->update();
-                    tag = false;
-                    return true;
-                }
-            }
+            //         maxBtn->update();
+            //         tag = false;
+            //         return true;
+            //     }
+            // }
             break;
         }
-        // case WM_LBUTTONDOWN:  // 鼠标左键按下（客户区）
-        // {
-        // }
+
         // case WM_LBUTTONDBLCLK:  // 鼠标左键双击（客户区）
         // {
         // }
