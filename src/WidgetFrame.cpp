@@ -27,6 +27,9 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
     {
         goto NO_WINDOWS_GENERIC_MSG;
     }
+    constinit static POINT    mouse{};
+    constinit static QPoint   pos{};
+    constinit static QWidget* child{nullptr};
     switch (msg->message)
     {
         /// @brief 计算窗口客户区大小（用于去掉系统边框）
@@ -47,15 +50,15 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         case WM_NCHITTEST:
         {
             // 获取鼠标的（屏幕）所在坐标
-            POINT mouse{GET_X_LPARAM(msg->lParam), GET_Y_LPARAM(msg->lParam)};
+            mouse = {GET_X_LPARAM(msg->lParam), GET_Y_LPARAM(msg->lParam)};
             // 获取DPI转换后（屏幕）所在坐标
-            QPoint pos{Win32Function::coordinateMapping(mouse, this, d->m_titleBar)};
+            pos = {Win32Function::coordinateMapping(mouse, this, d->m_titleBar)};
             if (*_result != 0)
             {
                 return true;
             }
             // 检索标题栏中鼠标所在元素
-            QWidget* child{d->m_titleBar->childAt(pos)};
+            child = {d->m_titleBar->childAt(pos)};
             /// @brief 检测鼠标位置在标题栏
             if (!child && d->m_titleBar->rect().contains(pos))
             {
@@ -76,6 +79,10 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 *_result = HTMAXBUTTON;
                 return true;
             }
+            else
+            {
+                qDebug() << "leave";
+            }
             // qDebug() << "custom";
             *_result = HTCLIENT;
             return false;
@@ -83,7 +90,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         case WM_NCLBUTTONDOWN:  // 鼠标左键在非客户区按下
         {
             qDebug() << "no custom pressed";
-            if (msg->wParam == HTMAXBUTTON)
+            if (msg->wParam == HTMAXBUTTON || tag)
             {
                 QMouseEvent mouseEvent{QEvent::MouseButtonPress, QPoint(), QPoint(), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier};
                 QCoreApplication::sendEvent(d->m_titleBar->getMaximizeBtn(), &mouseEvent);
@@ -95,14 +102,13 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         case WM_NCLBUTTONUP:  // 鼠标左键在非客户区释放
         {
             qDebug() << "no custom released";
-            // if (tag)
-            // {
-            qDebug() << "tttt";
-            QMouseEvent mouseEvent(QEvent::MouseButtonRelease, QPoint(), QPoint(), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-            QCoreApplication::sendEvent(d->m_titleBar->getMaximizeBtn(), &mouseEvent);
-            *_result = HTNOWHERE;
-            return true;
-            // }
+            if (tag)
+            {
+                QMouseEvent mouseEvent(QEvent::MouseButtonRelease, QPoint(), QPoint(), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+                QCoreApplication::sendEvent(d->m_titleBar->getMaximizeBtn(), &mouseEvent);
+                *_result = HTNOWHERE;
+                return true;
+            }
             break;
         }
         /// @brief 鼠标在非客户区域内移动
@@ -156,9 +162,27 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             // [[fallthrough]];
             break;
         }
-        case WM_MOUSEMOVE:  // 鼠标在客户区移动
+        case WM_MOUSEMOVE:
         {
-            qDebug() << "moveing in custom";
+            if (child != d->m_titleBar->getMaximizeBtn())
+            {
+                qDebug() << "WM_MOUSEMOVE";
+                QWidget* maxBtn   = d->m_titleBar->getMaximizeBtn();
+                QPoint   localPos = maxBtn->mapFromGlobal(QCursor::pos());
+                if (!maxBtn->rect().contains(localPos))
+                {
+                    QEvent leaveEvent(QEvent::Leave);
+                    QCoreApplication::sendEvent(maxBtn, &leaveEvent);
+
+                    QMouseEvent releaseEvent(QEvent::MouseButtonRelease, localPos, QCursor::pos(),
+                                             Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+                    QCoreApplication::sendEvent(maxBtn, &releaseEvent);
+
+                    maxBtn->update();
+                    tag = false;
+                    return true;
+                }
+            }
             break;
         }
         // case WM_LBUTTONDOWN:  // 鼠标左键按下（客户区）
