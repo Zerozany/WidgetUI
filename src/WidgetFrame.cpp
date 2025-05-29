@@ -61,7 +61,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 *_result = HTCAPTION;
                 return true;
             }
-            /// @brief 判断鼠标是否悬停在最大化按钮上, win11 触发snap layout
+            /// @brief 判断鼠标是否悬停在最大化按钮上, win11触发snap layout
             if (child == d->m_titleBar->getMaximizeBtn())
             {
                 // DPI 缩放校正
@@ -71,15 +71,16 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 QMouseEvent  mouseEvent{d->m_titleBar->getMaximizeBtn()->underMouse() ? QEvent::MouseMove : QEvent::Enter, localPos, globalPos, Qt::NoButton, Qt::NoButton, Qt::NoModifier};
                 QCoreApplication::sendEvent(d->m_titleBar->getMaximizeBtn(), &mouseEvent);
                 d->m_titleBar->getMaximizeBtn()->update();
-                *_result = HTMAXBUTTON;
                 tag      = true;
+                *_result = HTMAXBUTTON;
                 return true;
             }
-            if (d->m_titleBar->getMaximizeBtn()->underMouse())
+            if (tag && child != d->m_titleBar->getMaximizeBtn())
             {
                 QMouseEvent mouseEvent{QEvent::Leave, QPoint(), QPoint(), Qt::NoButton, Qt::NoButton, Qt::NoModifier};
                 QCoreApplication::sendEvent(d->m_titleBar->getMaximizeBtn(), &mouseEvent);
                 d->m_titleBar->getMaximizeBtn()->update();
+                tag = false;
                 return true;
             }
             *_result = HTCLIENT;
@@ -94,6 +95,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 *_result = HTNOWHERE;
                 return true;
             }
+            break;
         }
         case WM_NCLBUTTONUP:  // 鼠标在非客户区释放
         {
@@ -104,6 +106,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 *_result = HTNOWHERE;
                 return true;
             }
+            break;
         }
         case WM_NCMOUSEMOVE:  // 当鼠标移动到窗口的“非客户区域”（如标题栏）时触发此消息
         {
@@ -112,6 +115,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 *_result = HTNOWHERE;
                 return true;
             }
+            break;
         }
         case WM_NCMOUSEHOVER:  // 鼠标在非客户区悬停一段时间后触发
         {
@@ -120,27 +124,24 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 *_result = HTNOWHERE;
                 return true;
             }
+            break;
         }
         case WM_NCMOUSELEAVE:  // 鼠标离开非客户区后触发
         {
             if (tag)
             {
+                qDebug() << "*-*-";
                 QMouseEvent mouseEvent{QEvent::Leave, QPoint(), QPoint(), Qt::NoButton, Qt::NoButton, Qt::NoModifier};
                 QCoreApplication::sendEvent(d->m_titleBar->getMaximizeBtn(), &mouseEvent);
                 d->m_titleBar->getMaximizeBtn()->update();
                 tag = false;
                 return true;
             }
-        }
-        case WM_NCLBUTTONDBLCLK:  // 鼠标在非客户区域双击左键时触发
-        {
-            if (msg->wParam == HTMAXBUTTON)
-            {
-                *_result = 0;
-                // 处理鼠标事件
-                return true;
-            }
             break;
+        }
+        case WM_MOUSELEAVE:  // 鼠标离开客户区后触发
+        {
+            [[fallthrough]];
         }
         case WM_LBUTTONUP:  // 用户松开鼠标左键
         {
@@ -169,6 +170,16 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         case WM_NCMBUTTONDBLCLK:  // 鼠标在非客户区中键双击
         {
             [[fallthrough]];
+        }
+        case WM_NCLBUTTONDBLCLK:  // 鼠标在非客户区域双击左键时触发
+        {
+            if (msg->wParam == HTMAXBUTTON)
+            {
+                *_result = 0;
+                // 处理鼠标事件
+                return true;
+            }
+            break;
         }
         default:
         {

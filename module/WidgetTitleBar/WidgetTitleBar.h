@@ -29,11 +29,11 @@ private:
     auto connectSignalToSlot() noexcept -> void;
 
 private Q_SLOTS:
-    void minimizeChanged() noexcept;
+    void onMinimizeChanged() noexcept;
 
-    void maximizeChanged() noexcept;
+    void onMaximizeChanged() noexcept;
 
-    void closeChanged() noexcept;
+    void onCloseChanged() noexcept;
 
 private:
     WidgetFrame* m_widget{nullptr};

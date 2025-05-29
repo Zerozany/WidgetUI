@@ -79,16 +79,16 @@ auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
 
 auto WidgetTitleBar::connectSignalToSlot() noexcept -> void
 {
-    connect(m_titleBarButtons.at("minimize"), &QPushButton::clicked, this, &WidgetTitleBar::minimizeChanged);
-    connect(m_titleBarButtons.at("maximize"), &QPushButton::clicked, this, &WidgetTitleBar::maximizeChanged);
+    connect(m_titleBarButtons.at("minimize"), &QPushButton::clicked, this, &WidgetTitleBar::onMinimizeChanged);
+    connect(m_titleBarButtons.at("maximize"), &QPushButton::clicked, this, &WidgetTitleBar::onMaximizeChanged);
 }
 
-void WidgetTitleBar::minimizeChanged() noexcept
+void WidgetTitleBar::onMinimizeChanged() noexcept
 {
     m_widget->showMinimized();
 }
 
-void WidgetTitleBar::maximizeChanged() noexcept
+void WidgetTitleBar::onMaximizeChanged() noexcept
 {
     HWND hwnd{reinterpret_cast<HWND>(m_widget->winId())};
     if (::IsZoomed(hwnd))
@@ -103,6 +103,6 @@ void WidgetTitleBar::maximizeChanged() noexcept
     }
 }
 
-void WidgetTitleBar::closeChanged() noexcept
+void WidgetTitleBar::onCloseChanged() noexcept
 {
 }
