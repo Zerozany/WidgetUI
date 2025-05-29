@@ -50,6 +50,10 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         /// @brief 判断鼠标在窗口所在区域
         case WM_NCHITTEST:
         {
+            if (d->m_titleBar->getResizing())
+            {
+                goto NO_WINDOWS_GENERIC_MSG;
+            }
             // 获取鼠标的（屏幕）所在坐标
             mouse = {GET_X_LPARAM(msg->lParam), GET_Y_LPARAM(msg->lParam)};
             // 获取DPI转换后（屏幕）所在坐标
@@ -63,8 +67,11 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             /// @brief 检测鼠标位置在标题栏
             if (!child && d->m_titleBar->rect().contains(pos))
             {
-                *_result = HTCAPTION;
-                return true;
+                if ((GetAsyncKeyState(VK_LBUTTON) & 0x8000))
+                {
+                    *_result = HTCAPTION;
+                    return true;
+                }
             }
             /// @brief 判断鼠标是否悬停在最大化按钮上, win11触发snap layout
             if (child == d->m_titleBar->getMaximizeBtn())
@@ -104,7 +111,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         }
         case WM_NCLBUTTONDOWN:  // 鼠标左键在非客户区按下
         {
-            return false;
+            break;
         }
         case WM_NCLBUTTONUP:  // 鼠标左键在非客户区释放
         {
@@ -247,4 +254,27 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
 #endif
 NO_WINDOWS_GENERIC_MSG:
     return QWidget::nativeEvent(_eventType, _message, _result);
+}
+
+void WidgetFrame::mousePressEvent(QMouseEvent* _event)
+{
+    Q_D(WidgetFrame);
+    Q_EMIT d->m_titleBar->mousePress(_event);
+}
+
+void WidgetFrame::mouseMoveEvent(QMouseEvent* _event)
+{
+    Q_D(WidgetFrame);
+    Q_EMIT d->m_titleBar->mouseMove(_event);
+}
+
+void WidgetFrame::mouseReleaseEvent(QMouseEvent* _event)
+{
+    Q_D(WidgetFrame);
+    Q_EMIT d->m_titleBar->mouseRelease(_event);
+}
+
+void WidgetFrame::mouseDoubleClickEvent(QMouseEvent* _event)
+{
+    Q_D(WidgetFrame);
 }
