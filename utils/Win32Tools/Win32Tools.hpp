@@ -12,7 +12,6 @@ _Pragma("once");
 #include <QWidget>
 #include <QWindow>
 
-
 namespace Win32Function
 {
     inline auto adjustCustomerArea(const MSG* _msg) noexcept -> void;

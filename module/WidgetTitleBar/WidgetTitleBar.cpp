@@ -2,7 +2,6 @@
 
 #include <windows.h>
 
-#include <QMouseEvent>
 #include <ranges>
 #include <set>
 
