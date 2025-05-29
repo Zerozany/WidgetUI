@@ -15,11 +15,11 @@ public:
     ~WidgetTitleBar() noexcept = default;
 
 public:
-    auto getMaximizeBtn() noexcept -> QPushButton*;
+    auto getMaximizeBtn() const noexcept -> QPushButton*;
 
-    auto getMinimizeBtn() noexcept -> QPushButton*;
+    auto getMinimizeBtn() const noexcept -> QPushButton*;
 
-    auto getCloseBtn() noexcept -> QPushButton*;
+    auto getCloseBtn() const noexcept -> QPushButton*;
 
 private:
     auto initTitleBarHandle() noexcept -> void;

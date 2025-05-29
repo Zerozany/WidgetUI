@@ -31,7 +31,7 @@ QPushButton[propertyName="max"]:pressed {
 QPushButton[propertyName="close"] {
     border: none;
     border-radius: 0px;
-    border-top-right-radius: 8px;
+    /* border-top-right-radius: 8px; */
     background-color: transparent;
     padding: 0px;
 }

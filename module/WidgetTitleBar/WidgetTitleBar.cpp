@@ -23,17 +23,17 @@ WidgetTitleBar::WidgetTitleBar(WidgetFrame* _widget, QWidget* _parent) : QWidget
     std::invoke(&WidgetTitleBar::connectSignalToSlot, this);
 }
 
-auto WidgetTitleBar::getMaximizeBtn() noexcept -> QPushButton*
+auto WidgetTitleBar::getMaximizeBtn() const noexcept -> QPushButton*
 {
     return m_titleBarButtons.at("maximize");
 }
 
-auto WidgetTitleBar::getMinimizeBtn() noexcept -> QPushButton*
+auto WidgetTitleBar::getMinimizeBtn() const noexcept -> QPushButton*
 {
     return m_titleBarButtons.at("minimize");
 }
 
-auto WidgetTitleBar::getCloseBtn() noexcept -> QPushButton*
+auto WidgetTitleBar::getCloseBtn() const noexcept -> QPushButton*
 {
     return m_titleBarButtons.at("close");
 }
@@ -42,16 +42,16 @@ auto WidgetTitleBar::initTitleBarHandle() noexcept -> void
 {
     this->setAttribute(Qt::WA_StyledBackground);
     this->setMouseTracking(true);
-    this->setStyleSheet(StyleLoader::loadFromFile(R"(:/resources/css/TitleBar.css)"));
+    this->setStyleSheet(StyleLoader::loadFromFile(R"(:/resources/css/WidgetTitleBar.css)"));
     // this->setStyleSheet("background-color: red;");
 }
 
 auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
 {
     std::set<QString> __titleBarIcons{
-        ":/resources/icon/Minimize.png",
-        ":/resources/icon/Maximize.png",
-        ":/resources/icon/Close.png",
+        ":/resources/icon/minimize.png",
+        ":/resources/icon/maximize.png",
+        ":/resources/icon/close.png",
     };
 
     std::set<QString> __titleBarProperty{
@@ -93,12 +93,12 @@ void WidgetTitleBar::onMaximizeChanged() noexcept
     HWND hwnd{reinterpret_cast<HWND>(m_widget->winId())};
     if (::IsZoomed(hwnd))
     {
-        // m_titleBarButtons.at("maximize")->setIcon(QIcon{R"(:/resources/icon/Normal.png)"});
+        m_titleBarButtons.at("maximize")->setIcon(QIcon{R"(:/resources/icon/maximize.png)"});
         ::ShowWindow(hwnd, SW_RESTORE);
     }
     else
     {
-        // m_titleBarButtons.at("maximize")->setIcon(QIcon{R"(:/resources/icon/Maximize.png)"});
+        m_titleBarButtons.at("maximize")->setIcon(QIcon{R"(:/resources/icon/normal.png)"});
         ::ShowWindow(hwnd, SW_MAXIMIZE);
     }
 }
