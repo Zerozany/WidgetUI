@@ -104,12 +104,10 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         }
         case WM_NCLBUTTONDOWN:  // 鼠标左键在非客户区按下
         {
-            qDebug() << "no custom pressed";
-            break;
+            return false;
         }
         case WM_NCLBUTTONUP:  // 鼠标左键在非客户区释放
         {
-            qDebug() << "no custom released";
             if (tag)
             {
                 QMouseEvent mouseEvent{QEvent::MouseButtonRelease, QPoint(), QPoint(), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier};
@@ -120,35 +118,9 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             }
             break;
         }
-        /// @brief 鼠标在非客户区域内移动
-        case WM_NCMOUSEMOVE:
-        {
-            qDebug() << "maximize moveing";
-            if (!pressedTag)
-            {
-            }
-            // if (msg->wParam == HTMAXBUTTON)
-            // {
-            //     *_result = HTNOWHERE;
-            //     return false;
-            // }
-            break;
-        }
-        case WM_NCMOUSEHOVER:  // 鼠标在非客户区悬停一段时间后触发
-        {
-            qDebug() << "in no custom some time";
-
-            // if (msg->wParam == HTMAXBUTTON)
-            // {
-            //     *_result = HTNOWHERE;
-            //     return true;
-            // }
-            break;
-        }
         /// @brief 鼠标离开非客户区后触发
         case WM_NCMOUSELEAVE:
         {
-            qDebug() << "remove to no custom";
             if (tag)
             {
                 QMouseEvent mouseEvent{QEvent::Leave, QPoint(), QPoint(), Qt::NoButton, Qt::NoButton, Qt::NoModifier};
@@ -162,7 +134,6 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         /// @brief 鼠标离开客户区后触发
         case WM_MOUSELEAVE:
         {
-            qDebug() << "remove to custom ";
             if (tag)
             {
                 QMouseEvent mouseEvent{QEvent::Leave, QPoint(), QPoint(), Qt::NoButton, Qt::NoButton, Qt::NoModifier};
@@ -173,122 +144,99 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             }
             break;
         }
-        case WM_LBUTTONUP:  // 用户松开鼠标左键
+
+        /// @brief 鼠标在非客户区域内移动
+        case WM_NCMOUSEMOVE:
         {
-            qDebug() << "realease left button";
-            // [[fallthrough]];
-            break;
+            [[fallthrough]];
+        }
+        case WM_NCMOUSEHOVER:  // 鼠标在非客户区悬停一段时间后触发
+        {
+            [[fallthrough]];
+        }
+        case WM_LBUTTONUP:  // 用户松开鼠标左键（客户区）
+        {
+            [[fallthrough]];
         }
         case WM_MOUSEMOVE:
         {
-            // if (child != d->m_titleBar->getMaximizeBtn())
-            // {
-            //     qDebug() << "WM_MOUSEMOVE";
-            //     QWidget* maxBtn   = d->m_titleBar->getMaximizeBtn();
-            //     QPoint   localPos = maxBtn->mapFromGlobal(QCursor::pos());
-            //     if (!maxBtn->rect().contains(localPos))
-            //     {
-            //         QEvent leaveEvent(QEvent::Leave);
-            //         QCoreApplication::sendEvent(maxBtn, &leaveEvent);
-
-            //         QMouseEvent releaseEvent(QEvent::MouseButtonRelease, localPos, QCursor::pos(),
-            //                                  Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-            //         QCoreApplication::sendEvent(maxBtn, &releaseEvent);
-
-            //         maxBtn->update();
-            //         tag = false;
-            //         return true;
-            //     }
-            // }
-            break;
+            [[fallthrough]];
         }
-
-        // case WM_LBUTTONDBLCLK:  // 鼠标左键双击（客户区）
-        // {
-        // }
-        // case WM_RBUTTONDOWN:  // 鼠标右键按下（客户区）
-        // {
-        // }
-        // case WM_RBUTTONUP:  // 鼠标右键释放（客户区）
-        // {
-        // }
-        // case WM_RBUTTONDBLCLK:  // 鼠标右键双击（客户区）
-        // {
-        // }
+        case WM_LBUTTONDBLCLK:  // 鼠标左键双击（客户区）
+        {
+            [[fallthrough]];
+        }
+        case WM_RBUTTONDOWN:  // 鼠标右键按下（客户区）
+        {
+            [[fallthrough]];
+        }
+        case WM_RBUTTONUP:  // 鼠标右键释放（客户区）
+        {
+            [[fallthrough]];
+        }
+        case WM_RBUTTONDBLCLK:  // 鼠标右键双击（客户区）
+        {
+            [[fallthrough]];
+        }
         case WM_MOUSEHOVER:  // 鼠标悬停（需要调用 TrackMouseEvent 开启监听）（客户区）
         {
-            qDebug() << "mouse hovering";
-            break;
+            [[fallthrough]];
         }
         case WM_CAPTURECHANGED:  // 捕获的窗口改变（例如鼠标按住拖动时，焦点窗口改变）
         {
-            qDebug() << "windwo change";
-            break;
+            [[fallthrough]];
         }
         case WM_MOUSEACTIVATE:  // 鼠标点击激活窗口前的处理
         {
-            qDebug() << "track before ready";
-            break;
+            [[fallthrough]];
         }
-#if 0
-        case WM_MBUTTONDOWN:    // 鼠标中键按下
-        case WM_MBUTTONUP:      // 鼠标中键释放
-        case WM_MBUTTONDBLCLK:  // 鼠标中键双击
-        case WM_MOUSEWHEEL:     // 鼠标滚轮滚动（垂直方向）
-        case WM_MOUSEHWHEEL:    // 鼠标滚轮滚动（水平方向）
-#endif
-        case WM_NCRBUTTONDOWN:  // 鼠标在非客户区右键按下
+        case WM_MBUTTONDOWN:
         {
-            qDebug() << "mouse in no custom right button pressed";
+            [[fallthrough]];
+        }  // 鼠标中键按下
+        case WM_MBUTTONUP:
+        {
+            [[fallthrough]];
+        }  // 鼠标中键释放
+        case WM_MBUTTONDBLCLK:
+        {
+            [[fallthrough]];
+        }  // 鼠标中键双击
+        case WM_MOUSEWHEEL:
+        {
+            [[fallthrough]];
+        }  // 鼠标滚轮滚动（垂直方向）
+        case WM_MOUSEHWHEEL:
+        {
+            [[fallthrough]];
+        }  // 鼠标滚轮滚动（水平方向）
+        case WM_NCRBUTTONDOWN:
+        {
+            [[fallthrough]];
 
-            // [[fallthrough]];
-            break;
-        }
+        }  // 鼠标在非客户区右键按下
         case WM_NCRBUTTONUP:  // 鼠标在非客户区右键释放
         {
-            qDebug() << "mouse in no custom right button release";
-
-            // [[fallthrough]];
-            break;
+            [[fallthrough]];
         }
         case WM_NCRBUTTONDBLCLK:  // 鼠标在非客户区右键双击
         {
-            qDebug() << "mouse in no custom right button double";
-
-            // [[fallthrough]];
-            break;
+            [[fallthrough]];
         }
         case WM_NCMBUTTONDOWN:  // 鼠标在非客户区中键按下
         {
-            qDebug() << "mouse in no custom mide button pressed";
-
-            // [[fallthrough]];
-            break;
+            [[fallthrough]];
         }
         case WM_NCMBUTTONUP:  // 鼠标在非客户区中键释放
         {
-            qDebug() << "mouse in no custom mide button release";
-
-            // [[fallthrough]];
-            break;
+            [[fallthrough]];
         }
         case WM_NCMBUTTONDBLCLK:  // 鼠标在非客户区中键双击
         {
-            qDebug() << "mouse in no custom mide button double";
-
-            // [[fallthrough]];
-            break;
+            [[fallthrough]];
         }
         case WM_NCLBUTTONDBLCLK:  // 鼠标在非客户区域双击左键时触发
         {
-            qDebug() << "mouse in no custom left button double";
-
-            // if (msg->wParam == HTMAXBUTTON)
-            // {
-            //     *_result = 0;
-            //     // 处理鼠标事件
-            //     return true;
-            // }
             break;
         }
         default:
