@@ -22,48 +22,50 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
 {
     Q_D(WidgetFrame);
 #ifdef Q_OS_WIN
-    /// @brief 转换为Windows MSG结构
     MSG* msg{static_cast<MSG*>(_message)};
-    if (_eventType != QByteArray{"windows_generic_MSG"})
+    if (_eventType != static_cast<QByteArray>("windows_generic_MSG"))
     {
-        goto NO_WIN;
+        goto NO_WINDOWS_GENERIC_MSG;
     }
     switch (msg->message)
     {
-        case WM_NCCALCSIZE:  // 计算窗口客户区大小（用于去掉系统边框）
+        /// @brief 计算窗口客户区大小（用于去掉系统边框）
+        case WM_NCCALCSIZE:
         {
             Win32Function::adjustCustomerArea(msg);
             *_result = 0;
             return true;
         }
-        case WM_ACTIVATE:  // win11 圆角,窗口激活/非激活（可以用来重新绘制边框）
+        /// @brief 用于通知窗口 是否获得或失去焦点（激活状态）
+        case WM_ACTIVATE:
         {
             const HRESULT hr{Win32Function::achieveRoundedCorners(msg)};
             *_result = hr;
             return true;
         }
-        case WM_NCHITTEST:  // 判断鼠标在哪个窗口区域
+        /// @brief 判断鼠标在窗口所在区域
+        case WM_NCHITTEST:
         {
-            // 获取鼠标的屏幕坐标
+            // 获取鼠标的（屏幕）所在坐标
             POINT mouse{GET_X_LPARAM(msg->lParam), GET_Y_LPARAM(msg->lParam)};
             if (*_result != 0)
             {
                 return true;
             }
             /// @brief 检测鼠标位置在标题栏
+            // 获取DPI下鼠标的（界面）所在坐标
             QPoint   pos{Win32Function::coordinateMapping(mouse, this, d->m_titleBar)};
             QWidget* child{d->m_titleBar->childAt(pos)};
-            if (!child)
+            if (!child && d->m_titleBar->rect().contains(pos))
             {
                 *_result = HTCAPTION;
                 return true;
             }
             /// @brief 判断鼠标是否悬停在最大化按钮上, win11 触发snap layout
-            // DPI 缩放校正
-            QPoint globalPos{Win32Function::scalingCorrection(mouse, this->window()->windowHandle())};
-            // 判断鼠标是否在最大化按钮上，如果在创建一个鼠标进入按钮的事件，发送给QT事件，否则QT无法收到这个事件 QSS失效
             if (child == d->m_titleBar->getMaximizeBtn())
             {
+                // DPI 缩放校正
+                const QPoint globalPos{Win32Function::scalingCorrection(mouse, this->window()->windowHandle())};
                 // 转化为最大化按钮的局部坐标
                 const QPoint localPos{Win32Function::coordinateMapping(mouse, this, d->m_titleBar->getMaximizeBtn())};
                 QMouseEvent  mouseEvent{d->m_titleBar->getMaximizeBtn()->underMouse() ? QEvent::MouseMove : QEvent::Enter, localPos, globalPos, Qt::NoButton, Qt::NoButton, Qt::NoModifier};
@@ -73,7 +75,6 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 tag      = true;
                 return true;
             }
-            // 如果没有在最大化按钮上面,查看鼠标是否移出了按钮，发送鼠标移出按钮事件
             if (d->m_titleBar->getMaximizeBtn()->underMouse())
             {
                 QMouseEvent mouseEvent{QEvent::Leave, QPoint(), QPoint(), Qt::NoButton, Qt::NoButton, Qt::NoModifier};
@@ -143,6 +144,31 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         }
         case WM_LBUTTONUP:  // 用户松开鼠标左键
         {
+            [[fallthrough]];
+        }
+        case WM_NCRBUTTONDOWN:  // 鼠标在非客户区右键按下
+        {
+            [[fallthrough]];
+        }
+        case WM_NCRBUTTONUP:  // 鼠标在非客户区右键释放
+        {
+            [[fallthrough]];
+        }
+        case WM_NCRBUTTONDBLCLK:  // 鼠标在非客户区右键双击
+        {
+            [[fallthrough]];
+        }
+        case WM_NCMBUTTONDOWN:  // 鼠标在非客户区中键按下
+        {
+            [[fallthrough]];
+        }
+        case WM_NCMBUTTONUP:  // 鼠标在非客户区中键释放
+        {
+            [[fallthrough]];
+        }
+        case WM_NCMBUTTONDBLCLK:  // 鼠标在非客户区中键双击
+        {
+            [[fallthrough]];
         }
         default:
         {
@@ -150,6 +176,6 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         }
     }
 #endif
-NO_WIN:
+NO_WINDOWS_GENERIC_MSG:
     return QWidget::nativeEvent(_eventType, _message, _result);
 }

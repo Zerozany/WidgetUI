@@ -93,10 +93,12 @@ void WidgetTitleBar::maximizeChanged() noexcept
     HWND hwnd{reinterpret_cast<HWND>(m_widget->winId())};
     if (::IsZoomed(hwnd))
     {
+        // m_titleBarButtons.at("maximize")->setIcon(QIcon{R"(:/resources/icon/Normal.png)"});
         ::ShowWindow(hwnd, SW_RESTORE);
     }
     else
     {
+        // m_titleBarButtons.at("maximize")->setIcon(QIcon{R"(:/resources/icon/Maximize.png)"});
         ::ShowWindow(hwnd, SW_MAXIMIZE);
     }
 }

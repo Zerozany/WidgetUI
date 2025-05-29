@@ -44,6 +44,7 @@ inline auto Win32Function::adjustCustomerArea(const MSG* _msg) noexcept -> void
 
 auto Win32Function::achieveRoundedCorners(const MSG* _msg) noexcept -> HRESULT
 {
+    // 窗口的每一边都扩展 1 个像素
     constexpr MARGINS margins{1, 1, 1, 1};
     HRESULT           hr{DwmExtendFrameIntoClientArea(_msg->hwnd, &margins)};
     return hr;
