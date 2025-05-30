@@ -39,8 +39,7 @@ public:
     auto getResizing() const noexcept -> bool;
 
 private:
-    auto
-    initTitleBarHandle() noexcept -> void;
+    auto initTitleBarHandle() noexcept -> void;
 
     auto initTitleBarLayout() noexcept -> void;
 
