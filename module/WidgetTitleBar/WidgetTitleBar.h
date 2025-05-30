@@ -11,10 +11,6 @@ class WidgetTitleBar : public QWidget
 {
     Q_OBJECT
 public:
-    explicit(true) WidgetTitleBar(WidgetFrame* _widget, QWidget* _parent = nullptr);
-    ~WidgetTitleBar() noexcept = default;
-
-public:
     enum struct CursorType : std::uint8_t
     {
         None,
@@ -28,6 +24,9 @@ public:
         BottomRight
     };
     Q_ENUM(CursorType)
+public:
+    explicit(true) WidgetTitleBar(WidgetFrame* _widget, QWidget* _parent = nullptr);
+    ~WidgetTitleBar() noexcept = default;
 
 public:
     auto getMaximizeBtn() const noexcept -> QPushButton*;
@@ -81,11 +80,11 @@ private Q_SLOTS:
     void onCloseChanged() noexcept;
 
 private:
-    WidgetFrame* m_widget{nullptr};
-    QHBoxLayout* m_titleLayout{new QHBoxLayout{this}};
-    CursorType   m_cursorType{};       /*指针图标类型*/
-    bool         m_resizing{false};    /*窗口伸缩句柄*/
-    bool         m_resizingTag{false}; /*窗口伸缩句柄*/
+    WidgetFrame* m_widget{nullptr};                    /*无边框窗口指针*/
+    QHBoxLayout* m_titleLayout{new QHBoxLayout{this}}; /*标题栏布局容器*/
+    CursorType   m_cursorType{CursorType::None};       /*指针图标类型*/
+    bool         m_resizing{false};                    /*窗口伸缩句柄*/
+    bool         m_resizingTag{false};                 /*窗口伸缩鼠标指针显示句柄*/
 
     std::map<QString, QPushButton*> m_titleBarButtons{
         {"minimize", new QPushButton{this}},

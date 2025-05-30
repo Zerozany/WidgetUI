@@ -50,6 +50,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         /// @brief 判断鼠标在窗口所在区域
         case WM_NCHITTEST:
         {
+            /// @brief 开启窗口伸缩事件
             if (d->m_titleBar->getResizing())
             {
                 goto NO_WINDOWS_GENERIC_MSG;
@@ -220,7 +221,6 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         case WM_NCRBUTTONDOWN:
         {
             [[fallthrough]];
-
         }  // 鼠标在非客户区右键按下
         case WM_NCRBUTTONUP:  // 鼠标在非客户区右键释放
         {

@@ -43,3 +43,7 @@ QPushButton[propertyName="close"]:hover {
 QPushButton[propertyName="close"]:pressed {
     background-color: #f75d5d;
 }
+
+WidgetTitleBar {
+    background-color: #6062ad;
+}

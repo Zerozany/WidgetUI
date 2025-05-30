@@ -10,40 +10,19 @@
 #include "StyleLoader.h"
 #include "WidgetFrame.h"
 
-#ifndef _ButtonWidth
-#define _ButtonWidth 45
-#endif
-
-#ifndef _ButtonIconSize
-#define _ButtonIconSize {15, 15}
-#endif
-
-#ifndef BORDER_TOP_WIDTH
-#define BORDER_TOP_WIDTH 5
-#endif
-
-#ifndef BORDER_BOTTOM_WIDTH
-#define BORDER_BOTTOM_WIDTH 5
-#endif
-
-#ifndef BORDER_LEFT_WIDTH
-#define BORDER_LEFT_WIDTH 5
-#endif
-
-#ifndef BORDER_RIGHT_WIDTH
-#define BORDER_RIGHT_WIDTH 5
-#endif
-
-#ifndef CORNER_SIZE
-#define CORNER_SIZE 7
-#endif
+constexpr static QSize        BUTTON_ICON_SIZE{15, 15};
+constexpr static std::uint8_t BUTTON_WIDTH{45};
+constexpr static std::uint8_t BORDER_TOP_WIDTH{5};
+constexpr static std::uint8_t BORDER_BOTTOM_WIDTH{5};
+constexpr static std::uint8_t BORDER_LEFT_WIDTH{5};
+constexpr static std::uint8_t BORDER_RIGHT_WIDTH{5};
+constexpr static std::uint8_t CORNER_SIZE{7};
 
 constinit static QRect  g_startGeometry{}; /*当前窗口大小缓存区域*/
 constinit static QPoint g_startPoint{};    /*开启伸缩标记点*/
 
 WidgetTitleBar::WidgetTitleBar(WidgetFrame* _widget, QWidget* _parent) : QWidget{_parent}, m_widget{_widget}
 {
-    std::invoke(&WidgetTitleBar::setMouseTracking, this, true);
     std::invoke(&WidgetTitleBar::initTitleBarHandle, this);
     std::invoke(&WidgetTitleBar::initTitleBarLayout, this);
     std::invoke(&WidgetTitleBar::connectSignalToSlot, this);
@@ -51,17 +30,17 @@ WidgetTitleBar::WidgetTitleBar(WidgetFrame* _widget, QWidget* _parent) : QWidget
 
 auto WidgetTitleBar::getMaximizeBtn() const noexcept -> QPushButton*
 {
-    return m_titleBarButtons.at("maximize");
+    return this->m_titleBarButtons.at("maximize");
 }
 
 auto WidgetTitleBar::getMinimizeBtn() const noexcept -> QPushButton*
 {
-    return m_titleBarButtons.at("minimize");
+    return this->m_titleBarButtons.at("minimize");
 }
 
 auto WidgetTitleBar::getCloseBtn() const noexcept -> QPushButton*
 {
-    return m_titleBarButtons.at("close");
+    return this->m_titleBarButtons.at("close");
 }
 
 auto WidgetTitleBar::getResizing() const noexcept -> bool
@@ -71,9 +50,9 @@ auto WidgetTitleBar::getResizing() const noexcept -> bool
 
 auto WidgetTitleBar::initTitleBarHandle() noexcept -> void
 {
+    this->setMouseTracking(true);
     this->setAttribute(Qt::WA_StyledBackground);
     this->setStyleSheet(StyleLoader::loadFromFile(R"(:/resources/css/WidgetTitleBar.css)"));
-    // this->setStyleSheet("background-color: red;");
 }
 
 auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
@@ -92,10 +71,10 @@ auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
 
     for (const auto& [__btn, __icon, __property] : std::views::zip(m_titleBarButtons | std::views::values, __titleBarIcons, __titleBarProperty))
     {
-        __btn->setFixedWidth(_ButtonWidth);
+        __btn->setFixedWidth(BUTTON_WIDTH);
         __btn->setProperty("propertyName", __property);
         __btn->setIcon(QIcon{__icon});
-        __btn->setIconSize(QSize(_ButtonIconSize));
+        __btn->setIconSize(QSize(BUTTON_ICON_SIZE));
         __btn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     }
 
