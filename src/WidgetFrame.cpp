@@ -28,9 +28,10 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
     {
         goto NO_WINDOWS_GENERIC_MSG;
     }
+    constinit static QWidget* child{nullptr};
     constinit static POINT    mouse{};
     constinit static QPoint   pos{};
-    constinit static QWidget* child{nullptr};
+    constinit static HWND     hwnd{};
     switch (msg->message)
     {
         /// @brief 计算窗口客户区大小（用于去掉系统边框）
@@ -59,6 +60,8 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             mouse = {GET_X_LPARAM(msg->lParam), GET_Y_LPARAM(msg->lParam)};
             // 获取DPI转换后（屏幕）所在坐标
             pos = {Win32Function::coordinateMapping(mouse, this, d->m_titleBar)};
+            // 获取窗口状态句柄
+            hwnd = reinterpret_cast<HWND>(this->winId());
             if (*_result != 0)
             {
                 return true;
@@ -68,7 +71,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             /// @brief 检测鼠标位置在标题栏
             if (!child && d->m_titleBar->rect().contains(pos))
             {
-                if (this->isMaximized() || (GetAsyncKeyState(VK_LBUTTON) & 0x8000))
+                if (::IsZoomed(hwnd) || (GetAsyncKeyState(VK_LBUTTON) & 0x8000))
                 {
                     *_result = HTCAPTION;
                     return true;
@@ -156,7 +159,6 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         {
             if (!child && d->m_titleBar->rect().contains(pos))
             {
-                HWND hwnd{reinterpret_cast<HWND>(this->winId())};
                 if (::IsZoomed(hwnd))
                 {
                     d->m_titleBar->getMaximizeBtn()->setIcon(QIcon{R"(:/resources/icon/maximize.png)"});

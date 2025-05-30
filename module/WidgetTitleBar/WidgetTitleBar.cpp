@@ -28,80 +28,18 @@ WidgetTitleBar::WidgetTitleBar(WidgetFrame* _widget, QWidget* _parent) : QWidget
     std::invoke(&WidgetTitleBar::connectSignalToSlot, this);
 }
 
-auto WidgetTitleBar::getMaximizeBtn() const noexcept -> QPushButton*
-{
-    return this->m_titleBarButtons.at("maximize");
-}
-
-auto WidgetTitleBar::getMinimizeBtn() const noexcept -> QPushButton*
-{
-    return this->m_titleBarButtons.at("minimize");
-}
-
-auto WidgetTitleBar::getCloseBtn() const noexcept -> QPushButton*
-{
-    return this->m_titleBarButtons.at("close");
-}
-
-auto WidgetTitleBar::getResizing() const noexcept -> bool
-{
-    return this->m_resizingTag;
-}
-
-auto WidgetTitleBar::initTitleBarHandle() noexcept -> void
-{
-    this->setMouseTracking(true);
-    this->setAttribute(Qt::WA_StyledBackground);
-    this->setStyleSheet(StyleLoader::loadFromFile(R"(:/resources/css/WidgetTitleBar.css)"));
-}
-
-auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
-{
-    std::set<QString> __titleBarIcons{
-        ":/resources/icon/minimize.png",
-        ":/resources/icon/maximize.png",
-        ":/resources/icon/close.png",
-    };
-
-    std::set<QString> __titleBarProperty{
-        "min",
-        "max",
-        "close",
-    };
-
-    for (const auto& [__btn, __icon, __property] : std::views::zip(m_titleBarButtons | std::views::values, __titleBarIcons, __titleBarProperty))
-    {
-        __btn->setFixedWidth(BUTTON_WIDTH);
-        __btn->setProperty("propertyName", __property);
-        __btn->setIcon(QIcon{__icon});
-        __btn->setIconSize(QSize(BUTTON_ICON_SIZE));
-        __btn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    }
-
-    m_titleLayout->setContentsMargins(0, 0, 0, 0);
-    m_titleLayout->setSpacing(0);
-    m_titleLayout->addStretch();
-    m_titleLayout->addWidget(m_titleBarButtons.at("minimize"));
-    m_titleLayout->addWidget(m_titleBarButtons.at("maximize"));
-    m_titleLayout->addWidget(m_titleBarButtons.at("close"));
-}
-
 auto WidgetTitleBar::setCursorType(const QPoint& _pos) noexcept -> void
 {
-    const int x{_pos.x()};
-    const int y{_pos.y()};
-    const int w{m_widget->width()};
-    const int h{m_widget->height()};
     // 判断是否在角落（使用更大的 CORNER_SIZE）
-    const bool topLeft{(x < CORNER_SIZE && y < CORNER_SIZE)};
-    const bool topRight{(x > w - CORNER_SIZE && y < CORNER_SIZE)};
-    const bool bottomLeft{(x < CORNER_SIZE && y > h - CORNER_SIZE)};
-    const bool bottomRight{(x > w - CORNER_SIZE && y > h - CORNER_SIZE)};
+    const bool topLeft{(_pos.x() < CORNER_SIZE && _pos.y() < CORNER_SIZE)};
+    const bool topRight{(_pos.x() > m_widget->width() - CORNER_SIZE && _pos.y() < CORNER_SIZE)};
+    const bool bottomLeft{(_pos.x() < CORNER_SIZE && _pos.y() > m_widget->height() - CORNER_SIZE)};
+    const bool bottomRight{(_pos.x() > m_widget->width() - CORNER_SIZE && _pos.y() > m_widget->height() - CORNER_SIZE)};
     // 判断是否在边缘（使用较小的 BORDER_*_WIDTH）
-    const bool left{(x < BORDER_LEFT_WIDTH) && !topLeft && !bottomLeft};
-    const bool right{(x > w - BORDER_RIGHT_WIDTH) && !topRight && !bottomRight};
-    const bool top{(y < BORDER_TOP_WIDTH) && !topLeft && !topRight};
-    const bool bottom{(y > h - BORDER_BOTTOM_WIDTH) && !bottomLeft && !bottomRight};
+    const bool left{(_pos.x() < BORDER_LEFT_WIDTH) && !topLeft && !bottomLeft};
+    const bool right{(_pos.x() > m_widget->width() - BORDER_RIGHT_WIDTH) && !topRight && !bottomRight};
+    const bool top{(_pos.y() < BORDER_TOP_WIDTH) && !topLeft && !topRight};
+    const bool bottom{(_pos.y() > m_widget->height() - BORDER_BOTTOM_WIDTH) && !bottomLeft && !bottomRight};
     CursorType tmp{};
     if (topLeft)
     {
@@ -139,7 +77,7 @@ auto WidgetTitleBar::setCursorType(const QPoint& _pos) noexcept -> void
     {
         tmp = CursorType::None;
     }
-    if (top || left || topLeft)
+    if (top || left || topLeft && ::IsZoomed(m_hwnd))
     {
         m_resizingTag = true;
     }
@@ -147,33 +85,19 @@ auto WidgetTitleBar::setCursorType(const QPoint& _pos) noexcept -> void
     {
         m_resizingTag = false;
     }
-    if (this->m_cursorType == tmp)
+    if (this->m_cursorType != tmp)
     {
-        return;
+        this->m_cursorType = tmp;
+        Q_EMIT cursorType(this->m_cursorType);
     }
-    this->m_cursorType = tmp;
-    emit cursorType();
     if (this->m_cursorType == CursorType::None)
     {
-        emit mouseLeave(false);
+        Q_EMIT mouseLeave(false);
     }
     else
     {
-        emit mouseLeave(true);
+        Q_EMIT mouseLeave(true);
     }
-}
-
-auto WidgetTitleBar::connectSignalToSlot() noexcept -> void
-{
-    connect(m_titleBarButtons.at("minimize"), &QPushButton::clicked, this, &WidgetTitleBar::onMinimizeChanged);
-    connect(m_titleBarButtons.at("maximize"), &QPushButton::clicked, this, &WidgetTitleBar::onMaximizeChanged);
-    connect(m_titleBarButtons.at("close"), &QPushButton::clicked, this, &WidgetTitleBar::onCloseChanged);
-    connect(this, &WidgetTitleBar::mousePress, this, &WidgetTitleBar::onMousePressChanged);
-    connect(this, &WidgetTitleBar::mouseMove, this, &WidgetTitleBar::onMouseMoveChanged);
-    connect(this, &WidgetTitleBar::mouseRelease, this, &WidgetTitleBar::onMouseReleaseChanged);
-    connect(this, &WidgetTitleBar::cursorType, this, &WidgetTitleBar::onCursorTypeChanged);
-    connect(this, &WidgetTitleBar::mouseLeave, this, &WidgetTitleBar::onMouseLeaveChanged);
-    connect(this, &WidgetTitleBar::mouseDouble, this, &WidgetTitleBar::onMouseDoubleChanged);
 }
 
 void WidgetTitleBar::onMinimizeChanged() noexcept
@@ -183,7 +107,7 @@ void WidgetTitleBar::onMinimizeChanged() noexcept
 
 void WidgetTitleBar::onMousePressChanged(const QMouseEvent* _event) noexcept
 {
-    if ((_event->button() & Qt::LeftButton) && !m_widget->isMaximized() && m_cursorType != CursorType::None)
+    if ((_event->button() & Qt::LeftButton) && !::IsZoomed(m_hwnd) && m_cursorType != CursorType::None)
     {
         m_resizing      = true;
         g_startPoint    = _event->globalPos();
@@ -273,16 +197,18 @@ void WidgetTitleBar::onMouseDoubleChanged(const QMouseEvent* _event) noexcept
         const LPARAM lParam{MAKELPARAM(globalPos.x(), globalPos.y())};
         // 双击窗口顶部边缘
         ::PostMessage(hwnd, WM_NCLBUTTONDBLCLK, HTTOP, lParam);
+        // 恢复鼠标至默认状态
+        m_widget->setCursor(Qt::ArrowCursor);
     }
 }
 
-void WidgetTitleBar::onCursorTypeChanged() noexcept
+void WidgetTitleBar::onCursorTypeChanged(const CursorType& _cursorTyupe) noexcept
 {
     if (m_widget->isMaximized() || (QApplication::mouseButtons() & Qt::LeftButton))
     {
         return;
     }
-    switch (this->m_cursorType)
+    switch (_cursorTyupe)
     {
         case CursorType::Top:
         {
@@ -344,20 +270,92 @@ void WidgetTitleBar::onMouseLeaveChanged(const bool _flag) noexcept
 
 void WidgetTitleBar::onMaximizeChanged() noexcept
 {
-    HWND hwnd{reinterpret_cast<HWND>(m_widget->winId())};
-    if (::IsZoomed(hwnd))
+    if (::IsZoomed(this->m_hwnd))
     {
         m_titleBarButtons.at("maximize")->setIcon(QIcon{R"(:/resources/icon/maximize.png)"});
-        ::ShowWindow(hwnd, SW_RESTORE);
+        ::ShowWindow(this->m_hwnd, SW_RESTORE);
     }
     else
     {
         m_titleBarButtons.at("maximize")->setIcon(QIcon{R"(:/resources/icon/normal.png)"});
-        ::ShowWindow(hwnd, SW_MAXIMIZE);
+        ::ShowWindow(this->m_hwnd, SW_MAXIMIZE);
     }
 }
 
 void WidgetTitleBar::onCloseChanged() noexcept
 {
     m_widget->close();
+}
+
+auto WidgetTitleBar::getResizing() const noexcept -> bool
+{
+    return this->m_resizingTag;
+}
+
+/*              初始化固定逻辑              */
+auto WidgetTitleBar::initTitleBarHandle() noexcept -> void
+{
+    this->setMouseTracking(true);
+    this->setAttribute(Qt::WA_StyledBackground);
+    this->setStyleSheet(StyleLoader::loadFromFile(R"(:/resources/css/WidgetTitleBar.css)"));
+    this->m_hwnd = reinterpret_cast<HWND>(m_widget->winId());
+}
+
+auto WidgetTitleBar::getMaximizeBtn() const noexcept -> QPushButton*
+{
+    return this->m_titleBarButtons.at("maximize");
+}
+
+auto WidgetTitleBar::getMinimizeBtn() const noexcept -> QPushButton*
+{
+    return this->m_titleBarButtons.at("minimize");
+}
+
+auto WidgetTitleBar::getCloseBtn() const noexcept -> QPushButton*
+{
+    return this->m_titleBarButtons.at("close");
+}
+
+auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
+{
+    std::set<QString> __titleBarIcons{
+        ":/resources/icon/minimize.png",
+        ":/resources/icon/maximize.png",
+        ":/resources/icon/close.png",
+    };
+
+    std::set<QString> __titleBarProperty{
+        "min",
+        "max",
+        "close",
+    };
+
+    for (const auto& [__btn, __icon, __property] : std::views::zip(m_titleBarButtons | std::views::values, __titleBarIcons, __titleBarProperty))
+    {
+        __btn->setFixedWidth(BUTTON_WIDTH);
+        __btn->setProperty("propertyName", __property);
+        __btn->setIcon(QIcon{__icon});
+        __btn->setIconSize(QSize(BUTTON_ICON_SIZE));
+        __btn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    }
+
+    m_titleLayout->setContentsMargins(0, 0, 0, 0);
+    m_titleLayout->setSpacing(0);
+    m_titleLayout->addStretch();
+    m_titleLayout->addWidget(m_titleBarButtons.at("minimize"));
+    m_titleLayout->addWidget(m_titleBarButtons.at("maximize"));
+    m_titleLayout->addWidget(m_titleBarButtons.at("close"));
+}
+
+auto WidgetTitleBar::connectSignalToSlot() noexcept -> void
+{
+    connect(m_titleBarButtons.at("minimize"), &QPushButton::clicked, this, &WidgetTitleBar::onMinimizeChanged);
+    connect(m_titleBarButtons.at("maximize"), &QPushButton::clicked, this, &WidgetTitleBar::onMaximizeChanged);
+    connect(m_titleBarButtons.at("close"), &QPushButton::clicked, this, &WidgetTitleBar::onCloseChanged);
+    connect(this, &WidgetTitleBar::mousePress, this, &WidgetTitleBar::onMousePressChanged);
+    connect(this, &WidgetTitleBar::mouseMove, this, &WidgetTitleBar::onMouseMoveChanged);
+    connect(this, &WidgetTitleBar::mouseRelease, this, &WidgetTitleBar::onMouseReleaseChanged);
+    connect(this, &WidgetTitleBar::cursorType, this, &WidgetTitleBar::onCursorTypeChanged);
+    connect(this, &WidgetTitleBar::mouseLeave, this, &WidgetTitleBar::onMouseLeaveChanged);
+    connect(this, &WidgetTitleBar::mouseDouble, this, &WidgetTitleBar::onMouseDoubleChanged);
 }

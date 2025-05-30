@@ -55,7 +55,7 @@ Q_SIGNALS:
 
     void mouseDouble(const QMouseEvent* _event);
 
-    void cursorType();
+    void cursorType(const CursorType& _cursorTyupe);
 
     void mouseLeave(const bool _flag);
 
@@ -68,7 +68,7 @@ public Q_SLOTS:
 
     void onMouseDoubleChanged(const QMouseEvent* _event) noexcept;
 
-    void onCursorTypeChanged() noexcept;
+    void onCursorTypeChanged(const CursorType& _cursorTyupe) noexcept;
 
     void onMouseLeaveChanged(const bool _flag) noexcept;
 
@@ -85,6 +85,7 @@ private:
     CursorType   m_cursorType{CursorType::None};       /*指针图标类型*/
     bool         m_resizing{false};                    /*窗口伸缩句柄*/
     bool         m_resizingTag{false};                 /*窗口伸缩鼠标指针显示句柄*/
+    HWND         m_hwnd{};
 
     std::map<QString, QPushButton*> m_titleBarButtons{
         {"minimize", new QPushButton{this}},
