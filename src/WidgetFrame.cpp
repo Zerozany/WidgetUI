@@ -152,6 +152,36 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             }
             break;
         }
+        case WM_NCLBUTTONDBLCLK:  // 鼠标在非客户区域双击左键时触发
+        {
+            if (!child && d->m_titleBar->rect().contains(pos))
+            {
+                HWND hwnd{reinterpret_cast<HWND>(this->winId())};
+                if (::IsZoomed(hwnd))
+                {
+                    d->m_titleBar->getMaximizeBtn()->setIcon(QIcon{R"(:/resources/icon/maximize.png)"});
+                }
+                else
+                {
+                    d->m_titleBar->getMaximizeBtn()->setIcon(QIcon{R"(:/resources/icon/normal.png)"});
+                }
+                return false;
+            }
+            break;
+        }
+        /// @brief 窗口大小状态变化事件
+        case WM_SIZE:
+        {
+            if (msg->wParam == SIZE_MAXIMIZED)
+            {
+                d->m_titleBar->getMaximizeBtn()->setIcon(QIcon{R"(:/resources/icon/normal.png)"});
+            }
+            else if (msg->wParam == SIZE_RESTORED)
+            {
+                d->m_titleBar->getMaximizeBtn()->setIcon(QIcon{R"(:/resources/icon/maximize.png)"});
+            }
+            break;
+        }
 
         /// @brief 鼠标在非客户区域内移动
         case WM_NCMOUSEMOVE:
@@ -241,10 +271,6 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         case WM_NCMBUTTONDBLCLK:  // 鼠标在非客户区中键双击
         {
             [[fallthrough]];
-        }
-        case WM_NCLBUTTONDBLCLK:  // 鼠标在非客户区域双击左键时触发
-        {
-            break;
         }
         default:
         {
