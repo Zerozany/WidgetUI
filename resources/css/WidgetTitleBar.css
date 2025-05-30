@@ -12,22 +12,6 @@ QPushButton[propertyName="max"] {
     padding: 0px;
 }
 
-QPushButton[propertyName="min"]:hover {
-    background-color: #aca9a9;
-}
-
-QPushButton[propertyName="max"]:hover {
-    background-color: #aca9a9;
-}
-
-QPushButton[propertyName="min"]:pressed {
-    background-color: #DCDCDC;
-}
-
-QPushButton[propertyName="max"]:pressed {
-    background-color: #DCDCDC;
-}
-
 QPushButton[propertyName="close"] {
     border: none;
     border-radius: 0px;
@@ -36,8 +20,24 @@ QPushButton[propertyName="close"] {
     padding: 0px;
 }
 
+QPushButton[propertyName="min"]:hover {
+    background-color: #aca9a9;
+}
+
+QPushButton[propertyName="max"]:hover {
+    background-color: #aca9a9;
+}
+
 QPushButton[propertyName="close"]:hover {
     background-color: #f52c2c;
+}
+
+QPushButton[propertyName="min"]:pressed {
+    background-color: #d6d4d4;
+}
+
+QPushButton[propertyName="max"]:pressed {
+    background-color: #d6d4d4;
 }
 
 QPushButton[propertyName="close"]:pressed {
@@ -45,5 +45,5 @@ QPushButton[propertyName="close"]:pressed {
 }
 
 WidgetTitleBar {
-    background-color: #6062ad;
+    background-color: #434485;
 }

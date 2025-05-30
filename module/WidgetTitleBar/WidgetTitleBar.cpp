@@ -16,7 +16,7 @@ constexpr static std::uint8_t BORDER_TOP_WIDTH{5};
 constexpr static std::uint8_t BORDER_BOTTOM_WIDTH{5};
 constexpr static std::uint8_t BORDER_LEFT_WIDTH{5};
 constexpr static std::uint8_t BORDER_RIGHT_WIDTH{5};
-constexpr static std::uint8_t CORNER_SIZE{7};
+constexpr static std::uint8_t CORNER_SIZE{5};
 
 constinit static QRect  g_startGeometry{}; /*当前窗口大小缓存区域*/
 constinit static QPoint g_startPoint{};    /*开启伸缩标记点*/
