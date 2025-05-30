@@ -188,6 +188,7 @@ auto WidgetTitleBar::connectSignalToSlot() noexcept -> void
 {
     connect(m_titleBarButtons.at("minimize"), &QPushButton::clicked, this, &WidgetTitleBar::onMinimizeChanged);
     connect(m_titleBarButtons.at("maximize"), &QPushButton::clicked, this, &WidgetTitleBar::onMaximizeChanged);
+    connect(m_titleBarButtons.at("close"), &QPushButton::clicked, this, &WidgetTitleBar::onCloseChanged);
     connect(this, &WidgetTitleBar::mousePress, this, &WidgetTitleBar::onMousePressChanged);
     connect(this, &WidgetTitleBar::mouseMove, this, &WidgetTitleBar::onMouseMoveChanged);
     connect(this, &WidgetTitleBar::mouseRelease, this, &WidgetTitleBar::onMouseReleaseChanged);
@@ -298,7 +299,7 @@ void WidgetTitleBar::onMouseDoubleChanged(const QMouseEvent* _event) noexcept
 
 void WidgetTitleBar::onCursorTypeChanged() noexcept
 {
-    if (m_widget->isMaximized())
+    if (m_widget->isMaximized() || (QApplication::mouseButtons() & Qt::LeftButton))
     {
         return;
     }
@@ -379,4 +380,5 @@ void WidgetTitleBar::onMaximizeChanged() noexcept
 
 void WidgetTitleBar::onCloseChanged() noexcept
 {
+    m_widget->close();
 }
