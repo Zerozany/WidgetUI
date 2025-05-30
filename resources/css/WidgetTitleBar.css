@@ -13,19 +13,19 @@ QPushButton[propertyName="max"] {
 }
 
 QPushButton[propertyName="min"]:hover {
-    background-color: #DCDCDC;
+    background-color: #aca9a9;
 }
 
 QPushButton[propertyName="max"]:hover {
-    background-color: #DCDCDC;
+    background-color: #aca9a9;
 }
 
 QPushButton[propertyName="min"]:pressed {
-    background-color: #aca9a9;
+    background-color: #DCDCDC;
 }
 
 QPushButton[propertyName="max"]:pressed {
-    background-color: #aca9a9;
+    background-color: #DCDCDC;
 }
 
 QPushButton[propertyName="close"] {
