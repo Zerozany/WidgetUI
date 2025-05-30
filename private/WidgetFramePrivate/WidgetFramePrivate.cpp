@@ -32,10 +32,10 @@ auto WidgetFramePrivate::initWidgetLayout() noexcept -> void
     Q_Q(WidgetFrame);
     m_mainLayout = new QVBoxLayout{q};
     m_titleBar   = new WidgetTitleBar{q};
+    q->setLayout(m_mainLayout);
     // 设置 layout 和样式
     m_mainLayout->setContentsMargins(0, 0, 0, 0);
     m_mainLayout->setSpacing(0);
-    q->setLayout(m_mainLayout);
     // 设置 titleBar 的固定高度
     m_titleBar->setFixedHeight(30);
     // 添加控件到布局

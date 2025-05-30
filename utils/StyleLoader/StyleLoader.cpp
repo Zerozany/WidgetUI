@@ -3,7 +3,6 @@
 #include <QFile>
 #include <QTextStream>
 
-// 定义静态成员函数（推荐保留static）
 auto StyleLoader::loadFromFile(const QString& _filePath) -> QString
 {
     QFile file{_filePath};
