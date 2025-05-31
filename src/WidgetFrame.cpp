@@ -20,6 +20,36 @@ WidgetFrame::~WidgetFrame() noexcept
     delete d;
 }
 
+auto WidgetFrame::setMinimizeIcon(const QString& _iconPath) noexcept -> void
+{
+    Q_D(WidgetFrame);
+    Q_EMIT d->m_titleBar->minimizeIcon(_iconPath);
+}
+
+auto WidgetFrame::setMaximizeIcon(const QString& _iconMaximizePath, const QString& _iconNormalPath) noexcept -> void
+{
+    Q_D(WidgetFrame);
+    Q_EMIT d->m_titleBar->maximizeIcon(_iconMaximizePath, _iconNormalPath);
+}
+
+auto WidgetFrame::setCloseIcon(const QString& _iconPath) noexcept -> void
+{
+    Q_D(WidgetFrame);
+    Q_EMIT d->m_titleBar->closeIcon(_iconPath);
+}
+
+auto WidgetFrame::setWindowIcon(const QString& _iconPath) noexcept -> void
+{
+    Q_D(WidgetFrame);
+    Q_EMIT d->m_titleBar->windowIcon(_iconPath);
+}
+
+auto WidgetFrame::setWindowTitle(const QString& _title) noexcept -> void
+{
+    Q_D(WidgetFrame);
+    Q_EMIT d->m_titleBar->windowTitle(_title);
+}
+
 bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qintptr* _result)
 {
     Q_D(WidgetFrame);

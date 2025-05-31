@@ -90,6 +90,10 @@ Q_SIGNALS:
 
     void closeIcon(const QString& _iconPath);
 
+    void windowIcon(const QString& _iconPath);
+
+    void windowTitle(const QString& _title);
+
 private Q_SLOTS:
     void onMousePressChanged(const QMouseEvent* _event) noexcept;
 
@@ -118,10 +122,14 @@ private Q_SLOTS:
 
     void onCloseIconChanged(const QString& _iconPath) noexcept;
 
+    void onWindowIconChanged(const QString& _iconPath) noexcept;
+
+    void onWindowTitleChanged(const QString& _title) noexcept;
+
 private:
     WidgetFrame* m_widget{nullptr};                    /*无边框窗口指针*/
     QHBoxLayout* m_titleLayout{new QHBoxLayout{this}}; /*标题栏布局容器*/
-    QLabel*      m_titleIcon{new QLabel{this}};        /*标题栏图标*/
+    QLabel*      m_windowIcon{new QLabel{this}};       /*标题栏图标*/
     QLabel*      m_titleText{new QLabel{this}};        /*标题栏文本标题*/
     CursorType   m_cursorType{CursorType::None};       /*指针图标类型*/
     bool         m_resizeTag{false};                   /*窗口伸缩鼠标指针显示句柄*/

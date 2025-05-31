@@ -30,7 +30,8 @@ WidgetTitleBar::WidgetTitleBar(WidgetFrame* _widget, QWidget* _parent) : QWidget
     std::invoke(&WidgetTitleBar::initTitleBarHandle, this);
     std::invoke(&WidgetTitleBar::initTitleBarLayout, this);
     std::invoke(&WidgetTitleBar::connectSignalToSlot, this);
-    // Q_EMIT titleFlag(TitleFlags::MinimizeHint | TitleFlags::MaximizeHint | TitleFlags::CloseHint | TitleFlags::TitleHint);
+    /// @brief 暂无法对外开放
+    Q_EMIT titleFlag(TitleFlags::IconHint | TitleFlags::TitleHint | TitleFlags::MinimizeHint | TitleFlags::MaximizeHint | TitleFlags::CloseHint);
 }
 
 auto WidgetTitleBar::getMaximizeBtn() const noexcept -> QPushButton*
@@ -86,14 +87,14 @@ auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
         __btn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     }
 
-    this->m_titleIcon->setFixedHeight(TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2));
+    this->m_windowIcon->setFixedHeight(TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2));
     this->m_titleText->setFixedHeight(TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2));
-    this->m_titleIcon->setPixmap(QApplication::style()->standardIcon(QStyle::SP_ComputerIcon).pixmap(TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2), TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2)));
+    this->m_windowIcon->setPixmap(QApplication::style()->standardIcon(QStyle::SP_ComputerIcon).pixmap(TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2), TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2)));
     this->m_titleText->setText(QApplication::applicationName());
 
     m_titleLayout->setContentsMargins(10, 0, 0, 0);
     m_titleLayout->setSpacing(0);
-    m_titleLayout->addWidget(m_titleIcon);
+    m_titleLayout->addWidget(m_windowIcon);
     m_titleLayout->addSpacing(10);
     m_titleLayout->addWidget(m_titleText);
     m_titleLayout->addStretch();
@@ -194,6 +195,8 @@ auto WidgetTitleBar::connectSignalToSlot() noexcept -> void
     connect(this, &WidgetTitleBar::minimizeIcon, this, &WidgetTitleBar::onMinimizeIconChanged);
     connect(this, &WidgetTitleBar::maximizeIcon, this, &WidgetTitleBar::onMaximizeIconChanged);
     connect(this, &WidgetTitleBar::closeIcon, this, &WidgetTitleBar::onCloseIconChanged);
+    connect(this, &WidgetTitleBar::windowIcon, this, &WidgetTitleBar::onWindowIconChanged);
+    connect(this, &WidgetTitleBar::windowTitle, this, &WidgetTitleBar::onWindowTitleChanged);
 }
 
 void WidgetTitleBar::onMousePressChanged(const QMouseEvent* _event) noexcept
@@ -370,7 +373,7 @@ void WidgetTitleBar::onTitleFlagChanged(const TitleFlags& _flag) noexcept
     this->m_titleBarButtons.at("minimize")->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::MinimizeHint);
     this->m_titleBarButtons.at("maximize")->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::MaximizeHint);
     this->m_titleBarButtons.at("close")->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::CloseHint);
-    this->m_titleIcon->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::IconHint);
+    this->m_windowIcon->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::IconHint);
     this->m_titleText->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::TitleHint);
 }
 
@@ -405,6 +408,7 @@ void WidgetTitleBar::onMinimizeIconChanged(const QString& _iconPath) noexcept
         return;
     }
     m_titleBarIconsPath.at("minimizeIcon") = _iconPath;
+    m_titleBarButtons.at("minimize")->setIcon(QIcon{_iconPath});
 }
 
 void WidgetTitleBar::onMaximizeIconChanged(const QString& _iconMaximizePath, const QString& _iconNormalPath) noexcept
@@ -417,6 +421,14 @@ void WidgetTitleBar::onMaximizeIconChanged(const QString& _iconMaximizePath, con
     {
         m_titleBarIconsPath.at("normalIcon") = _iconNormalPath;
     }
+    if (::IsZoomed(m_hwnd))
+    {
+        m_titleBarButtons.at("maximize")->setIcon(QIcon{_iconNormalPath});
+    }
+    else
+    {
+        m_titleBarButtons.at("maximize")->setIcon(QIcon{_iconMaximizePath});
+    }
 }
 
 void WidgetTitleBar::onCloseIconChanged(const QString& _iconPath) noexcept
@@ -426,4 +438,15 @@ void WidgetTitleBar::onCloseIconChanged(const QString& _iconPath) noexcept
         return;
     }
     m_titleBarIconsPath.at("closeIcon") = _iconPath;
+    m_titleBarButtons.at("close")->setIcon(QIcon{_iconPath});
+}
+
+void WidgetTitleBar::onWindowIconChanged(const QString& _iconPath) noexcept
+{
+    m_windowIcon->setPixmap(QPixmap{_iconPath});
+}
+
+void WidgetTitleBar::onWindowTitleChanged(const QString& _title) noexcept
+{
+    m_titleText->setText(_title);
 }
