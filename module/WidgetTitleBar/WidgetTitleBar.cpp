@@ -28,7 +28,7 @@ WidgetTitleBar::WidgetTitleBar(WidgetFrame* _widget, QWidget* _parent) : QWidget
     std::invoke(&WidgetTitleBar::initTitleBarHandle, this);
     std::invoke(&WidgetTitleBar::initTitleBarLayout, this);
     std::invoke(&WidgetTitleBar::connectSignalToSlot, this);
-    // Q_EMIT titleFlag(TitleFlags::MinimizeHint | TitleFlags::MaximizeHint | TitleFlags::CloseHint);
+    // Q_EMIT titleFlag(TitleFlags::MinimizeHint | TitleFlags::MaximizeHint | TitleFlags::CloseHint | TitleFlags::TitleHint);
 }
 
 auto WidgetTitleBar::setCursorType(const QPoint& _pos) noexcept -> void
@@ -281,6 +281,8 @@ void WidgetTitleBar::onTitleFlagChanged(const TitleFlags& _flag) noexcept
     this->m_titleBarButtons.at("minimize")->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::MinimizeHint);
     this->m_titleBarButtons.at("maximize")->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::MaximizeHint);
     this->m_titleBarButtons.at("close")->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::CloseHint);
+    this->m_titleIcon->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::IconHint);
+    this->m_titleText->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::TitleHint);
 }
 
 void WidgetTitleBar::onMaximizeChanged() noexcept
