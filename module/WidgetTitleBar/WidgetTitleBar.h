@@ -32,7 +32,7 @@ public:
         TitleHint    = 0x02,
         MinimizeHint = 0x04,
         MaximizeHint = 0x08,
-        CloseHint    = 0x10
+        CloseHint    = 0x16
     };
     Q_ENUM(TitleFlags)
 
@@ -84,7 +84,13 @@ Q_SIGNALS:
 
     void titleFlag(const TitleFlags& _flag);
 
-public Q_SLOTS:
+    void minimizeIcon(const QString& _iconPath);
+
+    void maximizeIcon(const QString& _iconMaximizePath, const QString& _iconNormalPath);
+
+    void closeIcon(const QString& _iconPath);
+
+private Q_SLOTS:
     void onMousePressChanged(const QMouseEvent* _event) noexcept;
 
     void onMouseMoveChanged(const QMouseEvent* _event) noexcept;
@@ -106,19 +112,32 @@ private Q_SLOTS:
 
     void onCloseChanged() noexcept;
 
+    void onMinimizeIconChanged(const QString& _iconPath) noexcept;
+
+    void onMaximizeIconChanged(const QString& _iconMaximizePath, const QString& _iconNormalPath) noexcept;
+
+    void onCloseIconChanged(const QString& _iconPath) noexcept;
+
 private:
     WidgetFrame* m_widget{nullptr};                    /*无边框窗口指针*/
     QHBoxLayout* m_titleLayout{new QHBoxLayout{this}}; /*标题栏布局容器*/
     QLabel*      m_titleIcon{new QLabel{this}};        /*标题栏图标*/
     QLabel*      m_titleText{new QLabel{this}};        /*标题栏文本标题*/
     CursorType   m_cursorType{CursorType::None};       /*指针图标类型*/
-    bool         m_resizing{false};                    /*窗口伸缩句柄*/
     bool         m_resizeTag{false};                   /*窗口伸缩鼠标指针显示句柄*/
-    HWND         m_hwnd{};
+    HWND         m_hwnd{};                             /*窗口界面句柄*/
 
+private:
     std::map<QString, QPushButton*> m_titleBarButtons{
         {"minimize", new QPushButton{this}},
         {"maximize", new QPushButton{this}},
         {"close", new QPushButton{this}},
+    };
+
+    std::map<QString, QString> m_titleBarIconsPath{
+        {"minimizeIcon", QString{R"(:/resources/icon/minimize.png)"}},
+        {"maximizeIcon", QString{R"(:/resources/icon/maximize.png)"}},
+        {"normalIcon", QString{R"(:/resources/icon/normal.png)"}},
+        {"closeIcon", QString{R"(:/resources/icon/close.png)"}},
     };
 };

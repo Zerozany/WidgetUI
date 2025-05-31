@@ -16,8 +16,6 @@ auto WidgetFramePrivate::initWidgetFrame() noexcept -> void
     q->setMouseTracking(true);
     /// @brief 移除窗口的默认标题栏和边框
     q->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
-    /// @brief 设置背景透明
-    // q->setAttribute(Qt::WA_TranslucentBackground);
     /// @brief 设置界面最大尺寸
     q->setMaximumSize(QGuiApplication::primaryScreen()->availableGeometry().size());
     /// @brief 绑定窗口句柄
@@ -26,6 +24,7 @@ auto WidgetFramePrivate::initWidgetFrame() noexcept -> void
     /// @brief 启用最大化按钮
     /// @brief 显示标题栏
     /// @brief 允许窗口调整大小
+    /// @brief ...
     ::SetWindowLong(hwnd, GWL_STYLE, style | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_CAPTION | CS_DBLCLKS | WS_THICKFRAME);
 }
 
@@ -38,8 +37,6 @@ auto WidgetFramePrivate::initWidgetLayout() noexcept -> void
     // 设置 layout 和样式
     m_mainLayout->setContentsMargins(0, 0, 0, 0);
     m_mainLayout->setSpacing(0);
-    // 设置 titleBar 的固定高度
-    m_titleBar->setFixedHeight(30);
     // 添加控件到布局
     m_mainLayout->addWidget(m_titleBar);
     m_mainLayout->addStretch();

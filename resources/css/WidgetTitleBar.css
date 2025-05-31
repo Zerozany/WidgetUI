@@ -44,6 +44,6 @@ QPushButton[propertyName="close"]:pressed {
     background-color: #f75d5d;
 }
 
-WidgetTitleBar {
+/* WidgetTitleBar {
     background-color: #434485;
-}
+} */
