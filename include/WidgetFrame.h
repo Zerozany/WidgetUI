@@ -21,6 +21,8 @@ protected:
 
     void mouseDoubleClickEvent(QMouseEvent* _event) override;
 
+    // void resizeEvent(QResizeEvent* _event) override;
+
     // void paintEvent(QPaintEvent* _event) override;
 
     // void changeEvent(QEvent* _event) override;

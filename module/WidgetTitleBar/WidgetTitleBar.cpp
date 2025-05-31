@@ -32,7 +32,7 @@ auto WidgetTitleBar::setCursorType(const QPoint& _pos) noexcept -> void
 {
     if (::IsZoomed(m_hwnd))
     {
-        m_resizingTag = false;
+        m_resizeTag = false;
         return;
     }
     // 判断是否在角落（使用更大的 CORNER_SIZE）
@@ -84,11 +84,11 @@ auto WidgetTitleBar::setCursorType(const QPoint& _pos) noexcept -> void
     }
     if (tmp != CursorType::None)
     {
-        m_resizingTag = true;
+        m_resizeTag = true;
     }
     else
     {
-        m_resizingTag = false;
+        m_resizeTag = false;
     }
     if (this->m_cursorType != tmp)
     {
@@ -193,7 +193,7 @@ void WidgetTitleBar::onMouseReleaseChanged(const QMouseEvent* _event) noexcept
 
 void WidgetTitleBar::onMouseDoubleChanged(const QMouseEvent* _event) noexcept
 {
-    if (_event->button() == Qt::LeftButton)
+    if (_event->button() == Qt::LeftButton && (m_cursorType == CursorType::Top || m_cursorType == CursorType::Bottom))
     {
         HWND hwnd{reinterpret_cast<HWND>(m_widget->window()->winId())};
         // 获取鼠标全局位置
@@ -292,9 +292,9 @@ void WidgetTitleBar::onCloseChanged() noexcept
     m_widget->close();
 }
 
-auto WidgetTitleBar::getResizing() const noexcept -> bool
+auto WidgetTitleBar::getResizeTag() const noexcept -> bool
 {
-    return this->m_resizingTag;
+    return this->m_resizeTag;
 }
 
 /*              初始化固定逻辑              */

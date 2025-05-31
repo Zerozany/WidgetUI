@@ -35,7 +35,7 @@ public:
 
     auto getCloseBtn() const noexcept -> QPushButton*;
 
-    auto getResizing() const noexcept -> bool;
+    auto getResizeTag() const noexcept -> bool;
 
 private:
     auto initTitleBarHandle() noexcept -> void;
@@ -84,7 +84,7 @@ private:
     QHBoxLayout* m_titleLayout{new QHBoxLayout{this}}; /*标题栏布局容器*/
     CursorType   m_cursorType{CursorType::None};       /*指针图标类型*/
     bool         m_resizing{false};                    /*窗口伸缩句柄*/
-    bool         m_resizingTag{false};                 /*窗口伸缩鼠标指针显示句柄*/
+    bool         m_resizeTag{false};                   /*窗口伸缩鼠标指针显示句柄*/
     HWND         m_hwnd{};
 
     std::map<QString, QPushButton*> m_titleBarButtons{

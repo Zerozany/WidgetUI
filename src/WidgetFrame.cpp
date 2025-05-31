@@ -1,6 +1,7 @@
 #include "WidgetFrame.h"
 
 #include <QMouseEvent>
+#include <QResizeEvent>
 #include <QWindow>
 
 #include "WidgetFramePrivate.h"
@@ -52,7 +53,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         case WM_NCHITTEST:
         {
             /// @brief 开启窗口伸缩事件
-            if (d->m_titleBar->getResizing())
+            if (d->m_titleBar->getResizeTag())
             {
                 return false;
             }
@@ -62,12 +63,12 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             pos = {Win32Function::coordinateMapping(mouse, this, d->m_titleBar)};
             // 获取窗口状态句柄
             hwnd = reinterpret_cast<HWND>(this->winId());
+            // 检索标题栏中鼠标所在元素
+            child = d->m_titleBar->childAt(pos);
             if (*_result != 0)
             {
                 return true;
             }
-            // 检索标题栏中鼠标所在元素
-            child = d->m_titleBar->childAt(pos);
             /// @brief 检测鼠标位置在标题栏
             if (!child && d->m_titleBar->rect().contains(pos))
             {
@@ -88,7 +89,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 QCoreApplication::sendEvent(d->m_titleBar->getMaximizeBtn(), &mouseEvent);
                 d->m_titleBar->getMaximizeBtn()->update();
                 g_snapLayoutTag = true;
-                // 检测某个按键的当前状态（是否被按下）
+                // 检测鼠标左键的当前状态（是否被按下）
                 if (::GetAsyncKeyState(VK_LBUTTON) & 0x8000)
                 {
                     g_pressedTag = false;
@@ -103,21 +104,21 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             *_result = HTCLIENT;
             return false;
         }
-        case WM_LBUTTONDOWN:  // 鼠标左键按下（客户区）
+        /// @brief  鼠标左键按下（客户区）
+        case WM_LBUTTONDOWN:
         {
+            // 当最大化按钮被点击，关闭Snap Layout
             if (g_snapLayoutTag)
             {
-                // 当最大化按钮被点击，关闭Snap Layout
                 QMouseEvent mouseEvent{QEvent::MouseButtonPress, QPoint(), QPoint(), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier};
                 QCoreApplication::sendEvent(d->m_titleBar->getMaximizeBtn(), &mouseEvent);
                 d->m_titleBar->getMaximizeBtn()->update();
+                return false;
             }
-        }
-        case WM_NCLBUTTONDOWN:  // 鼠标左键在非客户区按下
-        {
             break;
         }
-        case WM_NCLBUTTONUP:  // 鼠标左键在非客户区释放
+        /// @brief  鼠标左键释放（非客户区）
+        case WM_NCLBUTTONUP:
         {
             if (g_snapLayoutTag)
             {
@@ -185,8 +186,16 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             break;
         }
 
-        /// @brief 鼠标在非客户区域内移动
-        case WM_NCMOUSEMOVE:
+        case WM_LBUTTONDBLCLK:  // 鼠标左键双击（客户区）
+        {
+            [[fallthrough]];
+        }
+        case WM_NCMOUSEMOVE:  // 鼠标在非客户区域内移动
+        {
+            [[fallthrough]];
+        }
+            /// @brief  鼠标左键按下（非客户区）
+        case WM_NCLBUTTONDOWN:
         {
             [[fallthrough]];
         }
@@ -199,10 +208,6 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             [[fallthrough]];
         }
         case WM_MOUSEMOVE:
-        {
-            [[fallthrough]];
-        }
-        case WM_LBUTTONDBLCLK:  // 鼠标左键双击（客户区）
         {
             [[fallthrough]];
         }
@@ -307,3 +312,8 @@ void WidgetFrame::mouseDoubleClickEvent(QMouseEvent* _event)
     Q_D(WidgetFrame);
     Q_EMIT d->m_titleBar->mouseDouble(_event);
 }
+
+// void WidgetFrame::resizeEvent(QResizeEvent* _event)
+// {
+//     Q_D(WidgetFrame);
+// }
