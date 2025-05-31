@@ -2,7 +2,9 @@
 
 #include <windows.h>
 
+#include <QApplication>
 #include <QMouseEvent>
+#include <QStyle>
 #include <QWindow>
 #include <ranges>
 #include <set>
@@ -26,6 +28,7 @@ WidgetTitleBar::WidgetTitleBar(WidgetFrame* _widget, QWidget* _parent) : QWidget
     std::invoke(&WidgetTitleBar::initTitleBarHandle, this);
     std::invoke(&WidgetTitleBar::initTitleBarLayout, this);
     std::invoke(&WidgetTitleBar::connectSignalToSlot, this);
+    // Q_EMIT titleFlag(TitleFlags::MinimizeHint | TitleFlags::MaximizeHint | TitleFlags::CloseHint);
 }
 
 auto WidgetTitleBar::setCursorType(const QPoint& _pos) noexcept -> void
@@ -273,6 +276,13 @@ void WidgetTitleBar::onMouseLeaveChanged(const bool _flag) noexcept
     this->setAttribute(Qt::WA_TransparentForMouseEvents, _flag);
 }
 
+void WidgetTitleBar::onTitleFlagChanged(const TitleFlags& _flag) noexcept
+{
+    this->m_titleBarButtons.at("minimize")->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::MinimizeHint);
+    this->m_titleBarButtons.at("maximize")->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::MaximizeHint);
+    this->m_titleBarButtons.at("close")->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::CloseHint);
+}
+
 void WidgetTitleBar::onMaximizeChanged() noexcept
 {
     if (::IsZoomed(this->m_hwnd))
@@ -304,6 +314,10 @@ auto WidgetTitleBar::initTitleBarHandle() noexcept -> void
     this->setAttribute(Qt::WA_StyledBackground);
     this->setStyleSheet(StyleLoader::loadFromFile(R"(:/resources/css/WidgetTitleBar.css)"));
     this->m_hwnd = reinterpret_cast<HWND>(m_widget->winId());
+    this->m_titleIcon->setFixedSize(20, 20);
+    this->m_titleText->setFixedHeight(20);
+    this->m_titleIcon->setPixmap(QApplication::style()->standardIcon(QStyle::SP_ComputerIcon).pixmap(20, 20));
+    this->m_titleText->setText(QApplication::applicationName());
 }
 
 auto WidgetTitleBar::getMaximizeBtn() const noexcept -> QPushButton*
@@ -344,8 +358,11 @@ auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
         __btn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     }
 
-    m_titleLayout->setContentsMargins(0, 0, 0, 0);
+    m_titleLayout->setContentsMargins(10, 0, 0, 0);
     m_titleLayout->setSpacing(0);
+    m_titleLayout->addWidget(m_titleIcon);
+    m_titleLayout->addSpacing(5);
+    m_titleLayout->addWidget(m_titleText);
     m_titleLayout->addStretch();
     m_titleLayout->addWidget(m_titleBarButtons.at("minimize"));
     m_titleLayout->addWidget(m_titleBarButtons.at("maximize"));
@@ -363,4 +380,5 @@ auto WidgetTitleBar::connectSignalToSlot() noexcept -> void
     connect(this, &WidgetTitleBar::cursorType, this, &WidgetTitleBar::onCursorTypeChanged);
     connect(this, &WidgetTitleBar::mouseLeave, this, &WidgetTitleBar::onMouseLeaveChanged);
     connect(this, &WidgetTitleBar::mouseDouble, this, &WidgetTitleBar::onMouseDoubleChanged);
+    connect(this, &WidgetTitleBar::titleFlag, this, &WidgetTitleBar::onTitleFlagChanged);
 }

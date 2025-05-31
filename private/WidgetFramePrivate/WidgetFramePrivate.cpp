@@ -18,6 +18,8 @@ auto WidgetFramePrivate::initWidgetFrame() noexcept -> void
     q->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
     /// @brief 设置背景透明
     // q->setAttribute(Qt::WA_TranslucentBackground);
+    /// @brief 设置界面最大尺寸
+    q->setMaximumSize(QGuiApplication::primaryScreen()->availableGeometry().size());
     /// @brief 绑定窗口句柄
     HWND hwnd{(HWND)q->winId()};
     LONG style{::GetWindowLongW(hwnd, GWL_STYLE)};
