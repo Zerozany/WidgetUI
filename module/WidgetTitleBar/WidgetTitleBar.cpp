@@ -16,7 +16,7 @@ constexpr static std::uint8_t BORDER_TOP_WIDTH{5};
 constexpr static std::uint8_t BORDER_BOTTOM_WIDTH{5};
 constexpr static std::uint8_t BORDER_LEFT_WIDTH{5};
 constexpr static std::uint8_t BORDER_RIGHT_WIDTH{5};
-constexpr static std::uint8_t CORNER_SIZE{5};
+constexpr static std::uint8_t CORNER_SIZE{8};
 
 constinit static QRect  g_startGeometry{}; /*当前窗口大小缓存区域*/
 constinit static QPoint g_startPoint{};    /*开启伸缩标记点*/
@@ -30,6 +30,11 @@ WidgetTitleBar::WidgetTitleBar(WidgetFrame* _widget, QWidget* _parent) : QWidget
 
 auto WidgetTitleBar::setCursorType(const QPoint& _pos) noexcept -> void
 {
+    if (::IsZoomed(m_hwnd))
+    {
+        m_resizingTag = false;
+        return;
+    }
     // 判断是否在角落（使用更大的 CORNER_SIZE）
     const bool topLeft{(_pos.x() < CORNER_SIZE && _pos.y() < CORNER_SIZE)};
     const bool topRight{(_pos.x() > m_widget->width() - CORNER_SIZE && _pos.y() < CORNER_SIZE)};
@@ -77,7 +82,7 @@ auto WidgetTitleBar::setCursorType(const QPoint& _pos) noexcept -> void
     {
         tmp = CursorType::None;
     }
-    if (top || left || topLeft && ::IsZoomed(m_hwnd))
+    if (tmp != CursorType::None)
     {
         m_resizingTag = true;
     }

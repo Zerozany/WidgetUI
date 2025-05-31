@@ -54,7 +54,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             /// @brief 开启窗口伸缩事件
             if (d->m_titleBar->getResizing())
             {
-                goto NO_WINDOWS_GENERIC_MSG;
+                return false;
             }
             // 获取鼠标的（屏幕）所在坐标
             mouse = {GET_X_LPARAM(msg->lParam), GET_Y_LPARAM(msg->lParam)};
@@ -67,7 +67,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 return true;
             }
             // 检索标题栏中鼠标所在元素
-            child = {d->m_titleBar->childAt(pos)};
+            child = d->m_titleBar->childAt(pos);
             /// @brief 检测鼠标位置在标题栏
             if (!child && d->m_titleBar->rect().contains(pos))
             {
