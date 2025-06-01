@@ -3,6 +3,7 @@
 #include <windows.h>
 
 #include <QApplication>
+#include <QDir>
 #include <QMouseEvent>
 #include <QStyle>
 #include <QWindow>
@@ -57,11 +58,15 @@ auto WidgetTitleBar::getResizeTag() const noexcept -> bool
 /*              初始化固定逻辑              */
 auto WidgetTitleBar::initTitleBarHandle() noexcept -> void
 {
+    this->m_hwnd         = reinterpret_cast<HWND>(m_widget->winId());
+    this->m_configLoader = std::make_shared<ConfigLoader>();
     this->setMouseTracking(true);
     this->setAttribute(Qt::WA_StyledBackground);
     this->setFixedHeight(TITLEBAR_HEIGHT);
-    this->setStyleSheet(StyleLoader::loadFromFile(R"(:/resources/css/WidgetTitleBar.css)"));
-    this->m_hwnd = reinterpret_cast<HWND>(m_widget->winId());
+    QDir dir(QCoreApplication::applicationDirPath());
+    dir.cdUp();
+    m_configLoader->setConfigSystem(dir.absoluteFilePath("Config"), "TitleBarConfig.toml");
+    this->setStyleSheet(StyleLoader::loadFromFile(m_configLoader->loadFromFile("TitleBarStyleCss", "TitleBarStyle")));
 }
 
 auto WidgetTitleBar::initTitleBarLayout() noexcept -> void

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.25 FATAL_ERROR)
 
 set(CMAKE_TOOLCHAIN_FILE "D:/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
 
-project(QModules VERSION 1.0.0 LANGUAGES CXX)
+project(QWidgetUI VERSION 1.0.0 LANGUAGES CXX)
 
 add_executable(${PROJECT_NAME}
     ${PROJECT_SOURCE_DIR}/main.cpp

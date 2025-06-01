@@ -12,7 +12,9 @@ public:
 int main(int argc, char* argv[])
 {
     QApplication app{argc, argv};
-    A            w{};
+    // 获取编译时间
+    qDebug() << "Compiled on: " << __DATE__ << " at " << __TIME__;
+    A w{};
     w.resize(960, 600);
     w.show();
     QApplication::exec();
