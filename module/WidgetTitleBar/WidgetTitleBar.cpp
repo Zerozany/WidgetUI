@@ -13,6 +13,8 @@
 #include "StyleLoader.h"
 #include "WidgetFrame.h"
 
+#define TitleBarConfigName R"(TitleBarConfig.toml)"
+
 constexpr static QSize        BUTTON_ICON_SIZE{15, 15};
 constexpr static std::uint8_t BUTTON_WIDTH{45};
 constexpr static std::uint8_t BORDER_TOP_SIZE{5};
@@ -59,13 +61,10 @@ auto WidgetTitleBar::getResizeTag() const noexcept -> bool
 auto WidgetTitleBar::initTitleBarHandle() noexcept -> void
 {
     this->m_hwnd         = reinterpret_cast<HWND>(m_widget->winId());
-    this->m_configLoader = std::make_shared<ConfigLoader>();
+    this->m_configLoader = std::make_shared<ConfigLoader>(TitleBarConfigName, "Config", QCoreApplication::applicationDirPath());
     this->setMouseTracking(true);
     this->setAttribute(Qt::WA_StyledBackground);
     this->setFixedHeight(TITLEBAR_HEIGHT);
-    QDir dir(QCoreApplication::applicationDirPath());
-    dir.cdUp();
-    m_configLoader->setConfigSystem(dir.absoluteFilePath("Config"), "TitleBarConfig.toml");
     this->setStyleSheet(StyleLoader::loadFromFile(m_configLoader->loadFromFile("TitleBarStyleCss", "TitleBarStyle")));
 }
 

@@ -1,11 +1,13 @@
 _Pragma("once");
 #include <QWidget>
 
+#if 0
 #define ICONHINT 0x01
 #define TITLEHINT 0x02
 #define MINIMIZEHINT 0x04
 #define MAXIMIZEHINT 0x08
 #define CLOSEHINT 0x16
+#endif
 
 class WidgetFramePrivate;
 
