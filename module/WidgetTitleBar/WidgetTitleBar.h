@@ -13,6 +13,11 @@ class WidgetFrame;
 class WidgetTitleBar : public QWidget
 {
     Q_OBJECT
+    Q_PROPERTY(QIcon minimizeIcon READ getMinimizeIcon WRITE setMinimizeIcon NOTIFY minimizeIconChanged);
+    Q_PROPERTY(QIcon maximizeIcon READ getMaximizeIcon WRITE setMaximizeIcon NOTIFY maximizeIconChanged);
+    Q_PROPERTY(QIcon normalIcon READ getNormalIcon WRITE setNormalIcon NOTIFY normalIconChanged);
+    Q_PROPERTY(QIcon closeIcon READ getCloseIcon WRITE setCloseIcon NOTIFY closeIconChanged);
+
 public:
     enum struct CursorType : std::uint8_t
     {
@@ -54,6 +59,21 @@ public:
     ~WidgetTitleBar() noexcept = default;
 
 public:
+    /// @brief Q_PROPERTY
+    auto getMinimizeIcon() const noexcept -> QIcon;
+    auto setMinimizeIcon(const QIcon& _iconPath) noexcept -> void;
+
+    auto getMaximizeIcon() const noexcept -> QIcon;
+    auto setMaximizeIcon(const QIcon& _iconPath) noexcept -> void;
+
+    auto getNormalIcon() const noexcept -> QIcon;
+    auto setNormalIcon(const QIcon& _iconPath) noexcept -> void;
+
+    auto getCloseIcon() const noexcept -> QIcon;
+    auto setCloseIcon(const QIcon& _iconPath) noexcept -> void;
+
+public:
+    /// @brief 主框架nativeEvent调用函数
     auto getMaximizeBtn() const noexcept -> QPushButton*;
 
     auto getMinimizeBtn() const noexcept -> QPushButton*;
@@ -74,6 +94,16 @@ private:
     auto connectSignalToSlot() noexcept -> void;
 
 Q_SIGNALS:
+    /// @brief 按钮图标更改信号
+    void minimizeIconChanged();
+
+    void maximizeIconChanged();
+
+    void normalIconChanged();
+
+    void closeIconChanged();
+
+Q_SIGNALS:
     void mousePress(const QMouseEvent* _event);
 
     void mouseMove(const QMouseEvent* _event);
@@ -86,15 +116,10 @@ Q_SIGNALS:
 
     void mouseLeave(const bool _flag);
 
+Q_SIGNALS:
     void titleFlag(const TitleFlags& _flag);
 
-    void minimizeIcon(const QString& _iconPath);
-
-    void maximizeIcon(const QString& _iconMaximizePath, const QString& _iconNormalPath);
-
-    void closeIcon(const QString& _iconPath);
-
-    void windowIcon(const QString& _iconPath);
+    void windowIcon(const QPixmap& _iconPath);
 
     void windowTitle(const QString& _title);
 
@@ -120,13 +145,7 @@ private Q_SLOTS:
 
     void onCloseChanged() noexcept;
 
-    void onMinimizeIconChanged(const QString& _iconPath) noexcept;
-
-    void onMaximizeIconChanged(const QString& _iconMaximizePath, const QString& _iconNormalPath) noexcept;
-
-    void onCloseIconChanged(const QString& _iconPath) noexcept;
-
-    void onWindowIconChanged(const QString& _iconPath) noexcept;
+    void onWindowIconChanged(const QPixmap& _iconPath) noexcept;
 
     void onWindowTitleChanged(const QString& _title) noexcept;
 
@@ -147,10 +166,10 @@ private:
         {"close", new QPushButton{this}},
     };
 
-    std::map<QString, QString> m_titleBarIconsPath{
-        {"minimizeIcon", QString{}},
-        {"maximizeIcon", QString{}},
-        {"normalIcon", QString{}},
-        {"closeIcon", QString{}},
+    QMap<QString, QIcon> m_titleBarIcons{
+        {"minimizeIcon", QIcon{":/resources/icon/minimize.png"}},
+        {"maximizeIcon", QIcon{":/resources/icon/maximize.png"}},
+        {"normalIcon", QIcon{":/resources/icon/normal.png"}},
+        {"closeIcon", QIcon{":/resources/icon/close.png"}},
     };
 };

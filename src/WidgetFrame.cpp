@@ -23,25 +23,25 @@ WidgetFrame::~WidgetFrame() noexcept
 auto WidgetFrame::setMinimizeIcon(const QString& _iconPath) noexcept -> void
 {
     Q_D(WidgetFrame);
-    Q_EMIT d->m_titleBar->minimizeIcon(_iconPath);
+    // Q_EMIT d->m_titleBar->minimizeIcon(_iconPath);
 }
 
 auto WidgetFrame::setMaximizeIcon(const QString& _iconMaximizePath, const QString& _iconNormalPath) noexcept -> void
 {
     Q_D(WidgetFrame);
-    Q_EMIT d->m_titleBar->maximizeIcon(_iconMaximizePath, _iconNormalPath);
+    // Q_EMIT d->m_titleBar->maximizeIcon(_iconMaximizePath, _iconNormalPath);
 }
 
 auto WidgetFrame::setCloseIcon(const QString& _iconPath) noexcept -> void
 {
     Q_D(WidgetFrame);
-    Q_EMIT d->m_titleBar->closeIcon(_iconPath);
+    // Q_EMIT d->m_titleBar->closeIcon(_iconPath);
 }
 
 auto WidgetFrame::setWindowIcon(const QString& _iconPath) noexcept -> void
 {
     Q_D(WidgetFrame);
-    Q_EMIT d->m_titleBar->windowIcon(_iconPath);
+    // Q_EMIT d->m_titleBar->windowIcon(_iconPath);
 }
 
 auto WidgetFrame::setWindowTitle(const QString& _title) noexcept -> void
@@ -192,11 +192,11 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             {
                 if (::IsZoomed(hwnd))
                 {
-                    d->m_titleBar->getMaximizeBtn()->setIcon(QIcon{R"(:/resources/icon/maximize.png)"});
+                    d->m_titleBar->getMaximizeBtn()->setIcon(d->m_titleBar->getMaximizeIcon());
                 }
                 else
                 {
-                    d->m_titleBar->getMaximizeBtn()->setIcon(QIcon{R"(:/resources/icon/normal.png)"});
+                    d->m_titleBar->getMaximizeBtn()->setIcon(d->m_titleBar->getNormalIcon());
                 }
                 return false;
             }
@@ -207,11 +207,11 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         {
             if (msg->wParam == SIZE_MAXIMIZED)
             {
-                d->m_titleBar->getMaximizeBtn()->setIcon(QIcon{R"(:/resources/icon/normal.png)"});
+                d->m_titleBar->getMaximizeBtn()->setIcon(d->m_titleBar->getNormalIcon());
             }
             else if (msg->wParam == SIZE_RESTORED)
             {
-                d->m_titleBar->getMaximizeBtn()->setIcon(QIcon{R"(:/resources/icon/maximize.png)"});
+                d->m_titleBar->getMaximizeBtn()->setIcon(d->m_titleBar->getMaximizeIcon());
             }
             break;
         }
