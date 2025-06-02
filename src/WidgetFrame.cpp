@@ -156,7 +156,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 QCoreApplication::sendEvent(d->m_titleBar->getMaximizeBtn(), &mouseEvent);
                 d->m_titleBar->getMaximizeBtn()->update();
                 g_snapLayoutTag = false;
-                return true;
+                return false;
             }
             break;
         }

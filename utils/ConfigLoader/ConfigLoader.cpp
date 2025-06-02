@@ -6,14 +6,9 @@
 
 #include "toml.hpp"
 
-ConfigLoader::ConfigLoader(QObject* _parent) : QObject{_parent}
-{
-    spdlog::set_level(spdlog::level::debug);
-}
-
 ConfigLoader::ConfigLoader(const QString& _file, const QString& _dir, const QString& _exePath, QObject* _parent) : QObject{_parent}
 {
-    spdlog::set_level(spdlog::level::debug);
+    std::invoke(&spdlog::set_level, spdlog::level::debug);
     std::invoke(&ConfigLoader::setConfigFilePath, this, _file);
     std::invoke(&ConfigLoader::setConfigDirPath, this, _dir, _exePath);
     std::invoke(&ConfigLoader::setConfigDirFilePath, this, QString{});

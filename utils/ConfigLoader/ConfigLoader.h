@@ -10,7 +10,6 @@ class ConfigLoader : public QObject
     Q_PROPERTY(QString configDirFilePath READ getConfigDirFilePath WRITE setConfigDirFilePath NOTIFY configDirFilePathChanged);
 
 public:
-    explicit(true) ConfigLoader(QObject* _parent = nullptr);
     explicit(true) ConfigLoader(const QString& _file, const QString& _dir, const QString& _exePath = QString{}, QObject* _parent = nullptr);
     ~ConfigLoader() noexcept = default;
 

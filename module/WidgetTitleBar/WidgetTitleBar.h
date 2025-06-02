@@ -5,7 +5,6 @@ _Pragma("once");
 #include <QPushButton>
 #include <QWidget>
 #include <map>
-#include <memory>
 
 #include "ConfigLoader.h"
 
@@ -64,11 +63,11 @@ public:
     auto getResizeTag() const noexcept -> bool;
 
 private:
+    auto initTitleBarConfig() noexcept -> void;
+
     auto initTitleBarHandle() noexcept -> void;
 
     auto initTitleBarLayout() noexcept -> void;
-
-    auto initConfigFile() noexcept -> void;
 
     auto setCursorType(const QPoint& _pos) noexcept -> void;
 
@@ -132,14 +131,14 @@ private Q_SLOTS:
     void onWindowTitleChanged(const QString& _title) noexcept;
 
 private:
-    WidgetFrame*                  m_widget{nullptr};                    /*无边框窗口指针*/
-    QHBoxLayout*                  m_titleLayout{new QHBoxLayout{this}}; /*标题栏布局容器*/
-    QLabel*                       m_windowIcon{new QLabel{this}};       /*标题栏图标*/
-    QLabel*                       m_titleText{new QLabel{this}};        /*标题栏文本标题*/
-    CursorType                    m_cursorType{CursorType::None};       /*指针图标类型*/
-    bool                          m_resizeTag{false};                   /*窗口伸缩鼠标指针显示句柄*/
-    HWND                          m_hwnd{};                             /*窗口界面句柄*/
-    std::unique_ptr<ConfigLoader> m_configLoader{};                     /*配置文件读取对象*/
+    WidgetFrame*  m_widget{nullptr};                    /*无边框窗口指针*/
+    QHBoxLayout*  m_titleLayout{new QHBoxLayout{this}}; /*标题栏布局容器*/
+    QLabel*       m_windowIcon{new QLabel{this}};       /*标题栏图标*/
+    QLabel*       m_titleText{new QLabel{this}};        /*标题栏文本标题*/
+    CursorType    m_cursorType{CursorType::None};       /*指针图标类型*/
+    bool          m_resizeTag{false};                   /*窗口伸缩鼠标指针显示句柄*/
+    HWND          m_hwnd{};                             /*窗口界面句柄*/
+    ConfigLoader* m_configLoader{nullptr};              /*配置文件读取对象*/
 
 private:
     std::map<QString, QPushButton*> m_titleBarButtons{

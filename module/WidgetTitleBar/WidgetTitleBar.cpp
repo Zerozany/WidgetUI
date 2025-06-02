@@ -32,7 +32,7 @@ constinit static bool   g_resizing{false}; /*窗口伸缩句柄*/
 
 WidgetTitleBar::WidgetTitleBar(WidgetFrame* _widget, QWidget* _parent) : QWidget{_parent}, m_widget{_widget}
 {
-    std::invoke(&WidgetTitleBar::initConfigFile, this);
+    std::invoke(&WidgetTitleBar::initTitleBarConfig, this);
     std::invoke(&WidgetTitleBar::initTitleBarHandle, this);
     std::invoke(&WidgetTitleBar::initTitleBarLayout, this);
     std::invoke(&WidgetTitleBar::connectSignalToSlot, this);
@@ -64,7 +64,7 @@ auto WidgetTitleBar::getResizeTag() const noexcept -> bool
 auto WidgetTitleBar::initTitleBarHandle() noexcept -> void
 {
     this->m_hwnd         = reinterpret_cast<HWND>(m_widget->winId());
-    this->m_configLoader = std::make_unique<ConfigLoader>(TitleBarConfigName, "Config", QCoreApplication::applicationDirPath());
+    this->m_configLoader = new ConfigLoader{TitleBarConfigName, "Config", QCoreApplication::applicationDirPath(), this};
     this->setMouseTracking(true);
     this->setAttribute(Qt::WA_StyledBackground);
     this->setFixedHeight(TITLEBAR_HEIGHT);
@@ -115,7 +115,7 @@ auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
     m_titleLayout->addWidget(m_titleBarButtons.at("close"));
 }
 
-auto WidgetTitleBar::initConfigFile() noexcept -> void
+auto WidgetTitleBar::initTitleBarConfig() noexcept -> void
 {
     constexpr const char* TitleBarConfigText{
         "[TitleBarStyle]\n"
@@ -132,7 +132,7 @@ auto WidgetTitleBar::initConfigFile() noexcept -> void
         "normalIcon = \":/resources/icon/normal.png\"\n"
         "closeIcon = \":/resources/icon/close.png\"\n"};
 
-    QDir configDir("./config");
+    QDir configDir{"./config"};
     if (!configDir.exists())
     {
         if (!configDir.mkpath("."))
