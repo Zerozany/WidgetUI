@@ -68,6 +68,8 @@ private:
 
     auto initTitleBarLayout() noexcept -> void;
 
+    auto initConfigFile() noexcept -> void;
+
     auto setCursorType(const QPoint& _pos) noexcept -> void;
 
     auto connectSignalToSlot() noexcept -> void;
@@ -137,7 +139,7 @@ private:
     CursorType                    m_cursorType{CursorType::None};       /*指针图标类型*/
     bool                          m_resizeTag{false};                   /*窗口伸缩鼠标指针显示句柄*/
     HWND                          m_hwnd{};                             /*窗口界面句柄*/
-    std::shared_ptr<ConfigLoader> m_configLoader{};                     /*配置文件读取对象*/
+    std::unique_ptr<ConfigLoader> m_configLoader{};                     /*配置文件读取对象*/
 
 private:
     std::map<QString, QPushButton*> m_titleBarButtons{
@@ -147,9 +149,9 @@ private:
     };
 
     std::map<QString, QString> m_titleBarIconsPath{
-        {"minimizeIcon", QString{R"(:/resources/icon/minimize.png)"}},
-        {"maximizeIcon", QString{R"(:/resources/icon/maximize.png)"}},
-        {"normalIcon", QString{R"(:/resources/icon/normal.png)"}},
-        {"closeIcon", QString{R"(:/resources/icon/close.png)"}},
+        {"minimizeIcon", QString{}},
+        {"maximizeIcon", QString{}},
+        {"normalIcon", QString{}},
+        {"closeIcon", QString{}},
     };
 };

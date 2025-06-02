@@ -4,8 +4,10 @@
 
 #include <QApplication>
 #include <QDir>
+#include <QFile>
 #include <QMouseEvent>
 #include <QStyle>
+#include <QTextStream>
 #include <QWindow>
 #include <ranges>
 #include <set>
@@ -13,7 +15,7 @@
 #include "StyleLoader.h"
 #include "WidgetFrame.h"
 
-#define TitleBarConfigName R"(TitleBarConfig.toml)"
+constexpr const char* TitleBarConfigName{R"(TitleBarConfig.toml)"};
 
 constexpr static QSize        BUTTON_ICON_SIZE{15, 15};
 constexpr static std::uint8_t BUTTON_WIDTH{45};
@@ -30,6 +32,7 @@ constinit static bool   g_resizing{false}; /*窗口伸缩句柄*/
 
 WidgetTitleBar::WidgetTitleBar(WidgetFrame* _widget, QWidget* _parent) : QWidget{_parent}, m_widget{_widget}
 {
+    std::invoke(&WidgetTitleBar::initConfigFile, this);
     std::invoke(&WidgetTitleBar::initTitleBarHandle, this);
     std::invoke(&WidgetTitleBar::initTitleBarLayout, this);
     std::invoke(&WidgetTitleBar::connectSignalToSlot, this);
@@ -61,7 +64,7 @@ auto WidgetTitleBar::getResizeTag() const noexcept -> bool
 auto WidgetTitleBar::initTitleBarHandle() noexcept -> void
 {
     this->m_hwnd         = reinterpret_cast<HWND>(m_widget->winId());
-    this->m_configLoader = std::make_shared<ConfigLoader>(TitleBarConfigName, "Config", QCoreApplication::applicationDirPath());
+    this->m_configLoader = std::make_unique<ConfigLoader>(TitleBarConfigName, "Config", QCoreApplication::applicationDirPath());
     this->setMouseTracking(true);
     this->setAttribute(Qt::WA_StyledBackground);
     this->setFixedHeight(TITLEBAR_HEIGHT);
@@ -70,6 +73,11 @@ auto WidgetTitleBar::initTitleBarHandle() noexcept -> void
 
 auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
 {
+    m_titleBarIconsPath.at("minimizeIcon") = m_configLoader->loadFromFile("minimizeIcon", "TitleBarButtonIcons");
+    m_titleBarIconsPath.at("maximizeIcon") = m_configLoader->loadFromFile("maximizeIcon", "TitleBarButtonIcons");
+    m_titleBarIconsPath.at("normalIcon")   = m_configLoader->loadFromFile("normalIcon", "TitleBarButtonIcons");
+    m_titleBarIconsPath.at("closeIcon")    = m_configLoader->loadFromFile("closeIcon", "TitleBarButtonIcons");
+
     std::set<QString> __titleBarIcons{
         m_titleBarIconsPath.at("minimizeIcon"),
         m_titleBarIconsPath.at("maximizeIcon"),
@@ -77,9 +85,9 @@ auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
     };
 
     std::set<QString> __titleBarProperty{
-        R"(min)",
-        R"(max)",
-        R"(close)",
+        m_configLoader->loadFromFile("minimize", "TitleBarButtonProperty"),
+        m_configLoader->loadFromFile("maximize", "TitleBarButtonProperty"),
+        m_configLoader->loadFromFile("close", "TitleBarButtonProperty"),
     };
 
     for (const auto& [__btn, __icon, __property] : std::views::zip(m_titleBarButtons | std::views::values, __titleBarIcons, __titleBarProperty))
@@ -105,6 +113,50 @@ auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
     m_titleLayout->addWidget(m_titleBarButtons.at("minimize"));
     m_titleLayout->addWidget(m_titleBarButtons.at("maximize"));
     m_titleLayout->addWidget(m_titleBarButtons.at("close"));
+}
+
+auto WidgetTitleBar::initConfigFile() noexcept -> void
+{
+    constexpr const char* TitleBarConfigText{
+        "[TitleBarStyle]\n"
+        "TitleBarStyleCss = \":/resources/css/WidgetTitleBar.css\"\n"
+        "\n"
+        "[TitleBarButtonProperty]\n"
+        "minimize = \"min\"\n"
+        "maximize = \"max\"\n"
+        "close = \"close\"\n"
+        "\n"
+        "[TitleBarButtonIcons]\n"
+        "minimizeIcon = \":/resources/icon/minimize.png\"\n"
+        "maximizeIcon = \":/resources/icon/maximize.png\"\n"
+        "normalIcon = \":/resources/icon/normal.png\"\n"
+        "closeIcon = \":/resources/icon/close.png\"\n"};
+
+    QDir configDir("./config");
+    if (!configDir.exists())
+    {
+        if (!configDir.mkpath("."))
+        {
+            qWarning() << "Failed to create config directory";
+        }
+    }
+    QFile   configFile{"./config/TitleBarConfig.toml"};
+    QString configText{};
+    if (configFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QTextStream rstream{&configFile};
+        configText = rstream.readAll();
+        configFile.close();
+    }
+    if (configText.trimmed().isEmpty())
+    {
+        if (configFile.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+            QTextStream wstream{&configFile};
+            wstream << TitleBarConfigText;
+            configFile.close();
+        }
+    }
 }
 
 auto WidgetTitleBar::setCursorType(const QPoint& _pos) noexcept -> void
