@@ -9,7 +9,7 @@ class A : public WidgetFrame
 public:
     explicit(true) A(WidgetFrame* _parent = nullptr) : WidgetFrame{_parent}
     {
-        initBtn();
+        // initBtn();
     }
     ~A() noexcept = default;
 
