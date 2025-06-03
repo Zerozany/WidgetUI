@@ -129,7 +129,6 @@ Q_SIGNALS:
 
     void mouseLeave(const bool _flag);
 
-Q_SIGNALS:
     void titleFlag(const TitleFlags& _flag);
 
     void cursorType(const CursorType& _cursorTyupe);

@@ -218,7 +218,8 @@ auto WidgetTitleBar::initTitleBarConfig() noexcept -> void
         "[TitleBarButtonProperty]\n"
         "minimize = \"min\"\n"
         "maximize = \"max\"\n"
-        "close = \"close\"\n"};
+        "close = \"close\"\n",
+    };
 
     if (QDir configDir{"./config"}; !configDir.exists())
     {
@@ -227,15 +228,15 @@ auto WidgetTitleBar::initTitleBarConfig() noexcept -> void
             qWarning() << "Failed to create config directory";
         }
     }
-    QFile   configFile{"./config/TitleBarConfig.toml"};
-    QString configText{};
+    QFile configFile{QStringLiteral("./config/") + QString::fromUtf8(TitleBarConfigName)};
+    bool  hasContent{};
     if (configFile.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        QTextStream rstream{&configFile};
-        configText = rstream.readAll();
+        QTextStream stream{&configFile};
+        hasContent = stream.readLine().trimmed().isEmpty();
         configFile.close();
     }
-    if (configText.trimmed().isEmpty())
+    if (!hasContent)
     {
         if (configFile.open(QIODevice::WriteOnly | QIODevice::Text))
         {
