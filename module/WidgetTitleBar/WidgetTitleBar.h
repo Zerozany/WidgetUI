@@ -17,6 +17,11 @@ class WidgetTitleBar : public QWidget
     Q_PROPERTY(QIcon maximizeIcon READ getMaximizeIcon WRITE setMaximizeIcon NOTIFY maximizeIconChanged);
     Q_PROPERTY(QIcon normalIcon READ getNormalIcon WRITE setNormalIcon NOTIFY normalIconChanged);
     Q_PROPERTY(QIcon closeIcon READ getCloseIcon WRITE setCloseIcon NOTIFY closeIconChanged);
+    Q_PROPERTY(QPixmap windowIcon READ getWindowIcon WRITE setWindowIcon NOTIFY windowIconChanged);
+    Q_PROPERTY(QString windowTitle READ getWindowTitle WRITE setWindowTitle NOTIFY windowTitleChanged);
+    Q_PROPERTY(QPushButton* maximizeBtn READ getMaximizeBtn);
+    Q_PROPERTY(QPushButton* minimizeBtn READ getMinimizeBtn);
+    Q_PROPERTY(QPushButton* closeBtn READ getCloseBtn);
 
 public:
     enum struct CursorType : std::uint8_t
@@ -61,16 +66,22 @@ public:
 public:
     /// @brief Q_PROPERTY
     auto getMinimizeIcon() const noexcept -> QIcon;
-    auto setMinimizeIcon(const QIcon& _iconPath) noexcept -> void;
+    auto setMinimizeIcon(const QIcon& _icon) noexcept -> void;
 
     auto getMaximizeIcon() const noexcept -> QIcon;
-    auto setMaximizeIcon(const QIcon& _iconPath) noexcept -> void;
+    auto setMaximizeIcon(const QIcon& _icon) noexcept -> void;
 
     auto getNormalIcon() const noexcept -> QIcon;
-    auto setNormalIcon(const QIcon& _iconPath) noexcept -> void;
+    auto setNormalIcon(const QIcon& _icon) noexcept -> void;
 
     auto getCloseIcon() const noexcept -> QIcon;
-    auto setCloseIcon(const QIcon& _iconPath) noexcept -> void;
+    auto setCloseIcon(const QIcon& _icon) noexcept -> void;
+
+    auto getWindowIcon() const noexcept -> QPixmap;
+    auto setWindowIcon(const QPixmap& _pixmap) noexcept -> void;
+
+    auto getWindowTitle() const noexcept -> QString;
+    auto setWindowTitle(const QString& _title) noexcept -> void;
 
 public:
     /// @brief 主框架nativeEvent调用函数
@@ -103,6 +114,10 @@ Q_SIGNALS:
 
     void closeIconChanged();
 
+    void windowIconChanged();
+
+    void windowTitleChanged();
+
 Q_SIGNALS:
     void mousePress(const QMouseEvent* _event);
 
@@ -112,16 +127,12 @@ Q_SIGNALS:
 
     void mouseDouble(const QMouseEvent* _event);
 
-    void cursorType(const CursorType& _cursorTyupe);
-
     void mouseLeave(const bool _flag);
 
 Q_SIGNALS:
     void titleFlag(const TitleFlags& _flag);
 
-    void windowIcon(const QPixmap& _iconPath);
-
-    void windowTitle(const QString& _title);
+    void cursorType(const CursorType& _cursorTyupe);
 
 private Q_SLOTS:
     void onMousePressChanged(const QMouseEvent* _event) noexcept;
@@ -132,28 +143,24 @@ private Q_SLOTS:
 
     void onMouseDoubleChanged(const QMouseEvent* _event) noexcept;
 
-    void onCursorTypeChanged(const CursorType& _cursorTyupe) noexcept;
-
     void onMouseLeaveChanged(const bool _flag) noexcept;
+
+    void onCursorTypeChanged(const CursorType& _cursorTyupe) noexcept;
 
     void onTitleFlagChanged(const TitleFlags& _flag) noexcept;
 
 private Q_SLOTS:
-    void onMinimizeChanged() noexcept;
+    void onMinimizeClicked() noexcept;
 
-    void onMaximizeChanged() noexcept;
+    void onMaximizeClicked() noexcept;
 
-    void onCloseChanged() noexcept;
-
-    void onWindowIconChanged(const QPixmap& _iconPath) noexcept;
-
-    void onWindowTitleChanged(const QString& _title) noexcept;
+    void onCloseClicked() noexcept;
 
 private:
     WidgetFrame*  m_widget{nullptr};                    /*无边框窗口指针*/
     QHBoxLayout*  m_titleLayout{new QHBoxLayout{this}}; /*标题栏布局容器*/
     QLabel*       m_windowIcon{new QLabel{this}};       /*标题栏图标*/
-    QLabel*       m_titleText{new QLabel{this}};        /*标题栏文本标题*/
+    QLabel*       m_windowTitle{new QLabel{this}};      /*标题栏文本标题*/
     CursorType    m_cursorType{CursorType::None};       /*指针图标类型*/
     bool          m_resizeTag{false};                   /*窗口伸缩鼠标指针显示句柄*/
     HWND          m_hwnd{};                             /*窗口界面句柄*/

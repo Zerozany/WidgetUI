@@ -47,7 +47,7 @@ auto WidgetFrame::setWindowIcon(const QString& _iconPath) noexcept -> void
 auto WidgetFrame::setWindowTitle(const QString& _title) noexcept -> void
 {
     Q_D(WidgetFrame);
-    Q_EMIT d->m_titleBar->windowTitle(_title);
+    // Q_EMIT d->m_titleBar->windowTitle(_title);
 }
 
 bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qintptr* _result)

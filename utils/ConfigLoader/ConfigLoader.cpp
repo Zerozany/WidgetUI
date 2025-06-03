@@ -32,7 +32,7 @@ auto ConfigLoader::setConfigDirPath(const QString& _dir, const QString& _exePath
             dir.setPath(_exePath);
             dir.cdUp();
             m_configDirPath = dir.absoluteFilePath("Config");
-            return;
+            break;
         }
         QDir configDir{_dir};
         if (!configDir.exists())
@@ -40,7 +40,7 @@ auto ConfigLoader::setConfigDirPath(const QString& _dir, const QString& _exePath
             if (!configDir.mkpath(_dir))
             {
                 spdlog::warn("Directory creation failed:{}", _dir.toStdString());
-                return;
+                break;
             }
         }
         m_configDirPath = _dir;
