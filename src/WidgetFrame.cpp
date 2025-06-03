@@ -20,34 +20,40 @@ WidgetFrame::~WidgetFrame() noexcept
     delete d;
 }
 
-auto WidgetFrame::setMinimizeIcon(const QString& _iconPath) noexcept -> void
+auto WidgetFrame::setMinimizeIcon(const QIcon& _icon) noexcept -> void
 {
     Q_D(WidgetFrame);
-    // Q_EMIT d->m_titleBar->minimizeIcon(_iconPath);
+    d->m_titleBar->setMinimizeIcon(_icon);
 }
 
-auto WidgetFrame::setMaximizeIcon(const QString& _iconMaximizePath, const QString& _iconNormalPath) noexcept -> void
+auto WidgetFrame::setMaximizeIcon(const QIcon& _icon) noexcept -> void
 {
     Q_D(WidgetFrame);
-    // Q_EMIT d->m_titleBar->maximizeIcon(_iconMaximizePath, _iconNormalPath);
+    d->m_titleBar->setMaximizeIcon(_icon);
 }
 
-auto WidgetFrame::setCloseIcon(const QString& _iconPath) noexcept -> void
+auto WidgetFrame::setNormalIcon(const QIcon& _icon) noexcept -> void
 {
     Q_D(WidgetFrame);
-    // Q_EMIT d->m_titleBar->closeIcon(_iconPath);
+    d->m_titleBar->setNormalIcon(_icon);
 }
 
-auto WidgetFrame::setWindowIcon(const QString& _iconPath) noexcept -> void
+auto WidgetFrame::setCloseIcon(const QIcon& _icon) noexcept -> void
 {
     Q_D(WidgetFrame);
-    // Q_EMIT d->m_titleBar->windowIcon(_iconPath);
+    d->m_titleBar->setCloseIcon(_icon);
+}
+
+auto WidgetFrame::setWindowIcon(const QPixmap& _pixmap) noexcept -> void
+{
+    Q_D(WidgetFrame);
+    d->m_titleBar->setWindowIcon(_pixmap);
 }
 
 auto WidgetFrame::setWindowTitle(const QString& _title) noexcept -> void
 {
     Q_D(WidgetFrame);
-    // Q_EMIT d->m_titleBar->windowTitle(_title);
+    d->m_titleBar->setWindowTitle(_title);
 }
 
 bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qintptr* _result)
@@ -342,8 +348,3 @@ void WidgetFrame::mouseDoubleClickEvent(QMouseEvent* _event)
     Q_D(WidgetFrame);
     Q_EMIT d->m_titleBar->mouseDouble(_event);
 }
-
-// void WidgetFrame::resizeEvent(QResizeEvent* _event)
-// {
-//     Q_D(WidgetFrame);
-// }

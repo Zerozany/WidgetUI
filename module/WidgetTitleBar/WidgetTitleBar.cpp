@@ -21,8 +21,8 @@ constexpr static QSize        BUTTON_ICON_SIZE{15, 15};
 constexpr static std::uint8_t BUTTON_WIDTH{45};
 constexpr static std::uint8_t BORDER_TOP_SIZE{5};
 constexpr static std::uint8_t BORDER_BOTTOM_SIZE{5};
-constexpr static std::uint8_t BORDER_LEFT_SIZE{5};
 constexpr static std::uint8_t BORDER_RIGHT_SIZE{5};
+constexpr static std::uint8_t BORDER_LEFT_SIZE{5};
 constexpr static std::uint8_t CORNER_SIZE{8};
 constexpr static std::uint8_t TITLEBAR_HEIGHT{30};
 

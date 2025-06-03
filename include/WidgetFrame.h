@@ -1,14 +1,6 @@
 _Pragma("once");
 #include <QWidget>
 
-#if 0
-#define ICONHINT 0x01
-#define TITLEHINT 0x02
-#define MINIMIZEHINT 0x04
-#define MAXIMIZEHINT 0x08
-#define CLOSEHINT 0x16
-#endif
-
 class WidgetFramePrivate;
 
 class WidgetFrame : public QWidget
@@ -19,13 +11,15 @@ public:
     virtual ~WidgetFrame() noexcept;
 
 public:
-    auto setMinimizeIcon(const QString& _iconPath) noexcept -> void;
+    auto setMinimizeIcon(const QIcon& _icon) noexcept -> void;
 
-    auto setMaximizeIcon(const QString& _iconMaximizePath, const QString& _iconNormalPath) noexcept -> void;
+    auto setMaximizeIcon(const QIcon& _icon) noexcept -> void;
 
-    auto setCloseIcon(const QString& _iconPath) noexcept -> void;
+    auto setNormalIcon(const QIcon& _icon) noexcept -> void;
 
-    auto setWindowIcon(const QString& _iconPath) noexcept -> void;
+    auto setCloseIcon(const QIcon& _icon) noexcept -> void;
+
+    auto setWindowIcon(const QPixmap& _pixmap) noexcept -> void;
 
     auto setWindowTitle(const QString& _title) noexcept -> void;
 
