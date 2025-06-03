@@ -33,8 +33,10 @@ auto WidgetFramePrivate::initWidgetLayout() noexcept -> void
     Q_Q(WidgetFrame);
     m_mainLayout = new QVBoxLayout{q};
     m_titleBar   = new WidgetTitleBar{q};
-    q->setLayout(m_mainLayout);
     // 设置 layout 和样式
+    // TODO 1 取消设置布局边距、或者开放接口
+    // TODO 2 return m_mainLayout 为主布局
+    // TODO 3 开放setSpacing 接口
     m_mainLayout->setContentsMargins(0, 0, 0, 0);
     m_mainLayout->setSpacing(0);
     // 添加控件到布局
