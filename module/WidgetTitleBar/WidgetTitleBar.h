@@ -157,12 +157,12 @@ private Q_SLOTS:
 
 private:
     WidgetFrame*  m_widget{nullptr};               /*无边框窗口指针*/
+    ConfigLoader* m_configLoader{nullptr};         /*配置文件读取对象*/
     QLabel*       m_windowIcon{new QLabel{this}};  /*标题栏图标*/
     QLabel*       m_windowTitle{new QLabel{this}}; /*标题栏文本标题*/
     CursorType    m_cursorType{CursorType::None};  /*指针图标类型*/
     bool          m_resizeTag{false};              /*窗口伸缩鼠标指针显示句柄*/
     HWND          m_hwnd{};                        /*窗口界面句柄*/
-    ConfigLoader* m_configLoader{nullptr};         /*配置文件读取对象*/
 
 private:
     std::map<QString, QHBoxLayout*> m_titleBarLayouts{

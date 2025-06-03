@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QHBoxLayout>
 #include <QPushButton>
 
 #include "WidgetFrame.h"
@@ -14,8 +15,9 @@ public:
 
     void initBtn()
     {
+        QHBoxLayout* lay = new QHBoxLayout{};
         QPushButton* btn = new QPushButton{"CCCCC", this};
-        btn->move(0, 50);
+        lay->addWidget(btn);
     }
 };
 
