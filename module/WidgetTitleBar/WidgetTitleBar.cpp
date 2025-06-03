@@ -37,7 +37,7 @@ WidgetTitleBar::WidgetTitleBar(WidgetFrame* _widget, QWidget* _parent) : QWidget
     std::invoke(&WidgetTitleBar::initTitleBarLayout, this);
     std::invoke(&WidgetTitleBar::connectSignalToSlot, this);
     /// @brief 暂无法对外开放
-    Q_EMIT titleFlag(TitleFlags::IconHint | TitleFlags::TitleHint | TitleFlags::MinimizeHint | TitleFlags::MaximizeHint | TitleFlags::CloseHint);
+    Q_EMIT titleFlagChanged(TitleFlags::IconHint | TitleFlags::TitleHint | TitleFlags::MinimizeHint | TitleFlags::MaximizeHint | TitleFlags::CloseHint);
 }
 
 /// @brief Q_PROPERTY
@@ -193,20 +193,31 @@ auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
         __btn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     }
 
+    for (const auto& __layout : m_titleBarLayouts | std::views::values)
+    {
+        __layout->setContentsMargins(10, 0, 0, 0);
+        __layout->setSpacing(0);
+    }
+
     m_windowIcon->setFixedHeight(TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2));
     m_windowTitle->setFixedHeight(TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2));
     m_windowIcon->setPixmap(QApplication::style()->standardIcon(QStyle::SP_ComputerIcon).pixmap(TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2), TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2)));
     m_windowTitle->setText(QApplication::applicationName());
+    m_windowIcon->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    m_windowTitle->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    m_titleLayout->setContentsMargins(10, 0, 0, 0);
-    m_titleLayout->setSpacing(0);
-    m_titleLayout->addWidget(m_windowIcon);
-    m_titleLayout->addSpacing(10);
-    m_titleLayout->addWidget(m_windowTitle);
-    m_titleLayout->addStretch();
-    m_titleLayout->addWidget(m_titleBarButtons.at("minimize"));
-    m_titleLayout->addWidget(m_titleBarButtons.at("maximize"));
-    m_titleLayout->addWidget(m_titleBarButtons.at("close"));
+    m_titleBarLayouts.at("titleActionLayout")->addWidget(m_windowIcon);
+    m_titleBarLayouts.at("titleActionLayout")->addSpacing(10);
+    m_titleBarLayouts.at("titleActionLayout")->addWidget(m_windowTitle);
+
+    m_titleBarLayouts.at("titleBtnLayout")->setDirection(QBoxLayout::RightToLeft);
+    m_titleBarLayouts.at("titleBtnLayout")->addWidget(m_titleBarButtons.at("close"));
+    m_titleBarLayouts.at("titleBtnLayout")->addWidget(m_titleBarButtons.at("maximize"));
+    m_titleBarLayouts.at("titleBtnLayout")->addWidget(m_titleBarButtons.at("minimize"));
+
+    m_titleBarLayouts.at("titleBarLayout")->addLayout(m_titleBarLayouts.at("titleActionLayout"));
+    m_titleBarLayouts.at("titleBarLayout")->addStretch();
+    m_titleBarLayouts.at("titleBarLayout")->addLayout(m_titleBarLayouts.at("titleBtnLayout"));
 }
 
 auto WidgetTitleBar::initTitleBarConfig() noexcept -> void
@@ -223,10 +234,7 @@ auto WidgetTitleBar::initTitleBarConfig() noexcept -> void
 
     if (QDir configDir{"./config"}; !configDir.exists())
     {
-        if (!configDir.mkpath("."))
-        {
-            qWarning() << "Failed to create config directory";
-        }
+        Q_UNUSED(configDir.mkpath("."));
     }
     QFile configFile{QStringLiteral("./config/") + QString::fromUtf8(TitleBarConfigName)};
     bool  hasContent{};
@@ -236,14 +244,15 @@ auto WidgetTitleBar::initTitleBarConfig() noexcept -> void
         hasContent = stream.readLine().trimmed().isEmpty();
         configFile.close();
     }
-    if (!hasContent)
+    if (hasContent)
     {
-        if (configFile.open(QIODevice::WriteOnly | QIODevice::Text))
-        {
-            QTextStream wstream{&configFile};
-            wstream << TitleBarConfigText;
-            configFile.close();
-        }
+        return;
+    }
+    if (configFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QTextStream wstream{&configFile};
+        wstream << TitleBarConfigText;
+        configFile.close();
     }
 }
 
@@ -312,7 +321,7 @@ auto WidgetTitleBar::setCursorType(const QPoint& _pos) noexcept -> void
     if (this->m_cursorType != tmp)
     {
         this->m_cursorType = tmp;
-        Q_EMIT cursorType(this->m_cursorType);
+        Q_EMIT cursorTypeChanged();
     }
     if (this->m_cursorType == CursorType::None)
     {
@@ -332,10 +341,10 @@ auto WidgetTitleBar::connectSignalToSlot() noexcept -> void
     connect(this, &WidgetTitleBar::mousePress, this, &WidgetTitleBar::onMousePressChanged);
     connect(this, &WidgetTitleBar::mouseMove, this, &WidgetTitleBar::onMouseMoveChanged);
     connect(this, &WidgetTitleBar::mouseRelease, this, &WidgetTitleBar::onMouseReleaseChanged);
-    connect(this, &WidgetTitleBar::cursorType, this, &WidgetTitleBar::onCursorTypeChanged);
+    connect(this, &WidgetTitleBar::cursorTypeChanged, this, &WidgetTitleBar::onCursorTypeChanged);
     connect(this, &WidgetTitleBar::mouseLeave, this, &WidgetTitleBar::onMouseLeaveChanged);
     connect(this, &WidgetTitleBar::mouseDouble, this, &WidgetTitleBar::onMouseDoubleChanged);
-    connect(this, &WidgetTitleBar::titleFlag, this, &WidgetTitleBar::onTitleFlagChanged);
+    connect(this, &WidgetTitleBar::titleFlagChanged, this, &WidgetTitleBar::onTitleFlagChanged);
 }
 
 void WidgetTitleBar::onMousePressChanged(const QMouseEvent* _event) noexcept
@@ -439,14 +448,14 @@ void WidgetTitleBar::onMouseDoubleChanged(const QMouseEvent* _event) noexcept
     }
 }
 
-void WidgetTitleBar::onCursorTypeChanged(const CursorType& _cursorTyupe) noexcept
+void WidgetTitleBar::onCursorTypeChanged() noexcept
 {
     /// @brief 光标样式监听
     if (m_widget->isMaximized() || (QApplication::mouseButtons() & Qt::LeftButton))
     {
         return;
     }
-    switch (_cursorTyupe)
+    switch (this->m_cursorType)
     {
         case CursorType::Top:
         {

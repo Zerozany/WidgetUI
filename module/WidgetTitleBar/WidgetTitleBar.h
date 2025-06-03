@@ -105,7 +105,7 @@ private:
     auto connectSignalToSlot() noexcept -> void;
 
 Q_SIGNALS:
-    /// @brief 按钮图标更改信号
+    /// @brief Q_PROPERTY 按钮图标更改信号
     void minimizeIconChanged();
 
     void maximizeIconChanged();
@@ -129,9 +129,9 @@ Q_SIGNALS:
 
     void mouseLeave(const bool _flag);
 
-    void titleFlag(const TitleFlags& _flag);
+    void titleFlagChanged(const TitleFlags& _flag);
 
-    void cursorType(const CursorType& _cursorTyupe);
+    void cursorTypeChanged();
 
 private Q_SLOTS:
     void onMousePressChanged(const QMouseEvent* _event) noexcept;
@@ -144,9 +144,9 @@ private Q_SLOTS:
 
     void onMouseLeaveChanged(const bool _flag) noexcept;
 
-    void onCursorTypeChanged(const CursorType& _cursorTyupe) noexcept;
-
     void onTitleFlagChanged(const TitleFlags& _flag) noexcept;
+
+    void onCursorTypeChanged() noexcept;
 
 private Q_SLOTS:
     void onMinimizeClicked() noexcept;
@@ -156,16 +156,21 @@ private Q_SLOTS:
     void onCloseClicked() noexcept;
 
 private:
-    WidgetFrame*  m_widget{nullptr};                    /*无边框窗口指针*/
-    QHBoxLayout*  m_titleLayout{new QHBoxLayout{this}}; /*标题栏布局容器*/
-    QLabel*       m_windowIcon{new QLabel{this}};       /*标题栏图标*/
-    QLabel*       m_windowTitle{new QLabel{this}};      /*标题栏文本标题*/
-    CursorType    m_cursorType{CursorType::None};       /*指针图标类型*/
-    bool          m_resizeTag{false};                   /*窗口伸缩鼠标指针显示句柄*/
-    HWND          m_hwnd{};                             /*窗口界面句柄*/
-    ConfigLoader* m_configLoader{nullptr};              /*配置文件读取对象*/
+    WidgetFrame*  m_widget{nullptr};               /*无边框窗口指针*/
+    QLabel*       m_windowIcon{new QLabel{this}};  /*标题栏图标*/
+    QLabel*       m_windowTitle{new QLabel{this}}; /*标题栏文本标题*/
+    CursorType    m_cursorType{CursorType::None};  /*指针图标类型*/
+    bool          m_resizeTag{false};              /*窗口伸缩鼠标指针显示句柄*/
+    HWND          m_hwnd{};                        /*窗口界面句柄*/
+    ConfigLoader* m_configLoader{nullptr};         /*配置文件读取对象*/
 
 private:
+    std::map<QString, QHBoxLayout*> m_titleBarLayouts{
+        {"titleBarLayout", new QHBoxLayout{this}},
+        {"titleBtnLayout", new QHBoxLayout{}},
+        {"titleActionLayout", new QHBoxLayout{}},
+    };
+
     std::map<QString, QPushButton*> m_titleBarButtons{
         {"minimize", new QPushButton{this}},
         {"maximize", new QPushButton{this}},
