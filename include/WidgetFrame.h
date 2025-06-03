@@ -1,6 +1,7 @@
 _Pragma("once");
 #include <QWidget>
 
+class QVBoxLayout;
 class WidgetFramePrivate;
 
 class WidgetFrame : public QWidget
@@ -22,6 +23,8 @@ public:
     auto setWindowIcon(const QPixmap& _pixmap) noexcept -> void;
 
     auto setWindowTitle(const QString& _title) noexcept -> void;
+
+    auto customerLayout() noexcept -> QVBoxLayout*;
 
 protected:
     bool nativeEvent(const QByteArray& _eventType, void* _message, qintptr* _result) override;

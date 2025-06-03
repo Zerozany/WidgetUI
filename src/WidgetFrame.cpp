@@ -56,6 +56,12 @@ auto WidgetFrame::setWindowTitle(const QString& _title) noexcept -> void
     d->m_titleBar->setWindowTitle(_title);
 }
 
+auto WidgetFrame::customerLayout() noexcept -> QVBoxLayout*
+{
+    Q_D(WidgetFrame);
+    return d->m_customerLayout;
+}
+
 bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qintptr* _result)
 {
     Q_D(WidgetFrame);

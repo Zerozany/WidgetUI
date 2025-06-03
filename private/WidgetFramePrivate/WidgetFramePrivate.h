@@ -25,6 +25,10 @@ private:
 public:
     WidgetTitleBar* m_titleBar{nullptr};
     QVBoxLayout*    m_mainLayout{nullptr};
+    QVBoxLayout*    m_customerLayout{nullptr};
+
+private:
+    QWidget* m_customerWidget{nullptr};
 
 private:
     WidgetFrame* q_ptr{nullptr};

@@ -31,8 +31,10 @@ auto WidgetFramePrivate::initWidgetFrame() noexcept -> void
 auto WidgetFramePrivate::initWidgetLayout() noexcept -> void
 {
     Q_Q(WidgetFrame);
-    m_mainLayout = new QVBoxLayout{q};
-    m_titleBar   = new WidgetTitleBar{q};
+    m_mainLayout     = new QVBoxLayout{q};
+    m_titleBar       = new WidgetTitleBar{q};
+    m_customerWidget = new QWidget{q};
+    m_customerLayout = new QVBoxLayout{m_customerWidget};
     // 设置 layout 和样式
     // TODO 1 取消设置布局边距、或者开放接口
     // TODO 2 return m_mainLayout 为主布局
@@ -41,5 +43,5 @@ auto WidgetFramePrivate::initWidgetLayout() noexcept -> void
     m_mainLayout->setSpacing(0);
     // 添加控件到布局
     m_mainLayout->addWidget(m_titleBar);
-    m_mainLayout->addStretch();
+    m_mainLayout->addWidget(m_customerWidget);
 }
