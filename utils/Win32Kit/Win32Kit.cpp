@@ -1,30 +1,6 @@
-_Pragma("once");
+#include "Win32Kit.h"
 
-#ifdef Q_OS_WIN
-#include <dwmapi.h>
-#include <windows.h>
-#include <windowsx.h>
-#pragma comment(lib, "dwmapi")
-#pragma comment(lib, "user32.lib")
-#endif
-
-#include <QScreen>
-#include <QWidget>
-#include <QWindow>
-
-namespace Win32Function
-{
-    inline auto adjustCustomerArea(const MSG* _msg) noexcept -> void;
-
-    inline auto achieveRoundedCorners(const MSG* _msg) noexcept -> HRESULT;
-
-    inline auto coordinateMapping(const POINT& _point, const QWidget* _widget, const QWidget* _titleBar) noexcept -> QPoint;
-
-    inline auto scalingCorrection(const POINT& _point, const QWindow* _handle) noexcept -> QPoint;
-
-}  // namespace Win32Function
-
-inline auto Win32Function::adjustCustomerArea(const MSG* _msg) noexcept -> void
+auto Win32Kit::adjustCustomerArea(const MSG* _msg) noexcept -> void
 {
     NCCALCSIZE_PARAMS* params{reinterpret_cast<NCCALCSIZE_PARAMS*>(_msg->lParam)};
     // 判断是否最大化
@@ -42,7 +18,7 @@ inline auto Win32Function::adjustCustomerArea(const MSG* _msg) noexcept -> void
     }
 }
 
-auto Win32Function::achieveRoundedCorners(const MSG* _msg) noexcept -> HRESULT
+auto Win32Kit::achieveRoundedCorners(const MSG* _msg) noexcept -> HRESULT
 {
     // 窗口的每一边都扩展 1 个像素
     constexpr MARGINS margins{1, 1, 1, 1};
@@ -50,7 +26,7 @@ auto Win32Function::achieveRoundedCorners(const MSG* _msg) noexcept -> HRESULT
     return hr;
 }
 
-auto Win32Function::coordinateMapping(const POINT& _point, const QWidget* _widget, const QWidget* _titleBar) noexcept -> QPoint
+auto Win32Kit::coordinateMapping(const POINT& _point, const QWidget* _widget, const QWidget* _titleBar) noexcept -> QPoint
 {
     // 如果 Windows 设置了 150% 缩放，那么 dpr ≈ 1.5
     double dpr{_widget->devicePixelRatioF()};
@@ -59,7 +35,7 @@ auto Win32Function::coordinateMapping(const POINT& _point, const QWidget* _widge
     return pos;
 }
 
-auto Win32Function::scalingCorrection(const POINT& _point, const QWindow* _handle) noexcept -> QPoint
+auto Win32Kit::scalingCorrection(const POINT& _point, const QWindow* _handle) noexcept -> QPoint
 {
     QPoint globalPos(_point.x, _point.y);
     // DPI 缩放校正

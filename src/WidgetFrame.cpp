@@ -80,14 +80,14 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         /// @brief 计算窗口客户区大小（用于去掉系统边框）
         case WM_NCCALCSIZE:
         {
-            Win32Function::adjustCustomerArea(msg);
+            Win32Kit::adjustCustomerArea(msg);
             *_result = 0;
             return true;
         }
         /// @brief 用于通知窗口 是否获得或失去焦点（激活状态）
         case WM_ACTIVATE:
         {
-            const HRESULT hr{Win32Function::achieveRoundedCorners(msg)};
+            const HRESULT hr{Win32Kit::achieveRoundedCorners(msg)};
             *_result = hr;
             return true;
         }
@@ -102,7 +102,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             // 获取鼠标的（屏幕）所在坐标
             mouse = {GET_X_LPARAM(msg->lParam), GET_Y_LPARAM(msg->lParam)};
             // 获取DPI转换后（屏幕）所在坐标
-            pos = {Win32Function::coordinateMapping(mouse, this, d->m_titleBar)};
+            pos = {Win32Kit::coordinateMapping(mouse, this, d->m_titleBar)};
             // 获取窗口状态句柄
             hwnd = reinterpret_cast<HWND>(this->winId());
             // 检索标题栏中鼠标所在元素
@@ -124,9 +124,9 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             if (child == d->m_titleBar->getMaximizeBtn())
             {
                 // DPI 缩放校正
-                const QPoint globalPos{Win32Function::scalingCorrection(mouse, this->window()->windowHandle())};
+                const QPoint globalPos{Win32Kit::scalingCorrection(mouse, this->window()->windowHandle())};
                 // 转化为最大化按钮的局部坐标
-                const QPoint localPos{Win32Function::coordinateMapping(mouse, this, d->m_titleBar->getMaximizeBtn())};
+                const QPoint localPos{Win32Kit::coordinateMapping(mouse, this, d->m_titleBar->getMaximizeBtn())};
                 QMouseEvent  mouseEvent{d->m_titleBar->getMaximizeBtn()->underMouse() ? QEvent::MouseMove : QEvent::Enter, localPos, globalPos, Qt::NoButton, Qt::NoButton, Qt::NoModifier};
                 QCoreApplication::sendEvent(d->m_titleBar->getMaximizeBtn(), &mouseEvent);
                 d->m_titleBar->getMaximizeBtn()->update();

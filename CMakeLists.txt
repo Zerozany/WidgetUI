@@ -1,11 +1,20 @@
 cmake_minimum_required(VERSION 3.25 FATAL_ERROR)
 
-set(CMAKE_TOOLCHAIN_FILE "D:/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
+if(DEFINED ENV{VCPKG_ROOT})
+    set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
+else()
+    message(FATAL_ERROR "Vcpkg environment variable VCPKG_ROOT not found")
+endif()
 
-project(QWidgetUI VERSION 1.0.0 LANGUAGES CXX)
+project(QWidgetUI
+    VERSION 1.0.0
+    LANGUAGES CXX
+    DESCRIPTION "A versatile and customizable UI component designed to enhance user interaction and streamline interface development"
+    HOMEPAGE_URL "https://github.com/Zerozany/WidgetUI"
+)
 
-add_executable(${PROJECT_NAME}
-    ${PROJECT_SOURCE_DIR}/main.cpp
+# BUILD_SHARED_LIBS
+add_library(${PROJECT_NAME}
 )
 
 target_compile_features(${PROJECT_NAME}
@@ -13,6 +22,7 @@ target_compile_features(${PROJECT_NAME}
     cxx_std_23
 )
 
+include(${PROJECT_SOURCE_DIR}/cmakes/importProjectConfig.cmake)
 include(${PROJECT_SOURCE_DIR}/cmakes/importQt.cmake)
 include(${PROJECT_SOURCE_DIR}/cmakes/importPrivate.cmake)
 include(${PROJECT_SOURCE_DIR}/cmakes/importSource.cmake)
