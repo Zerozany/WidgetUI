@@ -56,6 +56,12 @@ auto WidgetFrame::setWindowTitle(const QString& _title) noexcept -> void
     d->m_titleBar->setWindowTitle(_title);
 }
 
+auto WidgetFrame::setWindowCursor(const QPixmap& _arrow, const QPixmap& _sizeVer, const QPixmap& _sizeHor, const QPixmap& _sizeFDiag, const QPixmap& _sizeBDiag) noexcept -> void
+{
+    Q_D(WidgetFrame);
+    d->m_titleBar->setWindowCursor(_arrow, _sizeVer, _sizeHor, _sizeFDiag, _sizeBDiag);
+}
+
 auto WidgetFrame::customerLayout() noexcept -> QVBoxLayout*
 {
     Q_D(WidgetFrame);

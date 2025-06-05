@@ -30,6 +30,8 @@ public:
 
     auto setWindowTitle(const QString& _title) noexcept -> void;
 
+    auto setWindowCursor(const QPixmap& _arrow, const QPixmap& _sizeVer, const QPixmap& _sizeHor, const QPixmap& _sizeFDiag, const QPixmap& _sizeBDiag) noexcept -> void;
+
     auto customerLayout() noexcept -> QVBoxLayout*;
 
 protected:

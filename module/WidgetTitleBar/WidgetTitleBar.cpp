@@ -105,7 +105,7 @@ auto WidgetTitleBar::getWindowIcon() const noexcept -> QPixmap
 {
     if (m_windowIcon->pixmap().isNull())
     {
-        return QPixmap();
+        return QPixmap{};
     }
     return m_windowIcon->pixmap();
 }
@@ -157,6 +157,55 @@ auto WidgetTitleBar::getCloseBtn() const noexcept -> QPushButton*
 auto WidgetTitleBar::getResizeTag() const noexcept -> bool
 {
     return this->m_resizeTag;
+}
+
+auto WidgetTitleBar::setWindowCursor(const QPixmap& _arrow, const QPixmap& _sizeVer, const QPixmap& _sizeHor, const QPixmap& _sizeFDiag, const QPixmap& _sizeBDiag) const noexcept -> void
+{
+    if (_arrow.isNull())
+    {
+        m_cursorCursors.value("arrow") = Qt::ArrowCursor;
+    }
+    else
+    {
+        QPoint arrowPoint{_arrow.width() / 2, _arrow.height() / 2};
+        m_cursorCursors.value("arrow") = QCursor{_arrow, arrowPoint.x(), arrowPoint.y()};
+    }
+    if (_sizeVer.isNull())
+    {
+        m_cursorCursors.value("sizeVer") = Qt::SizeVerCursor;
+    }
+    else
+    {
+        QPoint sizeVerPoint{_sizeVer.width() / 2, _sizeVer.height() / 2};
+        m_cursorCursors.value("sizeVer") = QCursor{_sizeVer, sizeVerPoint.x(), sizeVerPoint.y()};
+    }
+    if (_sizeHor.isNull())
+    {
+        m_cursorCursors.value("sizeHor") = Qt::SizeHorCursor;
+    }
+    else
+    {
+        QPoint sizeHorPoint{_sizeHor.width() / 2, _sizeHor.height() / 2};
+        m_cursorCursors.value("sizeHor") = QCursor{_sizeHor, sizeHorPoint.x(), sizeHorPoint.y()};
+    }
+    if (_sizeFDiag.isNull())
+    {
+        m_cursorCursors.value("sizeFDiag") = Qt::SizeFDiagCursor;
+    }
+    else
+    {
+        QPoint sizeFDiagPoint{_sizeFDiag.width() / 2, _sizeFDiag.height() / 2};
+        m_cursorCursors.value("sizeFDiag") = QCursor{_sizeFDiag, sizeFDiagPoint.x(), sizeFDiagPoint.y()};
+    }
+    if (_sizeBDiag.isNull())
+    {
+        m_cursorCursors.value("sizeBDiag") = Qt::SizeBDiagCursor;
+    }
+    else
+    {
+        QPoint sizeBDiagPoint{_sizeBDiag.width() / 2, _sizeBDiag.height() / 2};
+        m_cursorCursors.value("sizeBDiag") = QCursor{_sizeBDiag, sizeBDiagPoint.x(), sizeBDiagPoint.y()};
+    }
 }
 
 /*              初始化固定逻辑              */

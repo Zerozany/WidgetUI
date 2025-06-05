@@ -93,6 +93,8 @@ public:
 
     auto getResizeTag() const noexcept -> bool;
 
+    auto setWindowCursor(const QPixmap& _arrow, const QPixmap& _sizeVer, const QPixmap& _sizeHor, const QPixmap& _sizeFDiag, const QPixmap& _sizeBDiag) const noexcept -> void;
+
 private:
     auto initTitleBarConfig() noexcept -> void;
 
@@ -182,5 +184,13 @@ private:
         {"maximizeIcon", QIcon{":/resources/icon/maximize.png"}},
         {"normalIcon", QIcon{":/resources/icon/normal.png"}},
         {"closeIcon", QIcon{":/resources/icon/close.png"}},
+    };
+
+    QMap<QString, QCursor> m_cursorCursors{
+        {"arrow", QCursor{}},
+        {"sizeVer", QCursor{}},
+        {"sizeHor", QCursor{}},
+        {"sizeFDiag", QCursor{}},
+        {"sizeBDiag", QCursor{}},
     };
 };
