@@ -13,6 +13,8 @@ project(QWidgetUI
     HOMEPAGE_URL "https://github.com/Zerozany/WidgetUI"
 )
 
+option(TEST_SWITCH "This is a switch that controls whether to compile test examples" ON)
+
 # BUILD_SHARED_LIBS
 add_library(${PROJECT_NAME}
 )
@@ -29,3 +31,7 @@ include(${PROJECT_SOURCE_DIR}/cmakes/importSource.cmake)
 include(${PROJECT_SOURCE_DIR}/cmakes/importModule.cmake)
 include(${PROJECT_SOURCE_DIR}/cmakes/importUtils.cmake)
 include(${PROJECT_SOURCE_DIR}/cmakes/import3rd.cmake)
+
+if(TEST_SWITCH)
+    add_subdirectory(${PROJECT_SOURCE_DIR}/test)
+endif()

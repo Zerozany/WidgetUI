@@ -18,10 +18,6 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     )
 endif()
 
-# target_compile_definitions(${PROJECT_NAME}
-# PRIVATE
-# BUILDING_MYLIB
-# )
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /utf-8)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -41,4 +37,9 @@ set_target_properties(${PROJECT_NAME}
     ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${PROJECT_BINARY_DIR}/lib"
     RUNTIME_OUTPUT_DIRECTORY_DEBUG "${PROJECT_BINARY_DIR}/bin"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${PROJECT_BINARY_DIR}/bin"
+)
+
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+    ${PROJECT_BINARY_DIR}
 )

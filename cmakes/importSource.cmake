@@ -24,3 +24,16 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE
     ${CMAKE_SOURCE_DIR}/include
 )
+
+target_compile_definitions(${PROJECT_NAME}
+    PRIVATE
+    DLL_BUILD
+)
+
+add_custom_target(${PROJECT_NAME}include ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/include
+    ${PROJECT_BINARY_DIR}/include
+    DEPENDS ${CMAKE_SOURCE_DIR}/include/*
+    COMMENT "Copying header files from source to build directory..."
+)

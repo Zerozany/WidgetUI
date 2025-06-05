@@ -1,15 +1,3 @@
-add_executable(${PROJECT_NAME}Demo
-    ${PROJECT_SOURCE_DIR}/test/main.cpp
-)
-
-add_dependencies(${PROJECT_NAME}Demo ${PROJECT_NAME})
-
-set_target_properties(${PROJECT_NAME}Demo PROPERTIES
-    AUTOUIC ON
-    AUTOMOC ON
-    AUTORCC ON
-)
-
 find_package(QT NAMES Qt6 Qt5 REQUIRED
     COMPONENTS
     Widgets
@@ -20,6 +8,18 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED
     COMPONENTS
     Widgets
     Core
+)
+
+add_executable(${PROJECT_NAME}Demo
+    ${PROJECT_SOURCE_DIR}/test/main.cpp
+)
+
+add_dependencies(${PROJECT_NAME}Demo ${PROJECT_NAME})
+
+set_target_properties(${PROJECT_NAME}Demo PROPERTIES
+    AUTOUIC ON
+    AUTOMOC ON
+    AUTORCC ON
 )
 
 if(QT_VERSION_MAJOR EQUAL 6)
@@ -33,7 +33,7 @@ target_compile_features(${PROJECT_NAME}Demo
 
 target_include_directories(${PROJECT_NAME}Demo
     PRIVATE
-    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_BINARY_DIR}/include
 )
 
 target_link_libraries(${PROJECT_NAME}Demo
@@ -50,4 +50,10 @@ target_link_libraries(${PROJECT_NAME}Demo
 set_target_properties(${PROJECT_NAME}Demo PROPERTIES
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE FALSE
+)
+
+set_target_properties(${PROJECT_NAME}Demo
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${PROJECT_BINARY_DIR}/bin"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${PROJECT_BINARY_DIR}/bin"
 )
