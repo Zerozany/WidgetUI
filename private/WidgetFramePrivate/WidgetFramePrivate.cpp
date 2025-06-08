@@ -35,6 +35,8 @@ auto WidgetFramePrivate::initWidgetLayout() noexcept -> void
     m_titleBar       = new WidgetTitleBar{q};
     m_customerWidget = new QWidget{q};
     m_customerLayout = new QVBoxLayout{m_customerWidget};
+    /// @brief 启用鼠标实时监听 不可去除
+    m_customerWidget->setMouseTracking(true);
     // 设置 layout 和样式
     // TODO 1 取消设置布局边距、或者开放接口
     // TODO 2 return m_mainLayout 为主布局

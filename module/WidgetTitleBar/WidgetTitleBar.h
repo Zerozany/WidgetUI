@@ -187,10 +187,10 @@ private:
     };
 
     QMap<QString, QCursor> m_cursorCursors{
-        {"arrow", QCursor{}},
-        {"sizeVer", QCursor{}},
-        {"sizeHor", QCursor{}},
-        {"sizeFDiag", QCursor{}},
-        {"sizeBDiag", QCursor{}},
+        {"arrow", Qt::ArrowCursor},
+        {"sizeVer", Qt::SizeVerCursor},
+        {"sizeHor", Qt::SizeHorCursor},
+        {"sizeFDiag", Qt::SizeFDiagCursor},
+        {"sizeBDiag", Qt::SizeBDiagCursor},
     };
 };
