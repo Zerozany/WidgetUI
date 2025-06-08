@@ -208,6 +208,18 @@ auto WidgetTitleBar::setWindowCursor(const QPixmap& _arrow, const QPixmap& _size
     }
 }
 
+auto WidgetTitleBar::addTitleAction(QWidget* _action) noexcept -> void
+{
+    _action->setFixedHeight(TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2));
+    m_titleBarLayouts.at("titleActionLayout")->addWidget(_action);
+}
+
+auto WidgetTitleBar::addTitleState(QWidget* _action) noexcept -> void
+{
+    _action->setFixedHeight(TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2));
+    m_titleBarLayouts.at("titleStateLayout")->addWidget(_action);
+}
+
 /*              初始化固定逻辑              */
 auto WidgetTitleBar::initTitleBarHandle() noexcept -> void
 {
@@ -255,18 +267,18 @@ auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
     m_windowIcon->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     m_windowTitle->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
+    m_titleBarLayouts.at("titleActionLayout")->setSpacing(10);
     m_titleBarLayouts.at("titleActionLayout")->addWidget(m_windowIcon);
-    m_titleBarLayouts.at("titleActionLayout")->addSpacing(10);
     m_titleBarLayouts.at("titleActionLayout")->addWidget(m_windowTitle);
 
-    m_titleBarLayouts.at("titleBtnLayout")->setDirection(QBoxLayout::RightToLeft);
-    m_titleBarLayouts.at("titleBtnLayout")->addWidget(m_titleBarButtons.at("close"));
-    m_titleBarLayouts.at("titleBtnLayout")->addWidget(m_titleBarButtons.at("maximize"));
-    m_titleBarLayouts.at("titleBtnLayout")->addWidget(m_titleBarButtons.at("minimize"));
+    m_titleBarLayouts.at("titleStateLayout")->setDirection(QBoxLayout::RightToLeft);
+    m_titleBarLayouts.at("titleStateLayout")->addWidget(m_titleBarButtons.at("close"));
+    m_titleBarLayouts.at("titleStateLayout")->addWidget(m_titleBarButtons.at("maximize"));
+    m_titleBarLayouts.at("titleStateLayout")->addWidget(m_titleBarButtons.at("minimize"));
 
     m_titleBarLayouts.at("titleBarLayout")->addLayout(m_titleBarLayouts.at("titleActionLayout"));
     m_titleBarLayouts.at("titleBarLayout")->addStretch();
-    m_titleBarLayouts.at("titleBarLayout")->addLayout(m_titleBarLayouts.at("titleBtnLayout"));
+    m_titleBarLayouts.at("titleBarLayout")->addLayout(m_titleBarLayouts.at("titleStateLayout"));
 }
 
 auto WidgetTitleBar::initTitleBarConfig() noexcept -> void

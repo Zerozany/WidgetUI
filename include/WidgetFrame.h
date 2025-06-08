@@ -34,6 +34,10 @@ public:
 
     auto customerLayout() noexcept -> QVBoxLayout*;
 
+    auto addTitleAction(QWidget* _action) noexcept -> void;
+
+    auto addTitleState(QWidget* _action) noexcept -> void;
+
 protected:
     bool nativeEvent(const QByteArray& _eventType, void* _message, qintptr* _result) override;
 

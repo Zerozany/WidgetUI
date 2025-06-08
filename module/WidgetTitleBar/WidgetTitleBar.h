@@ -95,6 +95,10 @@ public:
 
     auto setWindowCursor(const QPixmap& _arrow, const QPixmap& _sizeVer, const QPixmap& _sizeHor, const QPixmap& _sizeFDiag, const QPixmap& _sizeBDiag) const noexcept -> void;
 
+    auto addTitleAction(QWidget* _action) noexcept -> void;
+
+    auto addTitleState(QWidget* _action) noexcept -> void;
+
 private:
     auto initTitleBarConfig() noexcept -> void;
 
@@ -169,7 +173,7 @@ private:
 private:
     std::map<QString, QHBoxLayout*> m_titleBarLayouts{
         {"titleBarLayout", new QHBoxLayout{this}},
-        {"titleBtnLayout", new QHBoxLayout{}},
+        {"titleStateLayout", new QHBoxLayout{}},
         {"titleActionLayout", new QHBoxLayout{}},
     };
 
