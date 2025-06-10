@@ -9,7 +9,13 @@ class A : public WidgetFrame
 public:
     explicit(true) A(WidgetFrame* _parent = nullptr) : WidgetFrame{_parent}
     {
-        // initBtn();
+// initBtn();
+#if 1
+        QPushButton* btn  = new QPushButton{"XXXXX", this};
+        QPushButton* btn1 = new QPushButton{"WWWww", this};
+        this->addTitleAction(btn);
+        this->addTitleState(btn1);
+#endif
     }
     ~A() noexcept = default;
 

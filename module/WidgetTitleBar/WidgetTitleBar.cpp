@@ -24,7 +24,7 @@ constexpr static std::uint8_t BORDER_BOTTOM_SIZE{5};
 constexpr static std::uint8_t BORDER_RIGHT_SIZE{5};
 constexpr static std::uint8_t BORDER_LEFT_SIZE{5};
 constexpr static std::uint8_t CORNER_SIZE{8};
-constexpr static std::uint8_t TITLEBAR_HEIGHT{30};
+constexpr static std::uint8_t TITLEBAR_HEIGHT{35};
 
 constinit static QRect  g_startGeometry{}; /*当前窗口大小缓存区域*/
 constinit static QPoint g_startPoint{};    /*开启伸缩标记点*/
