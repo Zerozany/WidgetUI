@@ -1,5 +1,7 @@
 #include "Win32Kit.h"
 
+#ifdef Q_OS_WIN
+
 auto Win32Kit::adjustCustomerArea(const MSG* _msg) noexcept -> void
 {
     NCCALCSIZE_PARAMS* params{reinterpret_cast<NCCALCSIZE_PARAMS*>(_msg->lParam)};
@@ -46,3 +48,5 @@ auto Win32Kit::scalingCorrection(const POINT& _point, const QWindow* _handle) no
     }
     return globalPos;
 }
+
+#endif

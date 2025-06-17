@@ -3,7 +3,9 @@ _Pragma("once");
 #include <QVBoxLayout>
 #include <QWidget>
 
+#ifdef Q_OS_WIN
 #include "Win32Kit.h"
+#endif
 
 class WidgetFrame;
 class WidgetTitleBar;

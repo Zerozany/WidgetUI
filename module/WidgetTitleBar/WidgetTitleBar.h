@@ -168,7 +168,9 @@ private:
     QLabel*       m_windowTitle{new QLabel{this}}; /*标题栏文本标题*/
     CursorType    m_cursorType{CursorType::None};  /*指针图标类型*/
     bool          m_resizeTag{false};              /*窗口伸缩鼠标指针显示句柄*/
-    HWND          m_hwnd{};                        /*窗口界面句柄*/
+#ifdef Q_OS_WIN
+    HWND m_hwnd{}; /*窗口界面句柄*/
+#endif
 
 private:
     std::map<QString, QHBoxLayout*> m_titleBarLayouts{

@@ -10,7 +10,6 @@ _Pragma("once");
 #include <windowsx.h>
 #pragma comment(lib, "dwmapi")
 #pragma comment(lib, "user32.lib")
-#endif
 
 class Win32Kit
 {
@@ -23,3 +22,4 @@ public:
 
     static auto scalingCorrection(const POINT& _point, const QWindow* _handle) noexcept -> QPoint;
 };
+#endif

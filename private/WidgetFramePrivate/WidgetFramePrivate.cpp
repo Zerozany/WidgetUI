@@ -18,6 +18,7 @@ auto WidgetFramePrivate::initWidgetFrame() noexcept -> void
     q->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
     /// @brief 设置界面最大尺寸
     q->setMaximumSize(QGuiApplication::primaryScreen()->availableGeometry().size());
+#ifdef Q_OS_WIN
     /// @brief 绑定窗口句柄
     HWND hwnd{(HWND)q->winId()};
     LONG style{::GetWindowLongW(hwnd, GWL_STYLE)};
@@ -26,6 +27,7 @@ auto WidgetFramePrivate::initWidgetFrame() noexcept -> void
     /// @brief 允许窗口调整大小
     /// @brief ...
     ::SetWindowLong(hwnd, GWL_STYLE, style | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_CAPTION | CS_DBLCLKS | WS_THICKFRAME);
+#endif
 }
 
 auto WidgetFramePrivate::initWidgetLayout() noexcept -> void

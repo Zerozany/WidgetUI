@@ -223,7 +223,9 @@ auto WidgetTitleBar::addTitleState(QWidget* _action) noexcept -> void
 /*              初始化固定逻辑              */
 auto WidgetTitleBar::initTitleBarHandle() noexcept -> void
 {
-    this->m_hwnd         = reinterpret_cast<HWND>(m_widget->winId());
+#ifdef Q_OS_WIN
+    this->m_hwnd = reinterpret_cast<HWND>(m_widget->winId());
+#endif
     this->m_configLoader = new ConfigLoader{TitleBarConfigName.data(), "Config", QCoreApplication::applicationDirPath(), this};
     this->setMouseTracking(true);
     this->setAttribute(Qt::WA_StyledBackground);
@@ -319,11 +321,13 @@ auto WidgetTitleBar::initTitleBarConfig() noexcept -> void
 
 auto WidgetTitleBar::setCursorType(const QPoint& _pos) noexcept -> void
 {
+#ifdef Q_OS_WIN
     if (::IsZoomed(m_hwnd))
     {
         m_resizeTag = false;
         return;
     }
+#endif
     // 判断是否在角落（使用更大的 CORNER_SIZE）
     const bool topLeft{(_pos.x() < CORNER_SIZE && _pos.y() < CORNER_SIZE)};
     const bool topRight{(_pos.x() > m_widget->width() - CORNER_SIZE && _pos.y() < CORNER_SIZE)};
@@ -410,6 +414,7 @@ auto WidgetTitleBar::connectSignalToSlot() noexcept -> void
 
 void WidgetTitleBar::onMousePressChanged(const QMouseEvent* _event) noexcept
 {
+#ifdef Q_OS_WIN
     /// @brief 窗口伸缩事件开启
     if ((_event->button() & Qt::LeftButton) && !::IsZoomed(m_hwnd) && m_cursorType != CursorType::None)
     {
@@ -417,6 +422,7 @@ void WidgetTitleBar::onMousePressChanged(const QMouseEvent* _event) noexcept
         g_startPoint    = _event->globalPos();
         g_startGeometry = m_widget->geometry();
     }
+#endif
 }
 
 void WidgetTitleBar::onMouseMoveChanged(const QMouseEvent* _event) noexcept
@@ -497,6 +503,7 @@ void WidgetTitleBar::onMouseDoubleChanged(const QMouseEvent* _event) noexcept
     /// @brief 窗口顶部底部双击伸缩事件
     if (_event->button() == Qt::LeftButton && (m_cursorType == CursorType::Top || m_cursorType == CursorType::Bottom))
     {
+#ifdef Q_OS_WIN
         HWND hwnd{reinterpret_cast<HWND>(m_widget->window()->winId())};
         // 获取鼠标全局位置
         const QPoint globalPos{_event->globalPos()};
@@ -504,6 +511,7 @@ void WidgetTitleBar::onMouseDoubleChanged(const QMouseEvent* _event) noexcept
         const LPARAM lParam{MAKELPARAM(globalPos.x(), globalPos.y())};
         // 双击窗口顶部边缘
         ::PostMessage(hwnd, WM_NCLBUTTONDBLCLK, HTTOP, lParam);
+#endif
         // 恢复鼠标至默认状态
         m_widget->setCursor(Qt::ArrowCursor);
     }
@@ -593,6 +601,7 @@ void WidgetTitleBar::onMinimizeClicked() noexcept
 
 void WidgetTitleBar::onMaximizeClicked() noexcept
 {
+#ifdef Q_OS_WIN
     if (::IsZoomed(this->m_hwnd))
     {
         m_titleBarButtons.at("maximize")->setIcon(m_titleBarIcons.value("maximizeIcon"));
@@ -603,6 +612,7 @@ void WidgetTitleBar::onMaximizeClicked() noexcept
         m_titleBarButtons.at("maximize")->setIcon(m_titleBarIcons.value("normalIcon"));
         ::ShowWindow(this->m_hwnd, SW_MAXIMIZE);
     }
+#endif
 }
 
 void WidgetTitleBar::onCloseClicked() noexcept
