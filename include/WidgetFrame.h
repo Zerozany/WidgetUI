@@ -2,15 +2,15 @@ _Pragma("once");
 #include <QWidget>
 
 #ifdef DLL_BUILD
-#define DLL_OUTTYPE Q_DECL_EXPORT
+#define DLL_BUILDTYPE Q_DECL_EXPORT
 #else
-#define DLL_OUTTYPE Q_DECL_IMPORT
+#define DLL_BUILDTYPE Q_DECL_IMPORT
 #endif
 
 class QVBoxLayout;
 class WidgetFramePrivate;
 
-class DLL_OUTTYPE WidgetFrame : public QWidget
+class DLL_BUILDTYPE WidgetFrame : public QWidget
 {
     Q_OBJECT
 public:
@@ -75,5 +75,6 @@ protected:
 
 private:
     Q_DECLARE_PRIVATE(WidgetFrame)
+    Q_DISABLE_COPY(WidgetFrame)
     WidgetFramePrivate* d_ptr{nullptr};
 };

@@ -23,11 +23,7 @@ qt_add_resources(${PROJECT_NAME} "Main"
 target_include_directories(${PROJECT_NAME}
     PRIVATE
     ${CMAKE_SOURCE_DIR}/include
-)
-
-target_compile_definitions(${PROJECT_NAME}
-    PRIVATE
-    DLL_BUILD
+    ${PROJECT_BINARY_DIR}
 )
 
 add_custom_target(${PROJECT_NAME}include ALL

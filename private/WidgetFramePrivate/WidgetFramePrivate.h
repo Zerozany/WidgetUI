@@ -13,8 +13,6 @@ class WidgetTitleBar;
 class WidgetFramePrivate : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PUBLIC(WidgetFrame)
-
 public:
     explicit(true) WidgetFramePrivate(WidgetFrame* _q, QObject* _parent = nullptr);
     ~WidgetFramePrivate() noexcept = default;
@@ -33,5 +31,6 @@ private:
     QWidget*     m_customerWidget{nullptr};
 
 private:
+    Q_DECLARE_PUBLIC(WidgetFrame)
     WidgetFrame* q_ptr{nullptr};
 };

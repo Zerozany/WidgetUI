@@ -29,6 +29,6 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE FALSE
+    MACOSX_BUNDLE "$<$<CONFIG:Release>:TRUE>$<$<NOT:$<CONFIG:Release>>:FALSE>"
+    WIN32_EXECUTABLE "$<$<CONFIG:Debug>:FALSE>$<$<NOT:$<CONFIG:Debug>>:TRUE>"
 )
