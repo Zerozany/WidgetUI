@@ -20,6 +20,12 @@ WidgetFrame::~WidgetFrame() noexcept
     delete d;
 }
 
+auto WidgetFrame::setTitleFlags(const char _flags) noexcept -> void
+{
+    Q_D(WidgetFrame);
+    d->m_titleBar->titleFlagChanged(_flags);
+}
+
 auto WidgetFrame::setMinimizeIcon(const QIcon& _icon) noexcept -> void
 {
     Q_D(WidgetFrame);

@@ -13,15 +13,15 @@ class WidgetFrame;
 class WidgetTitleBar : public QWidget
 {
     Q_OBJECT
-    Q_PROPERTY(QIcon minimizeIcon READ getMinimizeIcon WRITE setMinimizeIcon NOTIFY minimizeIconChanged);
-    Q_PROPERTY(QIcon maximizeIcon READ getMaximizeIcon WRITE setMaximizeIcon NOTIFY maximizeIconChanged);
-    Q_PROPERTY(QIcon normalIcon READ getNormalIcon WRITE setNormalIcon NOTIFY normalIconChanged);
-    Q_PROPERTY(QIcon closeIcon READ getCloseIcon WRITE setCloseIcon NOTIFY closeIconChanged);
-    Q_PROPERTY(QPixmap windowIcon READ getWindowIcon WRITE setWindowIcon NOTIFY windowIconChanged);
-    Q_PROPERTY(QString windowTitle READ getWindowTitle WRITE setWindowTitle NOTIFY windowTitleChanged);
-    Q_PROPERTY(QPushButton* maximizeBtn READ getMaximizeBtn);
-    Q_PROPERTY(QPushButton* minimizeBtn READ getMinimizeBtn);
-    Q_PROPERTY(QPushButton* closeBtn READ getCloseBtn);
+    Q_PROPERTY(QIcon minimizeIcon READ getMinimizeIcon WRITE setMinimizeIcon NOTIFY minimizeIconChanged)
+    Q_PROPERTY(QIcon maximizeIcon READ getMaximizeIcon WRITE setMaximizeIcon NOTIFY maximizeIconChanged)
+    Q_PROPERTY(QIcon normalIcon READ getNormalIcon WRITE setNormalIcon NOTIFY normalIconChanged)
+    Q_PROPERTY(QIcon closeIcon READ getCloseIcon WRITE setCloseIcon NOTIFY closeIconChanged)
+    Q_PROPERTY(QPixmap windowIcon READ getWindowIcon WRITE setWindowIcon NOTIFY windowIconChanged)
+    Q_PROPERTY(QString windowTitle READ getWindowTitle WRITE setWindowTitle NOTIFY windowTitleChanged)
+    Q_PROPERTY(QPushButton* maximizeBtn READ getMaximizeBtn)
+    Q_PROPERTY(QPushButton* minimizeBtn READ getMinimizeBtn)
+    Q_PROPERTY(QPushButton* closeBtn READ getCloseBtn)
 
 public:
     enum struct CursorType : std::uint8_t
@@ -44,7 +44,7 @@ public:
         TitleHint    = 0x02,
         MinimizeHint = 0x04,
         MaximizeHint = 0x08,
-        CloseHint    = 0x16
+        CloseHint    = 0x10
     };
     Q_ENUM(TitleFlags)
 
@@ -135,7 +135,7 @@ Q_SIGNALS:
 
     void mouseLeave(const bool _flag);
 
-    void titleFlagChanged(const TitleFlags& _flag);
+    void titleFlagChanged(const char _flag);
 
     void cursorTypeChanged();
 
@@ -150,7 +150,7 @@ private Q_SLOTS:
 
     void onMouseLeaveChanged(const bool _flag) noexcept;
 
-    void onTitleFlagChanged(const TitleFlags& _flag) noexcept;
+    void onTitleFlagChanged(const char _flag) noexcept;
 
     void onCursorTypeChanged() noexcept;
 

@@ -1,6 +1,8 @@
 #include "WidgetTitleBar.h"
 
+#ifdef Q_OS_WIN
 #include <windows.h>
+#endif
 
 #include <QApplication>
 #include <QDir>
@@ -15,7 +17,7 @@
 #include "StyleLoader.h"
 #include "WidgetFrame.h"
 
-constexpr const char* TitleBarConfigName{R"(TitleBarConfig.toml)"};
+constexpr static std::string_view TitleBarConfigName{"TitleBarConfig.toml"};
 
 constexpr static QSize        BUTTON_ICON_SIZE{15, 15};
 constexpr static std::uint8_t BUTTON_WIDTH{45};
@@ -36,8 +38,6 @@ WidgetTitleBar::WidgetTitleBar(WidgetFrame* _widget, QWidget* _parent) : QWidget
     std::invoke(&WidgetTitleBar::initTitleBarHandle, this);
     std::invoke(&WidgetTitleBar::initTitleBarLayout, this);
     std::invoke(&WidgetTitleBar::connectSignalToSlot, this);
-    /// @brief 暂无法对外开放
-    Q_EMIT titleFlagChanged(TitleFlags::IconHint | TitleFlags::TitleHint | TitleFlags::MinimizeHint | TitleFlags::MaximizeHint | TitleFlags::CloseHint);
 }
 
 /// @brief Q_PROPERTY
@@ -224,7 +224,7 @@ auto WidgetTitleBar::addTitleState(QWidget* _action) noexcept -> void
 auto WidgetTitleBar::initTitleBarHandle() noexcept -> void
 {
     this->m_hwnd         = reinterpret_cast<HWND>(m_widget->winId());
-    this->m_configLoader = new ConfigLoader{TitleBarConfigName, "Config", QCoreApplication::applicationDirPath(), this};
+    this->m_configLoader = new ConfigLoader{TitleBarConfigName.data(), "Config", QCoreApplication::applicationDirPath(), this};
     this->setMouseTracking(true);
     this->setAttribute(Qt::WA_StyledBackground);
     this->setFixedHeight(TITLEBAR_HEIGHT);
@@ -396,16 +396,16 @@ auto WidgetTitleBar::setCursorType(const QPoint& _pos) noexcept -> void
 
 auto WidgetTitleBar::connectSignalToSlot() noexcept -> void
 {
-    connect(m_titleBarButtons.at("minimize"), &QPushButton::clicked, this, &WidgetTitleBar::onMinimizeClicked);
-    connect(m_titleBarButtons.at("maximize"), &QPushButton::clicked, this, &WidgetTitleBar::onMaximizeClicked);
+    connect(m_titleBarButtons.at("minimize"), &QPushButton::clicked, this, &WidgetTitleBar::onMinimizeClicked, Qt::AutoConnection);
+    connect(m_titleBarButtons.at("maximize"), &QPushButton::clicked, this, &WidgetTitleBar::onMaximizeClicked, Qt::AutoConnection);
     connect(m_titleBarButtons.at("close"), &QPushButton::clicked, this, &WidgetTitleBar::onCloseClicked);
-    connect(this, &WidgetTitleBar::mousePress, this, &WidgetTitleBar::onMousePressChanged);
-    connect(this, &WidgetTitleBar::mouseMove, this, &WidgetTitleBar::onMouseMoveChanged);
-    connect(this, &WidgetTitleBar::mouseRelease, this, &WidgetTitleBar::onMouseReleaseChanged);
-    connect(this, &WidgetTitleBar::cursorTypeChanged, this, &WidgetTitleBar::onCursorTypeChanged);
-    connect(this, &WidgetTitleBar::mouseLeave, this, &WidgetTitleBar::onMouseLeaveChanged);
-    connect(this, &WidgetTitleBar::mouseDouble, this, &WidgetTitleBar::onMouseDoubleChanged);
-    connect(this, &WidgetTitleBar::titleFlagChanged, this, &WidgetTitleBar::onTitleFlagChanged);
+    connect(this, &WidgetTitleBar::mousePress, this, &WidgetTitleBar::onMousePressChanged, Qt::AutoConnection);
+    connect(this, &WidgetTitleBar::mouseMove, this, &WidgetTitleBar::onMouseMoveChanged, Qt::AutoConnection);
+    connect(this, &WidgetTitleBar::mouseRelease, this, &WidgetTitleBar::onMouseReleaseChanged, Qt::AutoConnection);
+    connect(this, &WidgetTitleBar::cursorTypeChanged, this, &WidgetTitleBar::onCursorTypeChanged, Qt::AutoConnection);
+    connect(this, &WidgetTitleBar::mouseLeave, this, &WidgetTitleBar::onMouseLeaveChanged, Qt::AutoConnection);
+    connect(this, &WidgetTitleBar::mouseDouble, this, &WidgetTitleBar::onMouseDoubleChanged, Qt::AutoConnection);
+    connect(this, &WidgetTitleBar::titleFlagChanged, this, &WidgetTitleBar::onTitleFlagChanged, Qt::AutoConnection);
 }
 
 void WidgetTitleBar::onMousePressChanged(const QMouseEvent* _event) noexcept
@@ -577,13 +577,13 @@ void WidgetTitleBar::onMouseLeaveChanged(const bool _flag) noexcept
     this->setAttribute(Qt::WA_TransparentForMouseEvents, _flag);
 }
 
-void WidgetTitleBar::onTitleFlagChanged(const TitleFlags& _flag) noexcept
+void WidgetTitleBar::onTitleFlagChanged(const char _flag) noexcept
 {
+    this->m_windowIcon->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::IconHint);
+    this->m_windowTitle->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::TitleHint);
     this->m_titleBarButtons.at("minimize")->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::MinimizeHint);
     this->m_titleBarButtons.at("maximize")->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::MaximizeHint);
     this->m_titleBarButtons.at("close")->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::CloseHint);
-    this->m_windowIcon->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::IconHint);
-    this->m_windowTitle->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::TitleHint);
 }
 
 void WidgetTitleBar::onMinimizeClicked() noexcept

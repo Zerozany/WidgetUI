@@ -22,16 +22,16 @@ auto Win32Kit::achieveRoundedCorners(const MSG* _msg) noexcept -> HRESULT
 {
     // 窗口的每一边都扩展 1 个像素
     constexpr MARGINS margins{1, 1, 1, 1};
-    HRESULT           hr{DwmExtendFrameIntoClientArea(_msg->hwnd, &margins)};
+    const HRESULT     hr{DwmExtendFrameIntoClientArea(_msg->hwnd, &margins)};
     return hr;
 }
 
 auto Win32Kit::coordinateMapping(const POINT& _point, const QWidget* _widget, const QWidget* _titleBar) noexcept -> QPoint
 {
     // 如果 Windows 设置了 150% 缩放，那么 dpr ≈ 1.5
-    double dpr{_widget->devicePixelRatioF()};
+    const double dpr{_widget->devicePixelRatioF()};
     // 将物理像素坐标（来自 WinAPI 鼠标事件）转换为 Qt 所需的逻辑像素坐标
-    QPoint pos{_titleBar->mapFromGlobal(QPoint(_point.x / dpr, _point.y / dpr))};
+    const QPoint pos{_titleBar->mapFromGlobal(QPoint(_point.x / dpr, _point.y / dpr))};
     return pos;
 }
 
