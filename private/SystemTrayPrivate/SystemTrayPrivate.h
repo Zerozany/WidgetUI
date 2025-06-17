@@ -1,9 +1,9 @@
 _Pragma("once");
 #include <QObject>
+#include <QSystemTrayIcon>
 
 class QAction;
 class QMenu;
-class QSystemTrayIcon;
 class SystemTray;
 class QWidget;
 
@@ -23,6 +23,11 @@ public:
 
 private:
     auto initSystemTray() noexcept -> void;
+
+    auto connectSignalToSlot() noexcept -> void;
+
+private Q_SLOTS:
+    void onTrayIconActivated(QSystemTrayIcon::ActivationReason _reason);
 
 private:
     QWidget*         m_parentWindow{nullptr};
