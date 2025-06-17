@@ -37,6 +37,8 @@ int main(int argc, char* argv[])
     // qDebug() << "Compiled on: " << __DATE__ << " at " << __TIME__;
     A          w{};
     SystemTray tray{&w};
+    tray.setTrayIcon(QIcon{":/resources/icon/close.png"});
+    tray.show();
     w.resize(960, 600);
     w.show();
     QApplication::exec();

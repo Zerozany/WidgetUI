@@ -1,5 +1,6 @@
 #include "SystemTrayPrivate.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QSystemTrayIcon>
 #include <QWidget>
@@ -8,15 +9,23 @@
 SystemTrayPrivate::SystemTrayPrivate(QWidget* _parentWindow, QObject* _parent)
     : QObject(_parent), m_parentWindow(_parentWindow)
 {
-    m_trayIcon = new QSystemTrayIcon{m_parentWindow};
-    m_trayMenu = new QMenu{};
-    std::invoke(&SystemTrayPrivate::setTrayIcon, this, QIcon{":/resources/icon/normal.png"});
     std::invoke(&SystemTrayPrivate::initSystemTray, this);
 }
 
 auto SystemTrayPrivate::setTrayIcon(const QIcon& _icon) noexcept -> void
 {
     m_trayIcon->setIcon(_icon);
+}
+
+auto SystemTrayPrivate::show() noexcept -> void
+{
+    m_trayIcon->show();
+}
+
+auto SystemTrayPrivate::addTrayAction(QAction* _action) noexcept -> void
+{
+    m_trayMenu->addAction(_action);
+    m_trayMenu->addSeparator();
 }
 
 auto SystemTrayPrivate::initSystemTray() noexcept -> void
@@ -31,16 +40,15 @@ auto SystemTrayPrivate::initSystemTray() noexcept -> void
 #endif
     if (!QSystemTrayIcon::isSystemTrayAvailable())
     {
-        qDebug() << "Error: The system does not support tray function";
+        qDebug() << "当前系统不支持托盘";
         return;
     }
-    m_trayActions.value("restore")->setText(tr("设置"));
-    m_trayActions.value("quit")->setText(tr("退出"));
-    for (const auto _actions : m_trayActions.toStdMap() | std::views::values)
+    if (!m_trayIcon->supportsMessages())
     {
-        m_trayMenu->addAction(_actions);
-        m_trayMenu->addSeparator();
+        qWarning() << "当前系统不支持托盘消息！";
     }
+    m_trayIcon = new QSystemTrayIcon{m_parentWindow};
+    m_trayMenu = new QMenu{};
     m_trayIcon->setContextMenu(m_trayMenu);
-    m_trayIcon->show();
+    // m_trayIcon->showMessage("提示", "程序已最小化到托盘！", QSystemTrayIcon::Information, 3000);
 }

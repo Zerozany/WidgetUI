@@ -12,3 +12,21 @@ SystemTray::~SystemTray() noexcept
     Q_D(SystemTray);
     delete d;
 }
+
+auto SystemTray::setTrayIcon(const QIcon& _icon) noexcept -> void
+{
+    Q_D(SystemTray);
+    d->setTrayIcon(_icon);
+}
+
+auto SystemTray::show() noexcept -> void
+{
+    Q_D(SystemTray);
+    d->show();
+}
+
+auto SystemTray::addTrayAction(QAction* _action) noexcept -> void
+{
+    Q_D(SystemTray);
+    d->addTrayAction(_action);
+}

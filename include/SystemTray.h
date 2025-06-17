@@ -8,6 +8,7 @@ _Pragma("once");
 #define DLL_BUILDTYPE Q_DECL_IMPORT
 #endif
 
+class QAction;
 class QWidget;
 class SystemTrayPrivate;
 
@@ -19,6 +20,12 @@ public:
     ~SystemTray() noexcept;
 
 public:
+    auto setTrayIcon(const QIcon& _icon) noexcept -> void;
+
+    auto show() noexcept -> void;
+
+    auto addTrayAction(QAction* _action) noexcept -> void;
+
 private:
     Q_DECLARE_PRIVATE(SystemTray)
     Q_DISABLE_COPY(SystemTray)

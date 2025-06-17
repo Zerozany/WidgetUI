@@ -1,8 +1,7 @@
 _Pragma("once");
-#include <QAction>
-#include <QApplication>
 #include <QObject>
 
+class QAction;
 class QMenu;
 class QSystemTrayIcon;
 class SystemTray;
@@ -16,7 +15,11 @@ public:
     ~SystemTrayPrivate() noexcept = default;
 
 public:
-    auto setTrayIcon(const QIcon& _icon = QApplication::windowIcon()) noexcept -> void;
+    auto setTrayIcon(const QIcon& _icon) noexcept -> void;
+
+    auto show() noexcept -> void;
+
+    auto addTrayAction(QAction* _action) noexcept -> void;
 
 private:
     auto initSystemTray() noexcept -> void;
@@ -25,11 +28,6 @@ private:
     QWidget*         m_parentWindow{nullptr};
     QSystemTrayIcon* m_trayIcon{nullptr};
     QMenu*           m_trayMenu{nullptr};
-
-    QMap<QString, QAction*> m_trayActions{
-        {"restore", new QAction{}},
-        {"quit", new QAction{}},
-    };
 
 private:
     Q_DECLARE_PUBLIC(SystemTray)
