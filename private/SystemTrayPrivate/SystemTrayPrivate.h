@@ -2,8 +2,6 @@ _Pragma("once");
 #include <QObject>
 #include <QSystemTrayIcon>
 
-class QAction;
-class QMenu;
 class SystemTray;
 class QWidget;
 
@@ -19,8 +17,6 @@ public:
 
     auto show() noexcept -> void;
 
-    auto addTrayAction(QAction* _action) noexcept -> void;
-
 private:
     auto initSystemTray() noexcept -> void;
 
@@ -32,7 +28,6 @@ private Q_SLOTS:
 private:
     QWidget*         m_parentWindow{nullptr};
     QSystemTrayIcon* m_trayIcon{nullptr};
-    QMenu*           m_trayMenu{nullptr};
 
 private:
     Q_DECLARE_PUBLIC(SystemTray)

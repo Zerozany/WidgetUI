@@ -5,9 +5,9 @@ _Pragma("once");
 class ConfigLoader : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString configDirPath READ getConfigDirPath WRITE setConfigDirPath NOTIFY configDirPathChanged);
-    Q_PROPERTY(QString configFilePath READ getConfigFilePath WRITE setConfigFilePath NOTIFY configFilePathChanged);
-    Q_PROPERTY(QString configDirFilePath READ getConfigDirFilePath WRITE setConfigDirFilePath NOTIFY configDirFilePathChanged);
+    Q_PROPERTY(QString configDirPath READ getConfigDirPath WRITE setConfigDirPath NOTIFY configDirPathChanged)
+    Q_PROPERTY(QString configFilePath READ getConfigFilePath WRITE setConfigFilePath NOTIFY configFilePathChanged)
+    Q_PROPERTY(QString configDirFilePath READ getConfigDirFilePath WRITE setConfigDirFilePath NOTIFY configDirFilePathChanged)
 
 public:
     explicit(true) ConfigLoader(const QString& _file, const QString& _dir, const QString& _exePath = QString{}, QObject* _parent = nullptr);

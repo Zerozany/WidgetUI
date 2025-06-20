@@ -38,7 +38,6 @@ int main(int argc, char* argv[])
     A          w{};
     SystemTray tray{&w};
     tray.setTrayIcon(QIcon{":/resources/icon/close.png"});
-    tray.addTrayAction(new QAction{"quit"});
     tray.show();
     w.resize(960, 600);
     w.show();

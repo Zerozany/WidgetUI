@@ -24,9 +24,3 @@ auto SystemTray::show() noexcept -> void
     Q_D(SystemTray);
     d->show();
 }
-
-auto SystemTray::addTrayAction(QAction* _action) noexcept -> void
-{
-    Q_D(SystemTray);
-    d->addTrayAction(_action);
-}

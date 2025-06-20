@@ -256,20 +256,18 @@ auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
         __btn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     }
 
-    for (const auto& __layout : m_titleBarLayouts | std::views::values)
-    {
-        __layout->setContentsMargins(10, 0, 0, 0);
-        __layout->setSpacing(0);
-    }
-
     m_windowIcon->setFixedHeight(TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2));
     m_windowTitle->setFixedHeight(TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2));
     m_windowIcon->setPixmap(QApplication::style()->standardIcon(QStyle::SP_ComputerIcon).pixmap(TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2), TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2)));
     m_windowTitle->setText(QApplication::applicationName());
     m_windowIcon->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     m_windowTitle->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-
     m_titleBarLayouts.at("titleActionLayout")->setSpacing(10);
+    m_titleBarLayouts.at("titleStateLayout")->setSpacing(0);
+    m_titleBarLayouts.at("titleActionLayout")->setContentsMargins(5, 0, 0, 0);
+    m_titleBarLayouts.at("titleStateLayout")->setContentsMargins(0, 0, 0, 0);
+    m_titleBarLayouts.at("titleBarLayout")->setContentsMargins(0, 0, 0, 0);
+
     m_titleBarLayouts.at("titleActionLayout")->addWidget(m_windowIcon);
     m_titleBarLayouts.at("titleActionLayout")->addWidget(m_windowTitle);
 

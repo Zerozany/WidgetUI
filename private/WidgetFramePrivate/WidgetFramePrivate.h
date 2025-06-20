@@ -17,6 +17,9 @@ public:
     explicit(true) WidgetFramePrivate(WidgetFrame* _q, QObject* _parent = nullptr);
     ~WidgetFramePrivate() noexcept = default;
 
+public:
+    auto winNativeEvent(const QByteArray& _eventType, void* _message, qintptr* _result) noexcept -> bool;
+
 private:
     auto initWidgetFrame() noexcept -> void;
 
