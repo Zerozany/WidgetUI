@@ -39,14 +39,25 @@ auto Win32Kit::coordinateMapping(const POINT& _point, const QWidget* _widget, co
 
 auto Win32Kit::scalingCorrection(const POINT& _point, const QWindow* _handle) noexcept -> QPoint
 {
-    QPoint globalPos(_point.x, _point.y);
-    // DPI 缩放校正
-    if (_handle && _handle->screen())
+    if (QPoint globalPos{_point.x, _point.y}; _handle && _handle->screen())
     {
         QPoint offset{_handle->screen()->geometry().topLeft()};
         globalPos = (globalPos - offset) / _handle->screen()->devicePixelRatio() + offset;
+        return globalPos;
     }
-    return globalPos;
+    return QPoint{};
+}
+
+auto Win32Kit::modifyWinStyle(QWidget* _widget) noexcept -> void
+{
+    /// @brief 绑定窗口句柄
+    HWND hwnd{(HWND)_widget->winId()};
+    LONG style{::GetWindowLongW(hwnd, GWL_STYLE)};
+    /// @brief 启用最大化按钮
+    /// @brief 显示标题栏
+    /// @brief 允许窗口调整大小
+    /// @brief ...
+    ::SetWindowLong(hwnd, GWL_STYLE, style | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_CAPTION | CS_DBLCLKS | WS_THICKFRAME);
 }
 
 #endif

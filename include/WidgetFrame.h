@@ -63,6 +63,9 @@ public:
     /// @brief 添加窗口状态控件
     auto addTitleState(QWidget* _action) noexcept -> void;
 
+    /// @brief 设置标题栏CSS风格
+    auto setTitleBarStyleSheet(const QString& _styleStr) noexcept -> void;
+
 protected:
     bool nativeEvent(const QByteArray& _eventType, void* _message, qintptr* _result) override;
 

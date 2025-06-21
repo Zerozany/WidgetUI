@@ -6,6 +6,10 @@ _Pragma("once");
 #include <QWidget>
 #include <map>
 
+#ifdef Q_OS_WIN
+#include "Win32Kit.h"
+#endif
+
 #include "ConfigLoader.h"
 
 class WidgetFrame;
@@ -74,7 +78,7 @@ public:
     auto setWindowTitle(const QString& _title) noexcept -> void;
 
 public:
-    /// @brief 主框架nativeEvent调用函数
+    /// @brief 主框架QWidget调用函数
     auto getMaximizeBtn() const noexcept -> QPushButton*;
 
     auto getMinimizeBtn() const noexcept -> QPushButton*;
@@ -88,6 +92,8 @@ public:
     auto addTitleAction(QWidget* _action) noexcept -> void;
 
     auto addTitleState(QWidget* _action) noexcept -> void;
+
+    auto setTitleBarStyleSheet(const QString& _styleStr) noexcept -> void;
 
 private:
     auto initTitleBarConfig() noexcept -> void;

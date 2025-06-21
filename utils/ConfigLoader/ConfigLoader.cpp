@@ -6,10 +6,10 @@
 
 #include "toml.hpp"
 
-ConfigLoader::ConfigLoader(const QString& _file, const QString& _dir, const QString& _exePath, QObject* _parent) : QObject{_parent}
+ConfigLoader::ConfigLoader(const QString& _file, const QString& _dir, const QString& _exePath, QObject* _parent)
+    : QObject{_parent}, m_fileName{_file}
 {
     std::invoke(&spdlog::set_level, spdlog::level::debug);
-    std::invoke(&ConfigLoader::setConfigFilePath, this, _file);
     std::invoke(&ConfigLoader::setConfigDirPath, this, _dir, _exePath);
     std::invoke(&ConfigLoader::setConfigDirFilePath, this, QString{});
 }
@@ -35,36 +35,18 @@ auto ConfigLoader::setConfigDirPath(const QString& _dir, const QString& _exePath
             break;
         }
         QDir configDir{_dir};
-        if (!configDir.exists())
+        if (configDir.exists())
         {
-            if (!configDir.mkpath(_dir))
-            {
-                spdlog::warn("Directory creation failed:{}", _dir.toStdString());
-                break;
-            }
+            break;
+        }
+        if (!configDir.mkpath(_dir))
+        {
+            spdlog::warn("Directory creation failed:{}", _dir.toStdString());
+            break;
         }
         m_configDirPath = _dir;
     } while (false);
     Q_EMIT configDirPathChanged();
-}
-
-auto ConfigLoader::getConfigFilePath() const noexcept -> QString
-{
-    return this->m_configFilePath;
-}
-
-auto ConfigLoader::setConfigFilePath(const QString& _file) noexcept -> void
-{
-    QDir dir{m_configDirPath};
-    if (!QFile::exists(dir.filePath(_file)))
-    {
-        if (QFile configFile{dir.filePath(_file)}; configFile.open(QIODevice::WriteOnly))
-        {
-            configFile.close();
-        }
-    }
-    m_configFilePath = dir.filePath(_file);
-    Q_EMIT this->configFilePathChanged();
 }
 
 auto ConfigLoader::getConfigDirFilePath() const noexcept -> QString
@@ -84,7 +66,7 @@ auto ConfigLoader::setConfigDirFilePath(const QString& _dirFile) noexcept -> voi
                 break;
             }
         }
-        m_configDirFilePath = m_configDirPath + R"(/)" + m_configFilePath;
+        m_configDirFilePath = m_configDirPath + R"(/)" + m_fileName;
     } while (false);
     Q_EMIT this->configDirFilePathChanged();
 }

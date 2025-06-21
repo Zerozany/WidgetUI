@@ -83,6 +83,12 @@ auto WidgetFrame::addTitleState(QWidget* _action) noexcept -> void
     d->m_titleBar->addTitleState(_action);
 }
 
+auto WidgetFrame::setTitleBarStyleSheet(const QString& _styleStr) noexcept -> void
+{
+    Q_D(WidgetFrame);
+    d->m_titleBar->setTitleBarStyleSheet(_styleStr);
+}
+
 bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qintptr* _result)
 {
     Q_D(WidgetFrame);
@@ -146,7 +152,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             /// @brief 判断鼠标是否悬停在最大化按钮上, win11触发snap layout
             if (child == d->m_titleBar->getMaximizeBtn())
             {
-                // DPI 缩放校正
+                // 坐标转换
                 const QPoint globalPos{Win32Kit::scalingCorrection(mouse, this->window()->windowHandle())};
                 // 转化为最大化按钮的局部坐标
                 const QPoint localPos{Win32Kit::coordinateMapping(mouse, this, d->m_titleBar->getMaximizeBtn())};
@@ -250,7 +256,6 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             }
             break;
         }
-
         case WM_LBUTTONDBLCLK:  // 鼠标左键双击（客户区）
         {
             [[fallthrough]];

@@ -1,9 +1,5 @@
 #include "WidgetTitleBar.h"
 
-#ifdef Q_OS_WIN
-#include <windows.h>
-#endif
-
 #include <QApplication>
 #include <QDir>
 #include <QFile>
@@ -210,14 +206,30 @@ auto WidgetTitleBar::setWindowCursor(const QPixmap& _arrow, const QPixmap& _size
 
 auto WidgetTitleBar::addTitleAction(QWidget* _action) noexcept -> void
 {
+    if (!_action)
+    {
+        return;
+    }
     _action->setFixedHeight(TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2));
     m_titleBarLayouts.at("titleActionLayout")->addWidget(_action);
 }
 
 auto WidgetTitleBar::addTitleState(QWidget* _action) noexcept -> void
 {
+    if (!_action)
+    {
+        return;
+    }
     _action->setFixedHeight(TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2));
     m_titleBarLayouts.at("titleStateLayout")->addWidget(_action);
+}
+
+auto WidgetTitleBar::setTitleBarStyleSheet(const QString& _styleStr) noexcept -> void
+{
+    if (!_styleStr.isEmpty())
+    {
+        this->setStyleSheet(_styleStr);
+    }
 }
 
 /*              初始化固定逻辑              */
@@ -267,11 +279,11 @@ auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
     m_titleBarLayouts.at("titleActionLayout")->setContentsMargins(5, 0, 0, 0);
     m_titleBarLayouts.at("titleStateLayout")->setContentsMargins(0, 0, 0, 0);
     m_titleBarLayouts.at("titleBarLayout")->setContentsMargins(0, 0, 0, 0);
+    m_titleBarLayouts.at("titleStateLayout")->setDirection(QBoxLayout::RightToLeft);
 
     m_titleBarLayouts.at("titleActionLayout")->addWidget(m_windowIcon);
     m_titleBarLayouts.at("titleActionLayout")->addWidget(m_windowTitle);
 
-    m_titleBarLayouts.at("titleStateLayout")->setDirection(QBoxLayout::RightToLeft);
     m_titleBarLayouts.at("titleStateLayout")->addWidget(m_titleBarButtons.at("close"));
     m_titleBarLayouts.at("titleStateLayout")->addWidget(m_titleBarButtons.at("maximize"));
     m_titleBarLayouts.at("titleStateLayout")->addWidget(m_titleBarButtons.at("minimize"));
@@ -298,21 +310,18 @@ auto WidgetTitleBar::initTitleBarConfig() noexcept -> void
         Q_UNUSED(configDir.mkpath("."));
     }
     QFile configFile{QStringLiteral("./config/") + QString::fromUtf8(TitleBarConfigName)};
-    bool  hasContent{};
-    if (configFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    if (bool hasContent{}; configFile.open(QIODevice::ReadWrite | QIODevice::Text))
     {
         QTextStream stream{&configFile};
         hasContent = stream.readLine().trimmed().isEmpty();
-        configFile.close();
-    }
-    if (hasContent)
-    {
-        return;
-    }
-    if (configFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QTextStream wstream{&configFile};
-        wstream << TitleBarConfigText;
+        if (!hasContent)
+        {
+            configFile.close();
+            return;
+        }
+        stream.setEncoding(QStringConverter::Utf8);
+        stream << TitleBarConfigText;
+        stream.flush();
         configFile.close();
     }
 }
@@ -502,13 +511,12 @@ void WidgetTitleBar::onMouseDoubleChanged(const QMouseEvent* _event) noexcept
     if (_event->button() == Qt::LeftButton && (m_cursorType == CursorType::Top || m_cursorType == CursorType::Bottom))
     {
 #ifdef Q_OS_WIN
-        HWND hwnd{reinterpret_cast<HWND>(m_widget->window()->winId())};
         // 获取鼠标全局位置
         const QPoint globalPos{_event->globalPos()};
         // 转换为 Win32 坐标
         const LPARAM lParam{MAKELPARAM(globalPos.x(), globalPos.y())};
         // 双击窗口顶部边缘
-        ::PostMessage(hwnd, WM_NCLBUTTONDBLCLK, HTTOP, lParam);
+        ::PostMessage(m_hwnd, WM_NCLBUTTONDBLCLK, HTTOP, lParam);
 #endif
         // 恢复鼠标至默认状态
         m_widget->setCursor(Qt::ArrowCursor);
@@ -585,11 +593,11 @@ void WidgetTitleBar::onMouseLeaveChanged(const bool _flag) noexcept
 
 void WidgetTitleBar::onTitleFlagChanged(const char _flag) noexcept
 {
-    this->m_windowIcon->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::IconHint);
-    this->m_windowTitle->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::TitleHint);
-    this->m_titleBarButtons.at("minimize")->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::MinimizeHint);
-    this->m_titleBarButtons.at("maximize")->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::MaximizeHint);
-    this->m_titleBarButtons.at("close")->setVisible(static_cast<TitleFlags>(_flag) & TitleFlags::CloseHint);
+    this->m_windowIcon->setVisible(_flag & TitleFlags::IconHint);
+    this->m_windowTitle->setVisible(_flag & TitleFlags::TitleHint);
+    this->m_titleBarButtons.at("minimize")->setVisible(_flag & TitleFlags::MinimizeHint);
+    this->m_titleBarButtons.at("maximize")->setVisible(_flag & TitleFlags::MaximizeHint);
+    this->m_titleBarButtons.at("close")->setVisible(_flag & TitleFlags::CloseHint);
 }
 
 void WidgetTitleBar::onMinimizeClicked() noexcept
