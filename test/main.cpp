@@ -11,7 +11,7 @@ public:
     explicit(true) A(WidgetFrame* _parent = nullptr) : WidgetFrame{_parent}
     {
 #if 0
-        this->setTitleFlags(WidgetFrame::TitleBarFlags::CloseHint | WidgetFrame::TitleBarFlags::IconHint);
+        this->setTitleFlags(TitleBarFlags::CloseHint | TitleBarFlags::IconHint);
         initBtn();
         QPushButton* btn  = new QPushButton{"XXXXX", this};
         QPushButton* btn1 = new QPushButton{"WWWww", this};

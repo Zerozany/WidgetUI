@@ -24,6 +24,7 @@ public:
     };
     Q_DECLARE_FLAGS(TitleBarFlag, TitleBarFlags)
     Q_FLAGS(TitleBarFlags)
+
 public:
     explicit(true) WidgetFrame(QWidget* _parent = nullptr);
     virtual ~WidgetFrame() noexcept;
@@ -50,7 +51,7 @@ public:
     /// @brief 设置窗口标题
     auto setWindowTitle(const QString& _title) noexcept -> void;
 
-    /// @brief 设置窗口光标
+    /// @brief 设置窗口伸缩光标样式
     auto setWindowCursor(const QPixmap& _arrow, const QPixmap& _sizeVer, const QPixmap& _sizeHor, const QPixmap& _sizeFDiag, const QPixmap& _sizeBDiag) noexcept -> void;
 
     /// @brief 获取窗口客户区父布局

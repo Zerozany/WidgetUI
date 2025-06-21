@@ -38,7 +38,7 @@ public:
     };
     Q_ENUM(CursorType)
 
-    enum struct TitleFlags : std::uint8_t
+    enum TitleFlags : std::uint8_t
     {
         IconHint     = 0x01,
         TitleHint    = 0x02,
@@ -46,18 +46,8 @@ public:
         MaximizeHint = 0x08,
         CloseHint    = 0x10
     };
-    Q_ENUM(TitleFlags)
-
-public:
-    friend inline TitleFlags operator|(const TitleFlags& _ltf, const TitleFlags& _rtf)
-    {
-        return static_cast<TitleFlags>(static_cast<std::uint8_t>(_ltf) | static_cast<std::uint8_t>(_rtf));
-    }
-
-    friend inline bool operator&(const TitleFlags& _ltf, const TitleFlags& _rtf)
-    {
-        return static_cast<std::underlying_type_t<TitleFlags>>(static_cast<std::uint8_t>(_ltf) & static_cast<std::underlying_type_t<TitleFlags>>(_rtf));
-    }
+    Q_DECLARE_FLAGS(TitleFlag, TitleFlags)
+    Q_FLAGS(TitleFlags)
 
 public:
     explicit(true) WidgetTitleBar(WidgetFrame* _widget, QWidget* _parent = nullptr);
