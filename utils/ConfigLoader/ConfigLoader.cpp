@@ -66,7 +66,7 @@ auto ConfigLoader::setConfigDirFilePath(const QString& _dirFile) noexcept -> voi
                 break;
             }
         }
-        m_configDirFilePath = m_configDirPath + R"(/)" + m_fileName;
+        m_configDirFilePath = m_configDirPath + QDir::separator() + m_fileName;
     } while (false);
     Q_EMIT this->configDirFilePathChanged();
 }

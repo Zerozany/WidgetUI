@@ -67,8 +67,6 @@ public:
     auto setTitleBarStyleSheet(const QString& _styleStr) noexcept -> void;
 
 protected:
-    bool nativeEvent(const QByteArray& _eventType, void* _message, qintptr* _result) override;
-
     void mousePressEvent(QMouseEvent* _event) override;
 
     void mouseMoveEvent(QMouseEvent* _event) override;
@@ -76,6 +74,8 @@ protected:
     void mouseReleaseEvent(QMouseEvent* _event) override;
 
     void mouseDoubleClickEvent(QMouseEvent* _event) override;
+
+    bool nativeEvent(const QByteArray& _eventType, void* _message, qintptr* _result) override;
 
 private:
     Q_DECLARE_PRIVATE(WidgetFrame)

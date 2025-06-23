@@ -195,4 +195,11 @@ private:
         {"sizeFDiag", Qt::SizeFDiagCursor},
         {"sizeBDiag", Qt::SizeBDiagCursor},
     };
+
+    QMap<QString, QString> m_btnToolTips{
+        {"minimizeTip", "最小化"},
+        {"maximizeTip", "最大化"},
+        {"normalTip", "恢复"},
+        {"closeTip", "关闭"},
+    };
 };
