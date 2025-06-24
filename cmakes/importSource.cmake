@@ -6,7 +6,7 @@ file(GLOB SOURCE_FILES
 file(GLOB RESOURCES_LIST
     RELATIVE ${CMAKE_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/resources/css/*.css
-    ${CMAKE_SOURCE_DIR}/resources/icon/*.png
+    ${CMAKE_SOURCE_DIR}/resources/icon/**/*.png
 )
 
 target_sources(${PROJECT_NAME}

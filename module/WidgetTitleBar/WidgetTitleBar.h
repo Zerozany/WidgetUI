@@ -185,10 +185,10 @@ private:
     };
 
     QMap<QString, QIcon> m_titleBarIcons{
-        {"minimizeIcon", QIcon{":/resources/icon/minimize.png"}},
-        {"maximizeIcon", QIcon{":/resources/icon/maximize.png"}},
-        {"normalIcon", QIcon{":/resources/icon/normal.png"}},
-        {"closeIcon", QIcon{":/resources/icon/close.png"}},
+        {"minimizeIcon", QIcon{":/resources/icon/TitleBarIcons/minimize.png"}},
+        {"maximizeIcon", QIcon{":/resources/icon/TitleBarIcons/maximize.png"}},
+        {"normalIcon", QIcon{":/resources/icon/TitleBarIcons/normal.png"}},
+        {"closeIcon", QIcon{":/resources/icon/TitleBarIcons/close.png"}},
     };
 
     QMap<QString, QCursor> m_cursorCursors{

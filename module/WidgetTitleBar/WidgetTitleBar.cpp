@@ -15,10 +15,7 @@
 
 constexpr static QSize        BUTTON_ICON_SIZE{15, 15};
 constexpr static std::uint8_t BUTTON_WIDTH{45};
-constexpr static std::uint8_t BORDER_TOP_SIZE{5};
-constexpr static std::uint8_t BORDER_BOTTOM_SIZE{5};
-constexpr static std::uint8_t BORDER_RIGHT_SIZE{5};
-constexpr static std::uint8_t BORDER_LEFT_SIZE{5};
+constexpr static std::uint8_t BORDER_SIZE{5};
 constexpr static std::uint8_t CORNER_SIZE{8};
 constexpr static std::uint8_t TITLEBAR_HEIGHT{35};
 
@@ -207,7 +204,7 @@ auto WidgetTitleBar::addTitleAction(QWidget* _action) noexcept -> void
     {
         return;
     }
-    _action->setFixedHeight(TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2));
+    _action->setFixedHeight(TITLEBAR_HEIGHT - (BORDER_SIZE * 2));
     m_titleBarLayouts.at("titleActionLayout")->addWidget(_action);
 }
 
@@ -217,7 +214,7 @@ auto WidgetTitleBar::addTitleState(QWidget* _action) noexcept -> void
     {
         return;
     }
-    _action->setFixedHeight(TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2));
+    _action->setFixedHeight(TITLEBAR_HEIGHT - (BORDER_SIZE * 2));
     m_titleBarLayouts.at("titleStateLayout")->addWidget(_action);
 }
 
@@ -279,9 +276,9 @@ auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
         __btn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     }
 
-    m_windowIcon->setFixedHeight(TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2));
-    m_windowTitle->setFixedHeight(TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2));
-    m_windowIcon->setPixmap(QApplication::style()->standardIcon(QStyle::SP_ComputerIcon).pixmap(TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2), TITLEBAR_HEIGHT - (BORDER_TOP_SIZE * 2)));
+    m_windowIcon->setFixedHeight(TITLEBAR_HEIGHT - (BORDER_SIZE * 2));
+    m_windowTitle->setFixedHeight(TITLEBAR_HEIGHT - (BORDER_SIZE * 2));
+    m_windowIcon->setPixmap(QApplication::style()->standardIcon(QStyle::SP_ComputerIcon).pixmap(TITLEBAR_HEIGHT - (BORDER_SIZE * 2), TITLEBAR_HEIGHT - (BORDER_SIZE * 2)));
     m_windowTitle->setText(QApplication::applicationName());
     m_windowIcon->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     m_windowTitle->setAttribute(Qt::WA_TransparentForMouseEvents, true);
@@ -319,10 +316,10 @@ auto WidgetTitleBar::setCursorType(const QPoint& _pos) noexcept -> void
     const bool bottomLeft{(_pos.x() < CORNER_SIZE && _pos.y() > m_widget->height() - CORNER_SIZE)};
     const bool bottomRight{(_pos.x() > m_widget->width() - CORNER_SIZE && _pos.y() > m_widget->height() - CORNER_SIZE)};
     // 判断是否在边缘（使用较小的 BORDER_*_WIDTH）
-    const bool left{(_pos.x() < BORDER_LEFT_SIZE) && !topLeft && !bottomLeft};
-    const bool right{(_pos.x() > m_widget->width() - BORDER_RIGHT_SIZE) && !topRight && !bottomRight};
-    const bool top{(_pos.y() < BORDER_TOP_SIZE) && !topLeft && !topRight};
-    const bool bottom{(_pos.y() > m_widget->height() - BORDER_BOTTOM_SIZE) && !bottomLeft && !bottomRight};
+    const bool left{(_pos.x() < BORDER_SIZE) && !topLeft && !bottomLeft};
+    const bool right{(_pos.x() > m_widget->width() - BORDER_SIZE) && !topRight && !bottomRight};
+    const bool top{(_pos.y() < BORDER_SIZE) && !topLeft && !topRight};
+    const bool bottom{(_pos.y() > m_widget->height() - BORDER_SIZE) && !bottomLeft && !bottomRight};
     CursorType tmp{};
     if (topLeft)
     {
