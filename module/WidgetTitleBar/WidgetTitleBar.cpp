@@ -13,8 +13,6 @@
 #include "StyleLoader.h"
 #include "WidgetFrame.h"
 
-constexpr static std::string_view TitleBarConfigName{"TitleBarConfig.toml"};
-
 constexpr static QSize        BUTTON_ICON_SIZE{15, 15};
 constexpr static std::uint8_t BUTTON_WIDTH{45};
 constexpr static std::uint8_t BORDER_TOP_SIZE{5};
@@ -30,7 +28,6 @@ constinit static bool   g_resizing{false}; /*窗口伸缩句柄*/
 
 WidgetTitleBar::WidgetTitleBar(WidgetFrame* _widget, QWidget* _parent) : QWidget{_parent}, m_widget{_widget}
 {
-    std::invoke(&WidgetTitleBar::initTitleBarConfig, this);
     std::invoke(&WidgetTitleBar::initTitleBarHandle, this);
     std::invoke(&WidgetTitleBar::initTitleBarLayout, this);
     std::invoke(&WidgetTitleBar::connectSignalToSlot, this);
@@ -232,17 +229,31 @@ auto WidgetTitleBar::setTitleBarStyleSheet(const QString& _styleStr) noexcept ->
     }
 }
 
+auto WidgetTitleBar::setMinBtnProperty(const char* _proPertyName, const QString& _minProperty) noexcept -> void
+{
+    m_titleBarButtons.at("minimize")->setProperty(_proPertyName, _minProperty);
+}
+
+auto WidgetTitleBar::setMaxBtnProperty(const char* _proPertyName, const QString& _maxProperty) noexcept -> void
+{
+    m_titleBarButtons.at("maximize")->setProperty(_proPertyName, _maxProperty);
+}
+
+auto WidgetTitleBar::setcloseBtnProperty(const char* _proPertyName, const QString& _closeProperty) noexcept -> void
+{
+    m_titleBarButtons.at("close")->setProperty(_proPertyName, _closeProperty);
+}
+
 /*              初始化固定逻辑              */
 auto WidgetTitleBar::initTitleBarHandle() noexcept -> void
 {
 #ifdef Q_OS_WIN
     this->m_hwnd = reinterpret_cast<HWND>(m_widget->winId());
 #endif
-    this->m_configLoader = new ConfigLoader{TitleBarConfigName.data(), "Config", QCoreApplication::applicationDirPath(), this};
     this->setMouseTracking(true);
     this->setAttribute(Qt::WA_StyledBackground);
     this->setFixedHeight(TITLEBAR_HEIGHT);
-    this->setStyleSheet(StyleLoader::loadFromFile(m_configLoader->loadFromFile("TitleBarStyleCss", "TitleBarStyle")));
+    this->setStyleSheet(StyleLoader::loadFromFile(":/resources/css/WidgetTitleBar.css"));
 }
 
 auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
@@ -254,9 +265,9 @@ auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
     };
 
     std::set<QString> __titleBarProperty{
-        m_configLoader->loadFromFile("minimize", "TitleBarButtonProperty"),
-        m_configLoader->loadFromFile("maximize", "TitleBarButtonProperty"),
-        m_configLoader->loadFromFile("close", "TitleBarButtonProperty"),
+        "min",
+        "max",
+        "close",
     };
 
     for (const auto& [__btn, __icon, __property] : std::views::zip(m_titleBarButtons | std::views::values, __titleBarIcons, __titleBarProperty))
@@ -291,39 +302,6 @@ auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
     m_titleBarLayouts.at("titleBarLayout")->addLayout(m_titleBarLayouts.at("titleActionLayout"));
     m_titleBarLayouts.at("titleBarLayout")->addStretch();
     m_titleBarLayouts.at("titleBarLayout")->addLayout(m_titleBarLayouts.at("titleStateLayout"));
-}
-
-auto WidgetTitleBar::initTitleBarConfig() noexcept -> void
-{
-    constexpr const char* TitleBarConfigText{
-        "[TitleBarStyle]\n"
-        "TitleBarStyleCss = \":/resources/css/WidgetTitleBar.css\"\n"
-        "\n"
-        "[TitleBarButtonProperty]\n"
-        "minimize = \"min\"\n"
-        "maximize = \"max\"\n"
-        "close = \"close\"\n",
-    };
-
-    if (QDir configDir{"./config"}; !configDir.exists())
-    {
-        Q_UNUSED(configDir.mkpath("."));
-    }
-    QFile configFile{QStringLiteral("./config/") + QString::fromUtf8(TitleBarConfigName)};
-    if (bool hasContent{}; configFile.open(QIODevice::ReadWrite | QIODevice::Text))
-    {
-        QTextStream stream{&configFile};
-        hasContent = stream.readLine().trimmed().isEmpty();
-        if (!hasContent)
-        {
-            configFile.close();
-            return;
-        }
-        stream.setEncoding(QStringConverter::Utf8);
-        stream << TitleBarConfigText;
-        stream.flush();
-        configFile.close();
-    }
 }
 
 auto WidgetTitleBar::setCursorType(const QPoint& _pos) noexcept -> void

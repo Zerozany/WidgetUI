@@ -66,6 +66,15 @@ public:
     /// @brief 设置标题栏CSS风格
     auto setTitleBarStyleSheet(const QString& _styleStr) noexcept -> void;
 
+    /// @brief 最小化按钮添加属性
+    auto setMinBtnProperty(const char* _proPertyName, const QString& _minProperty) noexcept -> void;
+
+    /// @brief 最大化按钮添加属性
+    auto setMaxBtnProperty(const char* _proPertyName, const QString& _maxProperty) noexcept -> void;
+
+    /// @brief 关闭窗口按钮添加属性
+    auto setcloseBtnProperty(const char* _proPertyName, const QString& _closeProperty) noexcept -> void;
+
 protected:
     void mousePressEvent(QMouseEvent* _event) override;
 

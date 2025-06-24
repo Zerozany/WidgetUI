@@ -10,8 +10,6 @@ _Pragma("once");
 #include "Win32Kit.h"
 #endif
 
-#include "ConfigLoader.h"
-
 class WidgetFrame;
 
 class WidgetTitleBar : public QWidget
@@ -78,7 +76,7 @@ public:
     auto setWindowTitle(const QString& _title) noexcept -> void;
 
 public:
-    /// @brief 主框架QWidget调用函数
+    /// @brief 主框架QWidget内部调用函数
     auto getMaximizeBtn() const noexcept -> QPushButton*;
 
     auto getMinimizeBtn() const noexcept -> QPushButton*;
@@ -87,6 +85,8 @@ public:
 
     auto getResizeTag() const noexcept -> bool;
 
+public:
+    /// @brief 主框架QWidget公开调用函数
     auto setWindowCursor(const QPixmap& _arrow, const QPixmap& _sizeVer, const QPixmap& _sizeHor, const QPixmap& _sizeFDiag, const QPixmap& _sizeBDiag) const noexcept -> void;
 
     auto addTitleAction(QWidget* _action) noexcept -> void;
@@ -95,9 +95,13 @@ public:
 
     auto setTitleBarStyleSheet(const QString& _styleStr) noexcept -> void;
 
-private:
-    auto initTitleBarConfig() noexcept -> void;
+    auto setMinBtnProperty(const char* _proPertyName, const QString& _minProperty) noexcept -> void;
 
+    auto setMaxBtnProperty(const char* _proPertyName, const QString& _maxProperty) noexcept -> void;
+
+    auto setcloseBtnProperty(const char* _proPertyName, const QString& _closeProperty) noexcept -> void;
+
+private:
     auto initTitleBarHandle() noexcept -> void;
 
     auto initTitleBarLayout() noexcept -> void;
@@ -158,12 +162,11 @@ private Q_SLOTS:
     void onCloseClicked() noexcept;
 
 private:
-    WidgetFrame*  m_widget{nullptr};               /*无边框窗口指针*/
-    ConfigLoader* m_configLoader{nullptr};         /*配置文件读取对象*/
-    QLabel*       m_windowIcon{new QLabel{this}};  /*标题栏图标*/
-    QLabel*       m_windowTitle{new QLabel{this}}; /*标题栏文本标题*/
-    CursorType    m_cursorType{CursorType::None};  /*指针图标类型*/
-    bool          m_resizeTag{false};              /*窗口伸缩鼠标指针显示句柄*/
+    WidgetFrame* m_widget{nullptr};               /*无边框窗口指针*/
+    QLabel*      m_windowIcon{new QLabel{this}};  /*标题栏图标*/
+    QLabel*      m_windowTitle{new QLabel{this}}; /*标题栏文本标题*/
+    CursorType   m_cursorType{CursorType::None};  /*指针图标类型*/
+    bool         m_resizeTag{false};              /*窗口伸缩鼠标指针显示句柄*/
 #ifdef Q_OS_WIN
     HWND m_hwnd{}; /*窗口界面句柄*/
 #endif

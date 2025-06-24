@@ -13,5 +13,4 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE
     ${CMAKE_SOURCE_DIR}/utils/StyleLoader
     ${CMAKE_SOURCE_DIR}/utils/Win32Kit
-    ${CMAKE_SOURCE_DIR}/utils/ConfigLoader
 )

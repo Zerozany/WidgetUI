@@ -113,6 +113,24 @@ void WidgetFrame::mouseDoubleClickEvent(QMouseEvent* _event)
     Q_EMIT d->m_titleBar->mouseDouble(_event);
 }
 
+auto WidgetFrame::setMinBtnProperty(const char* _proPertyName, const QString& _minProperty) noexcept -> void
+{
+    Q_D(WidgetFrame);
+    d->m_titleBar->setMinBtnProperty(_proPertyName, _minProperty);
+}
+
+auto WidgetFrame::setMaxBtnProperty(const char* _proPertyName, const QString& _maxProperty) noexcept -> void
+{
+    Q_D(WidgetFrame);
+    d->m_titleBar->setMaxBtnProperty(_proPertyName, _maxProperty);
+}
+
+auto WidgetFrame::setcloseBtnProperty(const char* _proPertyName, const QString& _closeProperty) noexcept -> void
+{
+    Q_D(WidgetFrame);
+    d->m_titleBar->setcloseBtnProperty(_proPertyName, _closeProperty);
+}
+
 bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qintptr* _result)
 {
     Q_D(WidgetFrame);

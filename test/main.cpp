@@ -2,7 +2,6 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 
-#include "SystemTray.h"
 #include "WidgetFrame.h"
 
 class A : public WidgetFrame
@@ -35,10 +34,7 @@ int main(int argc, char* argv[])
     QApplication app{argc, argv};
     // 获取编译时间
     // qDebug() << "Compiled on: " << __DATE__ << " at " << __TIME__;
-    A          w{};
-    SystemTray tray{&w};
-    tray.setTrayIcon(QIcon{":/resources/icon/close.png"});
-    tray.show();
+    A w{};
     w.resize(960, 600);
     w.show();
     QApplication::exec();
