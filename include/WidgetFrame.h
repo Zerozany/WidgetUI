@@ -1,16 +1,20 @@
 _Pragma("once");
 #include <QWidget>
 
-#ifdef DLL_BUILD
-#define DLL_BUILDTYPE Q_DECL_EXPORT
+#if defined(_WIN32)
+#ifdef MYLIB_EXPORTS
+#define MYLIB_API Q_DECL_EXPORT
 #else
-#define DLL_BUILDTYPE Q_DECL_IMPORT
+#define MYLIB_API Q_DECL_IMPORT
+#endif
+#else
+#define MYLIB_API
 #endif
 
 class QVBoxLayout;
 class WidgetFramePrivate;
 
-class DLL_BUILDTYPE WidgetFrame : public QWidget
+class MYLIB_API WidgetFrame : public QWidget
 {
     Q_OBJECT
 public:

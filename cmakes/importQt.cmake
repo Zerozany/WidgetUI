@@ -1,4 +1,4 @@
-set_target_properties(${PROJECT_NAME} PROPERTIES
+set_target_properties(${QWIDGETUI_LIB_NAME} PROPERTIES
     AUTOUIC ON
     AUTOMOC ON
     AUTORCC ON
@@ -20,7 +20,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED
     Concurrent
 )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${QWIDGETUI_LIB_NAME}
     PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Core
@@ -28,7 +28,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Concurrent
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES
+set_target_properties(${QWIDGETUI_LIB_NAME} PROPERTIES
     MACOSX_BUNDLE "$<$<CONFIG:Release>:TRUE>$<$<NOT:$<CONFIG:Release>>:FALSE>"
     WIN32_EXECUTABLE "$<$<CONFIG:Debug>:FALSE>$<$<NOT:$<CONFIG:Debug>>:TRUE>"
 )
