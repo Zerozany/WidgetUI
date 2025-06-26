@@ -255,11 +255,6 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             {
                 d->m_titleBar->getMaximizeBtn()->setIcon(d->m_titleBar->getMaximizeIcon());
             }
-            break;
-        }
-        /// @brief  鼠标左键释放（非客户区）
-        case WM_LBUTTONUP:
-        {
             if (!pressedTag)
             {
                 QMouseEvent mouseEvent{QEvent::Leave, QPoint(), QPoint(), Qt::NoButton, Qt::NoButton, Qt::NoModifier};
@@ -268,6 +263,11 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
                 return false;
             }
             break;
+        }
+        /// @brief  鼠标左键释放（非客户区）
+        case WM_LBUTTONUP:
+        {
+            [[fallthrough]];
         }
             /// @brief 松开鼠标左键（客户区）
         case WM_NCLBUTTONUP:
