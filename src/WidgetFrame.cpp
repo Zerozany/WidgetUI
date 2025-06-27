@@ -89,6 +89,24 @@ auto WidgetFrame::setTitleBarStyleSheet(const QString& _styleStr) noexcept -> vo
     d->m_titleBar->setTitleBarStyleSheet(_styleStr);
 }
 
+auto WidgetFrame::setMinBtnProperty(const char* _proPertyName, const QString& _minProperty) noexcept -> void
+{
+    Q_D(WidgetFrame);
+    d->m_titleBar->setMinBtnProperty(_proPertyName, _minProperty);
+}
+
+auto WidgetFrame::setMaxBtnProperty(const char* _proPertyName, const QString& _maxProperty) noexcept -> void
+{
+    Q_D(WidgetFrame);
+    d->m_titleBar->setMaxBtnProperty(_proPertyName, _maxProperty);
+}
+
+auto WidgetFrame::setcloseBtnProperty(const char* _proPertyName, const QString& _closeProperty) noexcept -> void
+{
+    Q_D(WidgetFrame);
+    d->m_titleBar->setcloseBtnProperty(_proPertyName, _closeProperty);
+}
+
 void WidgetFrame::mousePressEvent(QMouseEvent* _event)
 {
     Q_D(WidgetFrame);
@@ -111,24 +129,6 @@ void WidgetFrame::mouseDoubleClickEvent(QMouseEvent* _event)
 {
     Q_D(WidgetFrame);
     Q_EMIT d->m_titleBar->mouseDouble(_event);
-}
-
-auto WidgetFrame::setMinBtnProperty(const char* _proPertyName, const QString& _minProperty) noexcept -> void
-{
-    Q_D(WidgetFrame);
-    d->m_titleBar->setMinBtnProperty(_proPertyName, _minProperty);
-}
-
-auto WidgetFrame::setMaxBtnProperty(const char* _proPertyName, const QString& _maxProperty) noexcept -> void
-{
-    Q_D(WidgetFrame);
-    d->m_titleBar->setMaxBtnProperty(_proPertyName, _maxProperty);
-}
-
-auto WidgetFrame::setcloseBtnProperty(const char* _proPertyName, const QString& _closeProperty) noexcept -> void
-{
-    Q_D(WidgetFrame);
-    d->m_titleBar->setcloseBtnProperty(_proPertyName, _closeProperty);
 }
 
 bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qintptr* _result)
@@ -165,7 +165,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         case WM_NCHITTEST:
         {
             /// @brief 开启窗口伸缩事件
-            if (d->m_titleBar->getResizeTag())
+            if (d->m_titleBar->getResizeTag()) [[unlikely]]
             {
                 return false;
             }
@@ -177,7 +177,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             hwnd = reinterpret_cast<HWND>(this->winId());
             // 检索标题栏中鼠标所在元素
             child = d->m_titleBar->childAt(pos);
-            if (*_result != 0)
+            if (*_result != 0) [[unlikely]]
             {
                 return true;
             }
@@ -228,22 +228,6 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             }
             break;
         }
-        case WM_NCLBUTTONDBLCLK:  // 鼠标在非客户区域双击左键时触发
-        {
-            if (!child && d->m_titleBar->rect().contains(pos))
-            {
-                if (::IsZoomed(hwnd))
-                {
-                    d->m_titleBar->getMaximizeBtn()->setIcon(d->m_titleBar->getMaximizeIcon());
-                }
-                else
-                {
-                    d->m_titleBar->getMaximizeBtn()->setIcon(d->m_titleBar->getNormalIcon());
-                }
-                return false;
-            }
-            break;
-        }
         /// @brief 窗口大小状态变化事件
         case WM_SIZE:
         {
@@ -264,6 +248,23 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
             }
             break;
         }
+        case WM_NCLBUTTONDBLCLK:  // 鼠标在非客户区域双击左键时触发
+        {
+            if (!child && d->m_titleBar->rect().contains(pos))
+            {
+                if (::IsZoomed(hwnd))
+                {
+                    d->m_titleBar->getMaximizeBtn()->setIcon(d->m_titleBar->getMaximizeIcon());
+                }
+                else
+                {
+                    d->m_titleBar->getMaximizeBtn()->setIcon(d->m_titleBar->getNormalIcon());
+                }
+                return false;
+            }
+            break;
+        }
+#if 0
         /// @brief  鼠标左键释放（非客户区）
         case WM_LBUTTONUP:
         {
@@ -373,6 +374,7 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         {
             [[fallthrough]];
         }
+#endif
         default:
         {
             break;
