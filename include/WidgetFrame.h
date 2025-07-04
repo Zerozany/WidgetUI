@@ -1,7 +1,7 @@
 _Pragma("once");
 #include <QWidget>
 
-#if defined(_WIN32)
+#if defined(_WIN32) && defined(_MSC_VER)
 #ifdef MYLIB_EXPORTS
 #define MYLIB_API Q_DECL_EXPORT
 #else
@@ -11,6 +11,7 @@ _Pragma("once");
 #define MYLIB_API
 #endif
 
+class QResizeEvent;
 class QVBoxLayout;
 class WidgetFramePrivate;
 
@@ -87,6 +88,8 @@ protected:
     void mouseReleaseEvent(QMouseEvent* _event) override;
 
     void mouseDoubleClickEvent(QMouseEvent* _event) override;
+
+    void resizeEvent(QResizeEvent* _event) override;
 
     bool nativeEvent(const QByteArray& _eventType, void* _message, qintptr* _result) override;
 

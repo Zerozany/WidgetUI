@@ -131,6 +131,21 @@ void WidgetFrame::mouseDoubleClickEvent(QMouseEvent* _event)
     Q_EMIT d->m_titleBar->mouseDouble(_event);
 }
 
+void WidgetFrame::resizeEvent(QResizeEvent* _event)
+{
+    Q_D(WidgetFrame);
+    if (this->isFullScreen())
+    {
+        d->m_titleBar->setFullScreenTag(true);
+        d->m_titleBar->hide();
+    }
+    else
+    {
+        d->m_titleBar->setFullScreenTag(false);
+        d->m_titleBar->show();
+    }
+}
+
 bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qintptr* _result)
 {
     Q_D(WidgetFrame);
@@ -166,6 +181,10 @@ bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qint
         {
             /// @brief 开启窗口伸缩事件
             if (d->m_titleBar->getResizeTag()) [[unlikely]]
+            {
+                return false;
+            }
+            if (d->m_titleBar->getFullScreenTag()) [[unlikely]]
             {
                 return false;
             }

@@ -129,6 +129,21 @@ auto WidgetTitleBar::setWindowTitle(const QString& _title) noexcept -> void
     Q_EMIT this->windowTitleChanged();
 }
 
+auto WidgetTitleBar::getFullScreenTag() const noexcept -> bool
+{
+    return this->m_fullScreenTag;
+}
+
+auto WidgetTitleBar::setFullScreenTag(const bool _tag) noexcept -> void
+{
+    if (m_fullScreenTag == _tag)
+    {
+        return;
+    }
+    m_fullScreenTag = _tag;
+    Q_EMIT this->fullScreenTagChanged();
+}
+
 auto WidgetTitleBar::getMaximizeBtn() const noexcept -> QPushButton*
 {
     return this->m_titleBarButtons.at("maximize");
@@ -304,7 +319,7 @@ auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
 auto WidgetTitleBar::setCursorType(const QPoint& _pos) noexcept -> void
 {
 #ifdef Q_OS_WIN
-    if (::IsZoomed(m_hwnd))
+    if (::IsZoomed(m_hwnd) || m_widget->isFullScreen())
     {
         m_resizeTag = false;
         return;
@@ -357,13 +372,13 @@ auto WidgetTitleBar::setCursorType(const QPoint& _pos) noexcept -> void
     {
         tmp = CursorType::None;
     }
-    if (tmp != CursorType::None)
+    if (tmp == CursorType::None || m_widget->isFullScreen())
     {
-        m_resizeTag = true;
+        m_resizeTag = false;
     }
     else
     {
-        m_resizeTag = false;
+        m_resizeTag = true;
     }
     if (this->m_cursorType != tmp)
     {

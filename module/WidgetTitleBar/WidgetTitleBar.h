@@ -21,6 +21,7 @@ class WidgetTitleBar : public QWidget
     Q_PROPERTY(QIcon closeIcon READ getCloseIcon WRITE setCloseIcon NOTIFY closeIconChanged)
     Q_PROPERTY(QPixmap windowIcon READ getWindowIcon WRITE setWindowIcon NOTIFY windowIconChanged)
     Q_PROPERTY(QString windowTitle READ getWindowTitle WRITE setWindowTitle NOTIFY windowTitleChanged)
+    Q_PROPERTY(bool fullScreenTag READ getFullScreenTag WRITE setFullScreenTag NOTIFY fullScreenTagChanged)
     Q_PROPERTY(QPushButton* maximizeBtn READ getMaximizeBtn)
     Q_PROPERTY(QPushButton* minimizeBtn READ getMinimizeBtn)
     Q_PROPERTY(QPushButton* closeBtn READ getCloseBtn)
@@ -75,6 +76,9 @@ public:
     auto getWindowTitle() const noexcept -> QString;
     auto setWindowTitle(const QString& _title) noexcept -> void;
 
+    auto getFullScreenTag() const noexcept -> bool;
+    auto setFullScreenTag(const bool _tag) noexcept -> void;
+
 public:
     /// @brief 主框架QWidget内部调用函数
     auto getMaximizeBtn() const noexcept -> QPushButton*;
@@ -124,6 +128,8 @@ Q_SIGNALS:
 
     void windowTitleChanged();
 
+    void fullScreenTagChanged();
+
 Q_SIGNALS:
     void mousePress(const QMouseEvent* _event);
 
@@ -167,6 +173,7 @@ private:
     QLabel*      m_windowTitle{new QLabel{this}}; /*标题栏文本标题*/
     CursorType   m_cursorType{CursorType::None};  /*指针图标类型*/
     bool         m_resizeTag{false};              /*窗口伸缩鼠标指针显示句柄*/
+    bool         m_fullScreenTag{false};
 #ifdef Q_OS_WIN
     HWND m_hwnd{}; /*窗口界面句柄*/
 #endif
