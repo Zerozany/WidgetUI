@@ -10,49 +10,49 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED
     Core
 )
 
-add_executable(${QWIDGETUI_LIB_NAME}Demo
+add_executable(${PROJECT_NAME}Demo
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
 )
 
-add_dependencies(${QWIDGETUI_LIB_NAME}Demo ${QWIDGETUI_LIB_NAME})
+add_dependencies(${PROJECT_NAME}Demo ${PROJECT_NAME})
 
-set_target_properties(${QWIDGETUI_LIB_NAME}Demo PROPERTIES
+set_target_properties(${PROJECT_NAME}Demo PROPERTIES
     AUTOUIC ON
     AUTOMOC ON
     AUTORCC ON
 )
 
 if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(${QWIDGETUI_LIB_NAME}Demo)
+    qt_finalize_executable(${PROJECT_NAME}Demo)
 endif()
 
-target_compile_features(${QWIDGETUI_LIB_NAME}Demo
+target_compile_features(${PROJECT_NAME}Demo
     PRIVATE
     cxx_std_23
 )
 
-target_include_directories(${QWIDGETUI_LIB_NAME}Demo
+target_include_directories(${PROJECT_NAME}Demo
     PRIVATE
     ${PROJECT_BINARY_DIR}/include
 )
 
-target_link_libraries(${QWIDGETUI_LIB_NAME}Demo
+target_link_libraries(${PROJECT_NAME}Demo
     PRIVATE
-    ${QWIDGETUI_LIB_NAME}
+    ${PROJECT_NAME}
 )
 
-target_link_libraries(${QWIDGETUI_LIB_NAME}Demo
+target_link_libraries(${PROJECT_NAME}Demo
     PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Core
 )
 
-set_target_properties(${QWIDGETUI_LIB_NAME}Demo PROPERTIES
+set_target_properties(${PROJECT_NAME}Demo PROPERTIES
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE FALSE
 )
 
-set_target_properties(${QWIDGETUI_LIB_NAME}Demo
+set_target_properties(${PROJECT_NAME}Demo
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_DEBUG "${PROJECT_BINARY_DIR}/bin"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${PROJECT_BINARY_DIR}/bin"

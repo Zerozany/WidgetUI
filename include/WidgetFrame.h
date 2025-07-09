@@ -2,20 +2,20 @@ _Pragma("once");
 #include <QWidget>
 
 #if defined(_WIN32) && defined(_MSC_VER)
-#ifdef MYLIB_EXPORTS
-#define MYLIB_API Q_DECL_EXPORT
+#ifdef UILIB_EXPORTS
+#define UILIB_API Q_DECL_EXPORT
 #else
-#define MYLIB_API Q_DECL_IMPORT
+#define UILIB_API Q_DECL_IMPORT
 #endif
 #else
-#define MYLIB_API
+#define UILIB_API
 #endif
 
 class QResizeEvent;
 class QVBoxLayout;
 class WidgetFramePrivate;
 
-class MYLIB_API WidgetFrame : public QWidget
+class UILIB_API WidgetFrame : public QWidget
 {
     Q_OBJECT
 public:

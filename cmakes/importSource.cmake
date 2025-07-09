@@ -9,24 +9,24 @@ file(GLOB RESOURCES_LIST
     ${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/**/*.png
 )
 
-target_sources(${QWIDGETUI_LIB_NAME}
+target_sources(${PROJECT_NAME}
     PRIVATE
     ${SOURCE_FILES}
 )
 
-qt_add_resources(${QWIDGETUI_LIB_NAME} "Main"
+qt_add_resources(${PROJECT_NAME} "Main"
     PREFIX "/"
     FILES
     ${RESOURCES_LIST}
 )
 
-target_include_directories(${QWIDGETUI_LIB_NAME}
+target_include_directories(${PROJECT_NAME}
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${PROJECT_BINARY_DIR}
 )
 
-add_custom_target(${QWIDGETUI_LIB_NAME}include ALL
+add_custom_target(${PROJECT_NAME}include ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${PROJECT_BINARY_DIR}/include

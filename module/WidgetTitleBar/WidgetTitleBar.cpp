@@ -303,14 +303,11 @@ auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
     m_titleBarLayouts.at("titleStateLayout")->setContentsMargins(0, 0, 0, 0);
     m_titleBarLayouts.at("titleBarLayout")->setContentsMargins(0, 0, 0, 0);
     m_titleBarLayouts.at("titleStateLayout")->setDirection(QBoxLayout::RightToLeft);
-
     m_titleBarLayouts.at("titleActionLayout")->addWidget(m_windowIcon);
     m_titleBarLayouts.at("titleActionLayout")->addWidget(m_windowTitle);
-
     m_titleBarLayouts.at("titleStateLayout")->addWidget(m_titleBarButtons.at("close"));
     m_titleBarLayouts.at("titleStateLayout")->addWidget(m_titleBarButtons.at("maximize"));
     m_titleBarLayouts.at("titleStateLayout")->addWidget(m_titleBarButtons.at("minimize"));
-
     m_titleBarLayouts.at("titleBarLayout")->addLayout(m_titleBarLayouts.at("titleActionLayout"));
     m_titleBarLayouts.at("titleBarLayout")->addStretch();
     m_titleBarLayouts.at("titleBarLayout")->addLayout(m_titleBarLayouts.at("titleStateLayout"));
@@ -399,7 +396,7 @@ auto WidgetTitleBar::connectSignalToSlot() noexcept -> void
 {
     connect(m_titleBarButtons.at("minimize"), &QPushButton::clicked, this, &WidgetTitleBar::onMinimizeClicked, Qt::AutoConnection);
     connect(m_titleBarButtons.at("maximize"), &QPushButton::clicked, this, &WidgetTitleBar::onMaximizeClicked, Qt::AutoConnection);
-    connect(m_titleBarButtons.at("close"), &QPushButton::clicked, this, &WidgetTitleBar::onCloseClicked);
+    connect(m_titleBarButtons.at("close"), &QPushButton::clicked, this, &WidgetTitleBar::onCloseClicked, Qt::AutoConnection);
     connect(this, &WidgetTitleBar::mousePress, this, &WidgetTitleBar::onMousePressChanged, Qt::AutoConnection);
     connect(this, &WidgetTitleBar::mouseMove, this, &WidgetTitleBar::onMouseMoveChanged, Qt::AutoConnection);
     connect(this, &WidgetTitleBar::mouseRelease, this, &WidgetTitleBar::onMouseReleaseChanged, Qt::AutoConnection);
