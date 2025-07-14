@@ -5,7 +5,7 @@ file(GLOB SOURCE_FILES
 
 file(GLOB RESOURCES_LIST
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/resources/css/*.css
+    ${CMAKE_CURRENT_SOURCE_DIR}/resources/css/**/*.css
     ${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/**/*.png
 )
 

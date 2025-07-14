@@ -12,10 +12,17 @@ target_sources(${PROJECT_NAME}
     ${IMPL_SOURCE}
 )
 
-foreach(HEADERDIR ${IMPL_SOURCE})
-    get_filename_component(DIR ${HEADERDIR} DIRECTORY)
-    target_include_directories(${PROJECT_NAME}
-        PRIVATE
-        ${DIR}
-    )
+file(GLOB INCLUDE_DIR
+    ${CMAKE_CURRENT_SOURCE_DIR}/module/*
+    ${CMAKE_CURRENT_SOURCE_DIR}/Private/*
+    ${CMAKE_CURRENT_SOURCE_DIR}/utils/*
+)
+
+foreach(HEADERDIR ${INCLUDE_DIR})
+    if(IS_DIRECTORY ${HEADERDIR})
+        target_include_directories(${PROJECT_NAME}
+            PRIVATE
+            ${HEADERDIR}
+        )
+    endif()
 endforeach()

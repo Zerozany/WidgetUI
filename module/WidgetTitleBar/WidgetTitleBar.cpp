@@ -248,9 +248,9 @@ auto WidgetTitleBar::initTitleBarHandle() noexcept -> void
     this->setMouseTracking(true);
     this->setAttribute(Qt::WA_StyledBackground);
     this->setFixedHeight(TITLEBAR_HEIGHT);
-    this->getMaximizeBtn()->setStyleSheet(StyleLoader::loadFromFile(":/resources/css/MaxBtn.css"));
-    this->getMinimizeBtn()->setStyleSheet(StyleLoader::loadFromFile(":/resources/css/MinBtn.css"));
-    this->getCloseBtn()->setStyleSheet(StyleLoader::loadFromFile(":/resources/css/CloseBtn.css"));
+    this->getMaximizeBtn()->setStyleSheet(StyleLoader::loadFromFile(":/resources/css/TitleBarCss/MaxBtn.css"));
+    this->getMinimizeBtn()->setStyleSheet(StyleLoader::loadFromFile(":/resources/css/TitleBarCss/MinBtn.css"));
+    this->getCloseBtn()->setStyleSheet(StyleLoader::loadFromFile(":/resources/css/TitleBarCss/CloseBtn.css"));
 }
 
 auto WidgetTitleBar::initTitleBarLayout() noexcept -> void
