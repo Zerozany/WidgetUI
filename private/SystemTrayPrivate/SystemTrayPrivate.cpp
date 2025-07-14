@@ -34,6 +34,11 @@ auto SystemTrayPrivate::setTrayMessage(const QString& _title, const QString& _ms
     m_trayIcon->showMessage(_title, _msg, QSystemTrayIcon::Information, _msecs);
 }
 
+auto SystemTrayPrivate::setMenuStyleSheet(const QString& _styleStr) noexcept -> void
+{
+    m_trayMenu->setStyleSheet(_styleStr);
+}
+
 auto SystemTrayPrivate::initSystemTray() noexcept -> void
 {
     if (!QSystemTrayIcon::isSystemTrayAvailable())

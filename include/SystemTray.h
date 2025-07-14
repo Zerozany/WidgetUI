@@ -36,6 +36,9 @@ public:
     /// @brief 设置程序气泡弹窗消息
     auto setTrayMessage(const QString& _title, const QString& _msg, int _msecs = 3000) noexcept -> void;
 
+    /// @brief 设置托盘栏CSS
+    auto setMenuStyleSheet(const QString& _styleStr) noexcept -> void;
+
 private:
     Q_DECLARE_PRIVATE(SystemTray)
     Q_DISABLE_COPY(SystemTray)
