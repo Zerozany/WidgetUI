@@ -97,13 +97,7 @@ public:
 
     auto addTitleState(QWidget* _action) noexcept -> void;
 
-    auto setTitleBarStyleSheet(const QString& _styleStr) noexcept -> void;
-
-    auto setMinBtnProperty(const char* _proPertyName, const QString& _minProperty) noexcept -> void;
-
-    auto setMaxBtnProperty(const char* _proPertyName, const QString& _maxProperty) noexcept -> void;
-
-    auto setcloseBtnProperty(const char* _proPertyName, const QString& _closeProperty) noexcept -> void;
+    auto setTitleBarBackColor(const QString& _color) noexcept -> void;
 
 private:
     auto initTitleBarHandle() noexcept -> void;

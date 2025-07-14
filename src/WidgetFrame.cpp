@@ -83,28 +83,10 @@ auto WidgetFrame::addTitleState(QWidget* _action) noexcept -> void
     d->m_titleBar->addTitleState(_action);
 }
 
-auto WidgetFrame::setTitleBarStyleSheet(const QString& _styleStr) noexcept -> void
+auto WidgetFrame::setTitleBarBackColor(const QString& _color) noexcept -> void
 {
     Q_D(WidgetFrame);
-    d->m_titleBar->setTitleBarStyleSheet(_styleStr);
-}
-
-auto WidgetFrame::setMinBtnProperty(const char* _proPertyName, const QString& _minProperty) noexcept -> void
-{
-    Q_D(WidgetFrame);
-    d->m_titleBar->setMinBtnProperty(_proPertyName, _minProperty);
-}
-
-auto WidgetFrame::setMaxBtnProperty(const char* _proPertyName, const QString& _maxProperty) noexcept -> void
-{
-    Q_D(WidgetFrame);
-    d->m_titleBar->setMaxBtnProperty(_proPertyName, _maxProperty);
-}
-
-auto WidgetFrame::setcloseBtnProperty(const char* _proPertyName, const QString& _closeProperty) noexcept -> void
-{
-    Q_D(WidgetFrame);
-    d->m_titleBar->setcloseBtnProperty(_proPertyName, _closeProperty);
+    d->m_titleBar->setTitleBarBackColor(_color);
 }
 
 void WidgetFrame::mousePressEvent(QMouseEvent* _event)
@@ -134,16 +116,7 @@ void WidgetFrame::mouseDoubleClickEvent(QMouseEvent* _event)
 void WidgetFrame::resizeEvent(QResizeEvent* _event)
 {
     Q_D(WidgetFrame);
-    if (this->isFullScreen())
-    {
-        d->m_titleBar->setFullScreenTag(true);
-        d->m_titleBar->hide();
-    }
-    else
-    {
-        d->m_titleBar->setFullScreenTag(false);
-        d->m_titleBar->show();
-    }
+    d->m_titleBar->setFullScreenTag(this->isFullScreen());
 }
 
 bool WidgetFrame::nativeEvent(const QByteArray& _eventType, void* _message, qintptr* _result)

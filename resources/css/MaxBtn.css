@@ -1,0 +1,14 @@
+QPushButton[propertyName="max"] {
+    border: none;
+    border-radius: 0px;
+    background-color: transparent;
+    padding: 0px;
+}
+
+QPushButton[propertyName="max"]:hover {
+    background-color: #aca9a9;
+}
+
+QPushButton[propertyName="max"]:pressed {
+    background-color: #d6d4d4;
+}

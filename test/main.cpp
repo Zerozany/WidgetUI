@@ -10,6 +10,7 @@ public:
     explicit(true) A(WidgetFrame* _parent = nullptr) : WidgetFrame{_parent}
     {
 #if 0
+        this->setTitleBarBackColor("#555FFF");
         this->setTitleFlags(TitleBarFlags::CloseHint | TitleBarFlags::IconHint);
         initBtn();
         QPushButton* btn  = new QPushButton{"XXXXX", this};

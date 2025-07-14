@@ -26,7 +26,7 @@ endif()
 
 target_compile_definitions(${PROJECT_NAME}
     PRIVATE
-    UILIB_EXPORTS
+    UILIB_HANDLE
 )
 
 set_target_properties(${PROJECT_NAME}

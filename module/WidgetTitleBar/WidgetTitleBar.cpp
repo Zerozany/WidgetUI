@@ -141,6 +141,7 @@ auto WidgetTitleBar::setFullScreenTag(const bool _tag) noexcept -> void
         return;
     }
     m_fullScreenTag = _tag;
+    m_fullScreenTag ? this->hide() : this->show();
     Q_EMIT this->fullScreenTagChanged();
 }
 
@@ -233,27 +234,9 @@ auto WidgetTitleBar::addTitleState(QWidget* _action) noexcept -> void
     m_titleBarLayouts.at("titleStateLayout")->addWidget(_action);
 }
 
-auto WidgetTitleBar::setTitleBarStyleSheet(const QString& _styleStr) noexcept -> void
+auto WidgetTitleBar::setTitleBarBackColor(const QString& _color) noexcept -> void
 {
-    if (!_styleStr.isEmpty())
-    {
-        this->setStyleSheet(_styleStr);
-    }
-}
-
-auto WidgetTitleBar::setMinBtnProperty(const char* _proPertyName, const QString& _minProperty) noexcept -> void
-{
-    m_titleBarButtons.at("minimize")->setProperty(_proPertyName, _minProperty);
-}
-
-auto WidgetTitleBar::setMaxBtnProperty(const char* _proPertyName, const QString& _maxProperty) noexcept -> void
-{
-    m_titleBarButtons.at("maximize")->setProperty(_proPertyName, _maxProperty);
-}
-
-auto WidgetTitleBar::setcloseBtnProperty(const char* _proPertyName, const QString& _closeProperty) noexcept -> void
-{
-    m_titleBarButtons.at("close")->setProperty(_proPertyName, _closeProperty);
+    this->setStyleSheet(QString{"background-color: %1;"}.arg(_color));
 }
 
 /*              初始化固定逻辑              */
@@ -265,7 +248,9 @@ auto WidgetTitleBar::initTitleBarHandle() noexcept -> void
     this->setMouseTracking(true);
     this->setAttribute(Qt::WA_StyledBackground);
     this->setFixedHeight(TITLEBAR_HEIGHT);
-    this->setStyleSheet(StyleLoader::loadFromFile(":/resources/css/WidgetTitleBar.css"));
+    this->getMaximizeBtn()->setStyleSheet(StyleLoader::loadFromFile(":/resources/css/MaxBtn.css"));
+    this->getMinimizeBtn()->setStyleSheet(StyleLoader::loadFromFile(":/resources/css/MinBtn.css"));
+    this->getCloseBtn()->setStyleSheet(StyleLoader::loadFromFile(":/resources/css/CloseBtn.css"));
 }
 
 auto WidgetTitleBar::initTitleBarLayout() noexcept -> void

@@ -2,7 +2,7 @@ _Pragma("once");
 #include <QWidget>
 
 #if defined(_WIN32) && defined(_MSC_VER)
-#ifdef UILIB_EXPORTS
+#ifdef UILIB_HANDLE
 #define UILIB_API Q_DECL_EXPORT
 #else
 #define UILIB_API Q_DECL_IMPORT
@@ -68,17 +68,8 @@ public:
     /// @brief 添加窗口状态控件
     auto addTitleState(QWidget* _action) noexcept -> void;
 
-    /// @brief 设置标题栏CSS风格
-    auto setTitleBarStyleSheet(const QString& _styleStr) noexcept -> void;
-
-    /// @brief 最小化按钮添加属性
-    auto setMinBtnProperty(const char* _proPertyName, const QString& _minProperty) noexcept -> void;
-
-    /// @brief 最大化按钮添加属性
-    auto setMaxBtnProperty(const char* _proPertyName, const QString& _maxProperty) noexcept -> void;
-
-    /// @brief 关闭窗口按钮添加属性
-    auto setcloseBtnProperty(const char* _proPertyName, const QString& _closeProperty) noexcept -> void;
+    /// @brief 设置标题栏背景CSS颜色
+    auto setTitleBarBackColor(const QString& _color) noexcept -> void;
 
 protected:
     void mousePressEvent(QMouseEvent* _event) override;

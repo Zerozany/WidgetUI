@@ -1,0 +1,14 @@
+QPushButton[propertyName="min"] {
+    border: none;
+    border-radius: 0px;
+    background-color: transparent;
+    padding: 0px;
+}
+
+QPushButton[propertyName="min"]:hover {
+    background-color: #aca9a9;
+}
+
+QPushButton[propertyName="min"]:pressed {
+    background-color: #d6d4d4;
+}
