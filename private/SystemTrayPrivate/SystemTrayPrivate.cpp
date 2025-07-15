@@ -29,14 +29,14 @@ auto SystemTrayPrivate::addTrayAction(QAction* _action) noexcept -> void
     m_trayMenu->addAction(_action);
 }
 
-auto SystemTrayPrivate::setTrayMessage(const QString& _title, const QString& _msg, int _msecs) noexcept -> void
-{
-    m_trayIcon->showMessage(_title, _msg, QSystemTrayIcon::Information, _msecs);
-}
-
 auto SystemTrayPrivate::setMenuStyleSheet(const QString& _styleStr) noexcept -> void
 {
     m_trayMenu->setStyleSheet(_styleStr);
+}
+
+auto SystemTrayPrivate::getTrayInstance() noexcept -> QSystemTrayIcon* const
+{
+    return this->m_trayIcon;
 }
 
 auto SystemTrayPrivate::initSystemTray() noexcept -> void

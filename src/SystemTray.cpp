@@ -37,14 +37,14 @@ auto SystemTray::addTrayAction(QAction* _action) noexcept -> void
     d->addTrayAction(_action);
 }
 
-auto SystemTray::setTrayMessage(const QString& _title, const QString& _msg, int _msecs) noexcept -> void
-{
-    Q_D(SystemTray);
-    d->setTrayMessage(_title, _msg, _msecs);
-}
-
 auto SystemTray::setMenuStyleSheet(const QString& _styleStr) noexcept -> void
 {
     Q_D(SystemTray);
     d->setMenuStyleSheet(_styleStr);
+}
+
+auto SystemTray::getTrayInstance() noexcept -> QSystemTrayIcon* const
+{
+    Q_D(SystemTray);
+    return d->getTrayInstance();
 }

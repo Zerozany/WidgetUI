@@ -11,9 +11,10 @@ _Pragma("once");
 #define UILIB_API
 #endif
 
-class QWidget;
 class SystemTrayPrivate;
+class QWidget;
 class QAction;
+class QSystemTrayIcon;
 
 class UILIB_API SystemTray : public QObject
 {
@@ -33,11 +34,11 @@ public:
     /// @brief 添加托盘选项
     auto addTrayAction(QAction* _action) noexcept -> void;
 
-    /// @brief 设置程序气泡弹窗消息
-    auto setTrayMessage(const QString& _title, const QString& _msg, int _msecs = 3000) noexcept -> void;
-
     /// @brief 设置托盘栏CSS
     auto setMenuStyleSheet(const QString& _styleStr) noexcept -> void;
+
+    /// @brief 获取托盘指针对象实例
+    auto getTrayInstance() noexcept -> QSystemTrayIcon* const;
 
 private:
     Q_DECLARE_PRIVATE(SystemTray)

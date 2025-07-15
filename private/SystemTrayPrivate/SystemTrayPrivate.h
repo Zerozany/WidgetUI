@@ -21,9 +21,9 @@ public:
 
     auto addTrayAction(QAction* _action) noexcept -> void;
 
-    auto setTrayMessage(const QString& _title, const QString& _msg, int _msecs = 3000) noexcept -> void;
-
     auto setMenuStyleSheet(const QString& _styleStr) noexcept -> void;
+
+    auto getTrayInstance() noexcept -> QSystemTrayIcon* const;
 
 private:
     auto initSystemTray() noexcept -> void;

@@ -2,6 +2,7 @@
 #include <QApplication>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QSystemTrayIcon>
 
 #include "SystemTray.h"
 #include "WidgetFrame.h"
@@ -43,7 +44,8 @@ public:
         tray->addTrayAction(new QAction{"quit"});
         tray->addTrayAction(new QAction{QIcon{":/resources/icon/TitleBarIcons/close.png"}, "setting"});
         tray->show();
-        tray->setTrayMessage(QApplication::applicationName(), "正在运行中", 3000);
+        tray->getTrayInstance()->showMessage(QApplication::applicationName(), "正在运行中", QSystemTrayIcon::Information, 3000);
+        tray->getTrayInstance()->setToolTip("Hello World");
     }
 };
 
