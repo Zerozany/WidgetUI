@@ -30,9 +30,8 @@ public:
     {
         this->setTitleBarBackColor("#555FFF");
         this->setTitleFlags(TitleBarFlags::CloseHint | TitleBarFlags::IconHint);
-        initBtn();
-        QPushButton* btn  = new QPushButton{"XXXXX", this};
-        QPushButton* btn1 = new QPushButton{"WWWww", this};
+        QPushButton* btn  = new QPushButton{"编辑", this};
+        QPushButton* btn1 = new QPushButton{"切换", this};
         this->addTitleAction(btn);
         this->addTitleState(btn1);
     }
